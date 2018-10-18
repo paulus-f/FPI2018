@@ -75,16 +75,6 @@ namespace Polska
 						vectOper.pop_back();
 					}
 				}
-				/*valChar = vectOper.back().lexema[GETLEX];
-			while (valChar != LEFTHESIS)
-			{
-				lexTable.table[posLT++] = vectOper.back();
-				vectOper.pop_back();
-				valChar = vectOper.back().lexema[GETLEX];
-			}
-			vectOper.pop_back();
-			lexTable.table[posLT++] = vectOper.back();
-			vectOper.pop_back();*/
 			break;
 			case LEX_ID: case LEX_LITERAL: case EQUAL:
 				if(IT::isFun(idTable, tempVarLexTable.table[i]))
@@ -118,7 +108,9 @@ namespace Polska
 			{
 				while (!vectOper.empty())
 				{
-					if (vectOper.back().lexema[GETLEX] == LEFTHESIS) vectOper.pop_back();
+					if (vectOper.back().lexema[GETLEX] == LEFTHESIS || vectOper.back().lexema[GETLEX] == RIGHTHESIS)
+
+						vectOper.pop_back();
 					else 
 					{
 						lexTable.table[posLT++] = vectOper.back();
