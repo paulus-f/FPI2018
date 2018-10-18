@@ -1,5 +1,0 @@
-*.pdb
-*.obj
-.vs
-FPI2018/Debug
-FPI2018/FPI2018/Debug
