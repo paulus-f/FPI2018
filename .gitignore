@@ -1,5 +1,12 @@
 *.pdb
 *.obj
 .vs
-Debug
 FPI2018/Debug
+FPI2018/FPI2018/Debug
+asm/Debug
+asm/asmA/Debug
+asm/asmb2/Debug
+asm/asmc/Debug
+asm/asmd/Debug
+asm/asme/Debug
+Debug
