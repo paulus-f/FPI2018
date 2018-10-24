@@ -121,13 +121,13 @@ namespace IT {
 		{
 			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
 			{
-				i = breakBlock(lexTable, i-1)-1;
+				i = breakBlock(lexTable, i-1) - 1;
 			}
 			if (i == 0)
 			{
 				throw ERROR_THROW_IN(120, line, -1);
 			}
-			if (lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) return i;
+			if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) return i;
 		}
 		return i;
 	}
@@ -143,13 +143,13 @@ namespace IT {
 		{
 			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
 			{
-				i = breakBlock(lexTable, i-1);
+				i = breakBlock(lexTable, i-1) - 1;
 			}
-			if ((lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE))
+			/*if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS)
 			{
 				continue;
-			}
-			if ((lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) && !breakBlock)
+			}*/
+			if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE)
 			{
 				return SCOPE::LB;
 			}
@@ -158,7 +158,6 @@ namespace IT {
 				return SCOPE::LF;
 			}
 		}
-
 		return SCOPE::ERROR;
 	}
 
@@ -172,7 +171,8 @@ namespace IT {
 	{
 		int posI = 0;
 		bool exit = false;
-		for (int j = lexTable.head - 1; j != 0; j--) 
+		//for (int j = lexTable.head - 1; j != 0; j--) 
+		for (int j = 0; j < lexTable.head ; j++)
 		{
 			if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
 			{
@@ -204,6 +204,10 @@ namespace IT {
 					{
 						break;
 					}
+					if (lexTable.table[j].lexema[GETLEX] == RIGHTBRACELET)
+					{
+						j = breakBlock(lexTable, j - 1) - 1;
+					}
 					if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
 					{
 						for (int i = 0; i < idTable.head; i++)
@@ -222,16 +226,9 @@ namespace IT {
 				{
 					if (lexTable.table[j].lexema[GETLEX] == RIGHTBRACELET)
 					{
-						int line = lexTable.table[j].sn;
-						for (;lexTable.table[j].lexema[GETLEX] != LEFTBRACET; j--)
-						{
-							if (j == 0)
-							{
-								throw ERROR_THROW_IN(120, line, -1);
-							}
-						}
+						j = breakBlock(lexTable, j - 1) - 1;
 					}
-					if (lexTable.table[j].lexema[GETLEX] == LEX_CYCLE || lexTable.table[j].lexema[GETLEX] == LEX_BRANCH)
+					if (lexTable.table[j].lexema[GETLEX] == LEX_FOR || lexTable.table[j].lexema[GETLEX] == LEX_ALIAS || lexTable.table[j].lexema[GETLEX] == LEX_CYCLE || lexTable.table[j].lexema[GETLEX] == LEX_BRANCH)
 					{
 						break;
 					}

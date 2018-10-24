@@ -74,6 +74,7 @@ namespace IT
 		IdTable& idTable, LT::LexTable &lexTable,
 		char id[ID_MAXSIZE]
 	);
+	
 	void logIT(IdTable& idTable, Log::LOG log);
 
 	SCOPE retScope(LT::LexTable lexTable, bool global);

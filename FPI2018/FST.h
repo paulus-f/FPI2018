@@ -58,7 +58,6 @@
 	FST::NODE(1, FST::RELATION('l', 5)),\
 	FST::NODE()
 
-
 #define FST_FOR 4,	\
 	FST::NODE(1, FST::RELATION('f', 1)),\
 	FST::NODE(1, FST::RELATION('o', 2)),\
@@ -75,6 +74,13 @@
 	FST::NODE(1, FST::RELATION('s', 6)), \
 	FST::NODE()
 
+#define FST_ALIAS 6,	\
+	FST::NODE(1, FST::RELATION('a', 1)),\
+	FST::NODE(1, FST::RELATION('l', 2)),\
+	FST::NODE(1, FST::RELATION('i', 3)),\
+	FST::NODE(1, FST::RELATION('a', 4)),\
+	FST::NODE(1, FST::RELATION('s', 5)),\
+	FST::NODE()
 
 #define FST_INT 4,	\
 	FST::NODE(1, FST::RELATION('i', 1)),\
@@ -93,8 +99,6 @@
 	FST::NODE(1, FST::RELATION('t', 2)),\
 	FST::NODE(1, FST::RELATION('r', 3)),\
 	FST::NODE()
-
-
 
 #define FST_BOOL 5,	\
 	FST::NODE(1, FST::RELATION('b', 1)),\
@@ -118,7 +122,6 @@
 	FST::NODE(1, FST::RELATION('<', 2)),\
 	FST::NODE()
 
-
 #define FST_INPUT 3,	\
 	FST::NODE(1, FST::RELATION('p', 1)),\
 	FST::NODE(1, FST::RELATION('>', 3)),\
@@ -133,6 +136,64 @@
 	FST::NODE(1, FST::RELATION('n', 6)),\
 	FST::NODE()
 
+#define FST_STRFIND 8,	\
+	FST::NODE(1, FST::RELATION('s', 1)),\
+	FST::NODE(1, FST::RELATION('t', 2)),\
+	FST::NODE(1, FST::RELATION('r', 3)),\
+	FST::NODE(1, FST::RELATION('f', 4)),\
+	FST::NODE(1, FST::RELATION('i', 5)),\
+	FST::NODE(1, FST::RELATION('n', 6)),\
+	FST::NODE(1, FST::RELATION('d', 7)),\
+	FST::NODE()
+
+#define FST_MSIN 5, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('s', 2)),\
+	FST::NODE(1, FST::RELATION('i', 3)),\
+	FST::NODE(1, FST::RELATION('n', 4)),\
+	FST::NODE()
+
+#define FST_MCOS 5, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('c', 2)),\
+	FST::NODE(1, FST::RELATION('o', 3)),\
+	FST::NODE(1, FST::RELATION('s', 4)),\
+	FST::NODE()
+
+#define FST_MTAN 5, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('t', 2)),\
+	FST::NODE(1, FST::RELATION('a', 3)),\
+	FST::NODE(1, FST::RELATION('n', 4)),\
+	FST::NODE()
+
+#define FST_MCTAN 6, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('c', 2)),\
+	FST::NODE(1, FST::RELATION('t', 3)),\
+	FST::NODE(1, FST::RELATION('a', 4)),\
+	FST::NODE(1, FST::RELATION('n', 5)),\
+	FST::NODE()
+
+#define FST_MABS 5, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('a', 2)),\
+	FST::NODE(1, FST::RELATION('b', 3)),\
+	FST::NODE(1, FST::RELATION('s', 4)),\
+	FST::NODE()
+
+#define FST_MLN 4, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('l', 2)),\
+	FST::NODE(1, FST::RELATION('n', 3)),\
+	FST::NODE()
+
+#define FST_MSQR 5, \
+	FST::NODE(1, FST::RELATION('m', 1)),\
+	FST::NODE(1, FST::RELATION('s', 2)),\
+	FST::NODE(1, FST::RELATION('q', 3)),\
+	FST::NODE(1, FST::RELATION('r', 4)),\
+	FST::NODE()
 
 #define FST_SUBSTR 7,	\
 	FST::NODE(1, FST::RELATION('s', 1)),\
@@ -141,6 +202,14 @@
 	FST::NODE(1, FST::RELATION('s', 4)),\
 	FST::NODE(1, FST::RELATION('t', 5)),\
 	FST::NODE(1, FST::RELATION('r', 6)),\
+	FST::NODE()
+
+#define FST_UNTIL 6,	\
+	FST::NODE(1, FST::RELATION('u', 1)),\
+	FST::NODE(1, FST::RELATION('n', 2)),\
+	FST::NODE(1, FST::RELATION('t', 3)),\
+	FST::NODE(1, FST::RELATION('i', 4)),\
+	FST::NODE(1, FST::RELATION('l', 5)),\
 	FST::NODE()
 
 

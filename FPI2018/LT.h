@@ -35,6 +35,12 @@
 #define SPACE ' '
 #define NEWLINE '\n'
 #define ENDNULL '\0'
+#define TAB '\t'
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 #define LEX_FIXSIZE 1
 #define GETLEX 0
 #define LT_MAXSIZE 4096
@@ -46,11 +52,11 @@
 #define LEX_TYPE 't'
 #define LEX_ID 'i'
 #define LEX_BRANCH 'b'
+#define LEX_ALIAS 'a'
 #define LEX_MAIN 'm'
 #define LEX_ÑOMPARISONOPER 's'
 #define LEX_LITERAL 'l'
 #define LEX_FUNCTION 'f'
-#define LEX_DECLARE 'd'
 #define LEX_RETURN 'r'
 #define LEX_OUTPUT 'o'
 #define LEX_INPUT 'p'
@@ -61,14 +67,19 @@
 #define LEX_LEFTHESIS '('
 #define LEX_RIGHTHESIS ')'
 #define LEX_CYCLE 'c'
+#define LEX_FOR 'x'
 #define LEX_PLUS 'v'
 #define LEX_MINUS 'v'
 #define LEX_STAR 'v'
 #define LEX_OPERATION 'v'
 #define LEX_EQUAL '='
-#define LEX_QUOTES '\"' // '"'
+#define LEX_QUOTES '\"' 
 #define LEX_DIRSLASH '/'
-
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 namespace LT
 {
 	enum CO { m = 1, l = 2, e = 3, ne = 4, me = 5, le = 6};
@@ -82,8 +93,6 @@ namespace LT
 		char operation = NULL;
 		CO co;
 	};
-
-	Entry Lex(char lexema, int numstr, int idx);
 
 	Entry retLex(char lex, int numstr, int idx);
 
@@ -113,9 +122,6 @@ namespace LT
 		LexTable& lextable,
 		int n
 	);
-
-	bool IsIntLit(char *str);
-	bool IsStrLit(char *str);
 
 	void LogLA(LexTable& lexTable, Log::LOG log);
 

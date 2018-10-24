@@ -9,6 +9,8 @@
 #include <vector>
 #include "stanlib.h"
 #include "RPN.h"
+
+
 namespace LT {
 	LT::Entry retLex(char lex, int numstr, int idx)
 	{
@@ -50,7 +52,7 @@ namespace LT {
 		{
 			numCol++;
 
-			if (strCode[i] == SPACE && strCode[i + 1] == SPACE)
+			if (strCode[i] == TAB || (strCode[i] == SPACE && strCode[i + 1] == SPACE))
 			{
 				continue;
 			}
@@ -212,7 +214,7 @@ namespace LT {
 					FST::FST fstFor(buff, FST_FOR);
 					if (FST::execute(fstFor) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_FOR, numLine, LT_TI_NULLIDX);
 						Add(lexTable, lexEntry);
 						flagCycle = true;
 						flagBuffReady = false;
@@ -249,6 +251,15 @@ namespace LT {
 					if (FST::execute(fstIf) && flagBuffReady)
 					{
 						lexEntry = retLex(LEX_BRANCH, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagBranch = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstAlias(buff, FST_ALIAS);
+					if (FST::execute(fstAlias) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_ALIAS, numLine, LT_TI_NULLIDX);
 						Add(lexTable, lexEntry);
 						flagBranch = true;
 						flagBuffReady = false;
