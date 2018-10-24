@@ -96,8 +96,7 @@ namespace MFST
 				{
 					GRB::Rule::Chain chain;
 					if ((nrulechain = rule.getNextChain(lenta[lenta_position], chain, nrulechain + 1)) >= 0)
-					{
-					
+					{	
 						MFST_TRACE1
 							savestate();
 						st.pop();

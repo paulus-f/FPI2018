@@ -1,4 +1,5 @@
 #pragma once
+#include "Log.h"
 #define ERROR_THROW(id) Error::geterror(id);
 #define ERROR_THROW_IN(id, l, c) Error::geterrorin(id, l, c);
 #define ERROR_ENTRY(id, m) {id, m, {-1, -1}}
@@ -24,6 +25,7 @@ namespace Error
 			short col;
 		} inext;
 	};
+	ERROR getarrayerror(ERROR errorarr[], Log::LOG log, int mainId, int size);
 	ERROR geterror(int id);
 	ERROR geterrorin(int id, int line, int col);
 };

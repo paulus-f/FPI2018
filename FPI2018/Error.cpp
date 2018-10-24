@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Error.h"
+#include "Log.h"
 namespace Error {
 	ERROR errors[ERROR_MAX_ENTRY] = 
 	{
@@ -24,7 +25,7 @@ namespace Error {
 		ERROR_ENTRY(117, "Переменная не объявлена"),
 		ERROR_ENTRY(118, "Пустая строка"),
 		ERROR_ENTRY(119, "Неверный литерал строки"),
-		ERROR_ENTRY_NODEF10(120),
+		ERROR_ENTRY(120, "Неоткрывающиеся блок кода"),
 		ERROR_ENTRY_NODEF10(130),ERROR_ENTRY_NODEF10(140),ERROR_ENTRY_NODEF10(150),
 		ERROR_ENTRY_NODEF10(160),ERROR_ENTRY_NODEF10(170),ERROR_ENTRY_NODEF10(180),ERROR_ENTRY_NODEF10(190),
 		ERROR_ENTRY_NODEF100(200),ERROR_ENTRY_NODEF100(300),ERROR_ENTRY_NODEF100(400),ERROR_ENTRY_NODEF100(500),
@@ -62,5 +63,26 @@ namespace Error {
 			temp.inext.line = line;
 			return temp;
 		}
+	}
+
+	ERROR getarrayerror(ERROR errorarr[], Log::LOG log, int mainId, int size)
+	{
+		ERROR temp;
+
+		for (int i = 0; i < size; i++)
+		{
+			Log::WriteError(log, errorarr[i]);
+		}
+
+		if (mainId > ERROR_MAX_ENTRY)
+		{
+			temp = errors[0];
+			return temp;
+		}
+		else
+		{
+			temp = errors[mainId];
+			return temp;
+		} 
 	}
 }

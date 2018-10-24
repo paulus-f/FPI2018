@@ -28,15 +28,23 @@ namespace LT {
 
 		int  numLine = 1;
 		int  numCol = 0;
-		char buffL[TI_STR_MAXSIZE];
+		int  indCO = 0;
 		char buff[TI_STR_MAXSIZE];
+		char buffL[TI_STR_MAXSIZE];
+		char buffCO[10];
 		char buffType[TI_STR_MAXSIZE];
 		char *strCode = str;
 		bool flagBuffReady = false;
 		bool flagParametr = false;
+		bool flagCycle = false;
+		bool flagBranch = false;
 		bool idFlag = false;
+		bool errorLex = false;
+		bool boolOper = false;
 		bool flagMain = false;
 		LT::Entry lexEntry;
+		Error::ERROR errarr[100];
+		int errhead = 0;
 
 		for (int i = 0, buffIndL = 0, buffInd = 0; i < strlen(strCode); i++)
 		{
@@ -56,13 +64,15 @@ namespace LT {
 					buffL[buffIndL++] = strCode[j];
 					if (j + 1 == strlen(strCode))
 					{
-						throw ERROR_THROW_IN(116, numLine, numCol);
+						errorLex = true;
+						errarr[errhead++] = ERROR_THROW_IN(116, numLine, numCol);
 					}
 				}
 
 				i = j;
 				buffL[buffIndL++] = strCode[i];
 				buffL[buffIndL] = '\0';
+				
 				FST::FST fstTypeStr(buffL, FST_STRLIT);
 				if (FST::execute(fstTypeStr))
 				{
@@ -70,6 +80,7 @@ namespace LT {
 					Add(lexTable, lexEntry);
 
 					IT::Entry litStrId;
+					litStrId.scope = IT::SCOPE::LIT;
 					litStrId.idxfirstLE = lexTable.head;
 					litStrId.iddatatype = IT::STR;
 					litStrId.idtype = IT::L;
@@ -82,7 +93,8 @@ namespace LT {
 				}
 				else
 				{
-					throw ERROR_THROW_IN(119, numLine, numCol);
+					errorLex = true;
+					errarr[errhead++] = ERROR_THROW_IN(119, numLine, numCol);
 				}
 			}
 			else if (strCode[i] == NEWLINE)
@@ -92,8 +104,19 @@ namespace LT {
 			}
 			else if ((strCode[i] == SPACE && strCode[i + 1] != SPACE) || isOperOrSep(strCode[i]))
 			{
-				buff[buffInd] = '\0';
-				buffInd = 0;
+				if ((strCode[i] == MORE || strCode[i] == LESS) && strCode[i-1] == 'p')
+				{
+					buff[buffInd++] = strCode[i];
+					i++;
+					buff[buffInd] = '\0';
+					buffInd = 0;
+				}
+				else
+				{
+					buff[buffInd] = '\0';
+					buffInd = 0;
+				}
+
 				if (!isOperOrSep(buff[0]))
 				{
 					flagBuffReady = !flagBuffReady;
@@ -109,6 +132,7 @@ namespace LT {
 						strcpy(buffType, INTEGER);
 						flagBuffReady = false;
 					}
+
 					FST::FST fstTypeStr(buff, FST_STR);
 					if (FST::execute(fstTypeStr) && flagBuffReady)
 					{
@@ -117,6 +141,25 @@ namespace LT {
 						strcpy(buffType, STRING);
 						flagBuffReady = false;
 					}
+
+					FST::FST fstBool(buff, FST_BOOL);
+					if (FST::execute(fstBool) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_BOOL, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						strcpy(buffType, BOOL);
+						flagBuffReady = false;
+					}
+
+					FST::FST fstFloat(buff, FST_FLOAT);
+					if (FST::execute(fstFloat) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_FLOAT, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						strcpy(buffType, FLOAT);
+						flagBuffReady = false;
+					}
+
 					FST::FST fstFun(buff, FST_FUN);
 					if (FST::execute(fstFun) && flagBuffReady)
 					{
@@ -124,13 +167,7 @@ namespace LT {
 						Add(lexTable, lexEntry);
 						flagBuffReady = false;
 					}
-					FST::FST fstDec(buff, FST_DEC);
-					if (FST::execute(fstDec) && flagBuffReady)
-					{
-						lexEntry = retLex(LEX_DECLARE, numLine, LT_TI_NULLIDX);
-						Add(lexTable, lexEntry);
-						flagBuffReady = false;
-					}
+					
 					FST::FST fstMain(buff, FST_MAIN);
 					if (FST::execute(fstMain) && flagBuffReady)
 					{
@@ -143,16 +180,27 @@ namespace LT {
 						}
 						else
 						{
-							throw ERROR_THROW_IN(115, numLine, numCol);;
+							errorLex = true;
+							errarr[errhead++] = ERROR_THROW_IN(115, numLine, numCol);;
 						}
 					}
-					FST::FST fstPrint(buff, FST_PRINT);
-					if (FST::execute(fstPrint) && flagBuffReady)
+					
+					FST::FST fstOutput(buff, FST_OUTPUT);
+					if (FST::execute(fstOutput) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_PRINT, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_OUTPUT, numLine, LT_TI_NULLIDX);
 						Add(lexTable, lexEntry);
 						flagBuffReady = false;
 					}
+
+					FST::FST fstInput(buff, FST_INPUT);
+					if (FST::execute(fstInput) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_INPUT, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagBuffReady = false;
+					}
+
 					FST::FST fstRet(buff, FST_RET);
 					if (FST::execute(fstRet) && flagBuffReady)
 					{
@@ -160,6 +208,103 @@ namespace LT {
 						Add(lexTable, lexEntry);
 						flagBuffReady = false;
 					}
+
+					FST::FST fstFor(buff, FST_FOR);
+					if (FST::execute(fstFor) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagCycle = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstWhite(buff, FST_WHILE);
+					if (FST::execute(fstWhite) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagCycle = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstUntil(buff, FST_UNTIL);
+					if (FST::execute(fstUntil) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagCycle = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstUnless(buff, FST_UNLESS);
+					if (FST::execute(fstUnless) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_BRANCH, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagBranch = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstIf(buff, FST_IF);
+					if (FST::execute(fstIf) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_BRANCH, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+						flagBranch = true;
+						flagBuffReady = false;
+					}
+
+					FST::FST fstFlLit(buff, FST_FLLIT);
+					if (FST::execute(fstFlLit) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+
+						IT::Entry litFlid;
+						litFlid.scope = IT::SCOPE::LIT;
+						litFlid.idxfirstLE = lexTable.head;
+						litFlid.iddatatype = IT::FL;
+						litFlid.idtype = IT::L;
+						strcpy(litFlid.id, "FL LIT");
+						litFlid.value.vfl = std::stod(buff);
+						IT::Add(idTable, litFlid);
+						flagBuffReady = false;
+					}
+
+					FST::FST fstTrueLit(buff, FST_LITTRUE);
+					if (FST::execute(fstTrueLit) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+
+						IT::Entry litTrueid;
+						litTrueid.scope = IT::SCOPE::LIT;
+						litTrueid.idxfirstLE = lexTable.head;
+						litTrueid.iddatatype = IT::BL;
+						litTrueid.idtype = IT::L;
+						strcpy(litTrueid.id, "BOOL LIT");
+						litTrueid.value.vbool = true;
+						IT::Add(idTable, litTrueid);
+						flagBuffReady = false;
+					}
+
+					FST::FST fstFalseLit(buff, FST_LITFALSE);
+					if (FST::execute(fstFalseLit) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+
+						IT::Entry litFalse;
+						litFalse.scope = IT::SCOPE::LIT;
+						litFalse.idxfirstLE = lexTable.head;
+						litFalse.iddatatype = IT::BL;
+						litFalse.idtype = IT::L;
+						strcpy(litFalse.id, "BOOL LIT");
+						litFalse.value.vbool = false;
+						IT::Add(idTable, litFalse);
+						flagBuffReady = false;
+					}
+
 					FST::FST fstIntLit(buff, FST_INTLIT);
 					if (FST::execute(fstIntLit) && flagBuffReady)
 					{
@@ -167,6 +312,7 @@ namespace LT {
 						Add(lexTable, lexEntry);
 
 						IT::Entry litIntId;
+						litIntId.scope = IT::SCOPE::LIT;
 						litIntId.idxfirstLE = lexTable.head;
 						litIntId.iddatatype = IT::INT;
 						litIntId.idtype = IT::L;
@@ -181,7 +327,6 @@ namespace LT {
 					{
 						flagParametr = SL::funStrlen(lexTable, idTable, buff, buffType, numLine);
 						flagBuffReady = false;
-
 					}
 
 					// standart lib ///////////////////////////////////
@@ -197,6 +342,7 @@ namespace LT {
 						flagBuffReady = false;
 						idFlag = true;
 					}
+
 					if (idFlag)
 					{
 						FST::FST fstID(buff, FST_ID);
@@ -205,7 +351,6 @@ namespace LT {
 							switch (lexTable.table[lexTable.head - 1].lexema[GETLEX])
 							{
 							case LEX_TYPE:
-								IT::Entry indType;
 								lexEntry = retLex(LEX_ID, numLine, idTable.head);
 								IT::addVarOrPar(idTable, lexTable, lexEntry, buff, buffType, flagParametr, numLine, numCol);
 								break;
@@ -218,36 +363,43 @@ namespace LT {
 								int findId = IT::IsId(idTable, lexTable, buff);
 								if (findId == TI_NULLIDX)
 								{
-									throw ERROR_THROW_IN(117, numLine, numCol);
+									errorLex = true;
+									errarr[errhead++] = ERROR_THROW_IN(117, numLine, numCol);
+									
 								}
-								switch (idTable.table[findId].idtype)
+								else
 								{
-								case IT::V:
-									lexEntry = retLex(LEX_ID, numLine, findId);
-									LT::Add(lexTable, lexEntry);
+									switch (idTable.table[findId].idtype)
+									{
+									case IT::V:
+										lexEntry = retLex(LEX_ID, numLine, findId);
+										LT::Add(lexTable, lexEntry);
+										break;
+									case IT::F:
+										lexEntry = retLex(LEX_ID, numLine, findId);
+										LT::Add(lexTable, lexEntry);
+										break;
+									case IT::L:
+										lexEntry = retLex(LEX_ID, numLine, findId);
+										LT::Add(lexTable, lexEntry);
+										break;
+									case IT::P:
+										lexEntry = retLex(LEX_ID, numLine, findId);
+										LT::Add(lexTable, lexEntry);
+										break;
+									default:
+										errorLex = true;
+										errarr[errhead++] = ERROR_THROW(999);
+									}
 									break;
-								case IT::F:
-									lexEntry = retLex(LEX_ID, numLine, findId);
-									LT::Add(lexTable, lexEntry);
-									break;
-								case IT::L:
-									lexEntry = retLex(LEX_ID, numLine, findId);
-									LT::Add(lexTable, lexEntry);
-									break;
-								case IT::P:
-									lexEntry = retLex(LEX_ID, numLine, findId);
-									LT::Add(lexTable, lexEntry);
-									break;
-								default: throw ERROR_THROW(999);
 								}
-								break;
 							}
 						}
 						else
 						{
-							throw ERROR_THROW_IN(114, numLine, numCol);
+							errorLex = true;
+							errarr[errhead++] = ERROR_THROW_IN(114, numLine, numCol);
 						}
-
 						idFlag = false;
 					}
 				}
@@ -256,8 +408,87 @@ namespace LT {
 			{
 				buff[buffInd++] = strCode[i];
 			}
+			
+			if (isCO(strCode[i]))
+			{
+				buffCO[indCO++] = strCode[i];
 
-			if (isOperOrSep(strCode[i]))
+				if (isCO(strCode[i + 1]))
+				{
+					buffCO[indCO++] = strCode[i + 1];
+				}
+				buffCO[indCO] = NULL;
+
+				FST::FST fstLogEqual(buffCO, FST_E);
+				if (FST::execute(fstLogEqual))
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::e;
+					indCO = 0;
+					i = i + 2;
+					continue;
+				}
+
+				FST::FST fstLogNotEqual(buffCO, FST_NE);
+				if (FST::execute(fstLogNotEqual))
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::ne;
+					indCO = 0;
+					i = i + 2;
+					continue;
+				}
+
+				FST::FST fstLogMore(buffCO, FST_M);
+				if (FST::execute(fstLogMore) && strCode[i - 1] != 'p')
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::m;
+					indCO = 0;
+					i = i + 1;
+					continue;
+				}
+
+				FST::FST fstLogLess(buffCO, FST_L);
+				if (FST::execute(fstLogEqual) && strCode[i - 1] != 'p')
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::l;
+					indCO = 0;
+					i = i + 1;
+					continue;
+				}
+
+				FST::FST fstLogLessEqual(buffCO, FST_LE);
+				if (FST::execute(fstLogLessEqual))
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::le;
+					indCO = 0;
+					i = i + 2;
+					continue;
+				}
+
+				FST::FST fstLogMoreEqual(buffCO, FST_ME);
+				if (FST::execute(fstLogMoreEqual))
+				{
+					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
+					Add(lexTable, lexEntry);
+					lexEntry.co = CO::me;
+					indCO = 0;
+					i = i + 2;
+					continue;
+				}
+
+				indCO = 0;
+			}
+
+			if (isOperOrSep(strCode[i]) && strCode[i+1] != '>')
 			{
 				buff[buffInd++] = strCode[i];
 				buff[buffInd] = '\0';
@@ -284,6 +515,8 @@ namespace LT {
 				if (FST::execute(fstRightBrac))
 				{
 					flagParametr = false;
+					flagBranch = false;
+					flagCycle = false;
 					lexEntry = retLex(LEX_RIGHTHESIS, numLine, LT_TI_NULLIDX);
 					Add(lexTable, lexEntry);
 					continue;
@@ -358,7 +591,10 @@ namespace LT {
 				}
 			}
 		}
-		std::cout << lexTable.head << std::endl;
+		if (errorLex)
+		{	
+			throw Error::getarrayerror(errarr, log, 113, errhead);
+		}
 		/////TABLE OF LEXEM AND IND. ARE ALL RIGHT BEFORE POLISH NOTATION
 		std::cout << "LexicalAnalysis is made copmlete" << std::endl;
 		// polish notation
@@ -449,7 +685,18 @@ namespace LT {
 		case RIGHTHESIS: case LEFTHESIS: case LEFTBRACET:
 		case RIGHTBRACELET: case  SEMICOLON: case  COMMA:
 		case PLUS: case MINUS: case EQUAL:
+		case MORE: case LESS: case EXCLAM:
 		case DIRSLASH: case STAR: case ENDNULL: return true;
+		default: return false;
+		}
+	}
+
+	bool LT::isCO(char lit)
+	{
+		switch (lit)
+		{
+		case MORE: case LESS: case EQUAL: case EXCLAM:
+		return true;
 		default: return false;
 		}
 	}

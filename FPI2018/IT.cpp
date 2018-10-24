@@ -9,9 +9,7 @@ namespace IT {
 	{
 		LT::Add(lexTable, lexEntry);
 		IT::Entry indFun;
-		indFun.idtype = IT::F;
-		indFun.idxfirstLE = lexTable.head;
-		strcpy(indFun.id, buff);
+		indFun.scope = IT::SCOPE::FUN;
 		if (!strcmp(buffType, INTEGER))
 		{
 			indFun.iddatatype = IT::INT;
@@ -20,16 +18,28 @@ namespace IT {
 		{
 			indFun.iddatatype = IT::STR;
 		}
+		else if (!strcmp(buffType, FLOAT))
+		{
+			indFun.iddatatype = IT::FL;
+		}
+		else if (!strcmp(buffType, BOOL))
+		{
+			indFun.iddatatype = IT::BL;
+		}
 		else
 		{
 			throw ERROR_THROW(999);
 		}
+		indFun.idxfirstLE = lexTable.head - 1;
+		strcpy(indFun.id, buff);
+		indFun.idtype = IDTYPE::F;
 		IT::Add(idTable, indFun);
 	}
 
 	void addVarOrPar(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num)
 	{
 		IT::Entry indType;
+		bool checkGlobal;
 		LT::Add(lexTable, lexEntry);
 		strcpy(indType.id, buff);
 		if (flagPar)
@@ -52,10 +62,22 @@ namespace IT {
 			indType.value.vstr->str[0] = '\0';
 			indType.value.vstr->len = 0;
 		}
+		else if (!strcmp(buffType, FLOAT))
+		{
+			indType.iddatatype = IT::FL;
+			indType.value.vfl = 0.0;
+		}
+		else if (!strcmp(buffType, BOOL))
+		{
+			indType.iddatatype = IT::BL;
+			indType.value.vbool = false;
+		}
 		else
 		{
 			throw ERROR_THROW_IN(117, Num, Cul);
 		}
+		checkGlobal = buff[0] == '$' ? true : false;
+		indType.scope = IT::retScope(lexTable, checkGlobal);
 		IT::Add(idTable, indType);
 	}
 
@@ -92,6 +114,54 @@ namespace IT {
 		}
 	}
 
+	int breakBlock(LT::LexTable lexTable, int i)
+	{
+		int line = lexTable.table[i].sn;
+		for (;; --i)
+		{
+			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
+			{
+				i = breakBlock(lexTable, i-1)-1;
+			}
+			if (i == 0)
+			{
+				throw ERROR_THROW_IN(120, line, -1);
+			}
+			if (lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) return i;
+		}
+		return i;
+	}
+
+	IT::SCOPE retScope(LT::LexTable lexTable, bool isGlobal)
+	{
+		if (isGlobal)
+		{
+			return SCOPE::G;
+		}
+
+		for (int i = lexTable.head; i != 0; --i)
+		{
+			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
+			{
+				i = breakBlock(lexTable, i-1);
+			}
+			if ((lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE))
+			{
+				continue;
+			}
+			if ((lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) && !breakBlock)
+			{
+				return SCOPE::LB;
+			}
+			if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN || lexTable.table[i].lexema[GETLEX] == LEX_FUNCTION)
+			{
+				return SCOPE::LF;
+			}
+		}
+
+		return SCOPE::ERROR;
+	}
+
 	bool isFun(IdTable  &idTable, LT::Entry lexEntry)
 	{
 		if (lexEntry.idxTI == -1) return false;
@@ -100,36 +170,92 @@ namespace IT {
 
 	int IT::IsId(IdTable  &idTable, LT::LexTable &lexTable, char id[ID_MAXSIZE])
 	{
-		for (int i = 0; i < lexTable.head; i++) // searching ind fun
+		int posI = 0;
+		bool exit = false;
+		for (int j = lexTable.head - 1; j != 0; j--) 
 		{
-			if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
-			{
-				int numIdTable = lexTable.table[i].idxTI;
-				if (!strcmp(idTable.table[numIdTable].id, id) && idTable.table[numIdTable].idtype == IT::F)
-				{
-					return numIdTable;
-				}
-			}
-		}
-
-		for (int j = lexTable.head - 1; j != 0; j--) // searching ind fun
-		{
-			if (lexTable.table[j].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[j].lexema[GETLEX] == LEX_MAIN)
-			{
-				break;
-			}
 			if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
 			{
 				for (int i = 0; i < idTable.head; i++)
 				{
 					if (!strcmp(idTable.table[i].id, id) && lexTable.table[j].idxTI == i)
 					{
-						return i;
+						posI = i;
+						exit = true;
+						break;
 					}
+				}
+				if (exit)
+				{
+					break;
 				}
 			}
 		}
-		return TI_NULLIDX; // ret -1 when var is not init in space of declar 
+
+		switch (idTable.table[posI].scope)
+		{
+			case SCOPE::G: 
+				return posI;
+				break;
+			case SCOPE::LF:
+				for (int j = lexTable.head - 1; j != 0; j--)
+				{					
+					if (lexTable.table[j].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[j].lexema[GETLEX] == LEX_MAIN)
+					{
+						break;
+					}
+					if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
+					{
+						for (int i = 0; i < idTable.head; i++)
+						{
+							if (!strcmp(idTable.table[i].id, id) && lexTable.table[j].idxTI == i && idTable.table[i].scope != SCOPE::LB)
+							{
+								return i;
+								break;
+							}
+						}
+					}
+				}
+				break;
+			case SCOPE::LB:
+				for (int j = lexTable.head - 1; j != 0; j--)
+				{
+					if (lexTable.table[j].lexema[GETLEX] == RIGHTBRACELET)
+					{
+						int line = lexTable.table[j].sn;
+						for (;lexTable.table[j].lexema[GETLEX] != LEFTBRACET; j--)
+						{
+							if (j == 0)
+							{
+								throw ERROR_THROW_IN(120, line, -1);
+							}
+						}
+					}
+					if (lexTable.table[j].lexema[GETLEX] == LEX_CYCLE || lexTable.table[j].lexema[GETLEX] == LEX_BRANCH)
+					{
+						break;
+					}
+					if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
+					{
+						for (int i = 0; i < idTable.head; i++)
+						{
+							if (!strcmp(idTable.table[i].id, id) && lexTable.table[j].idxTI == i)
+							{
+								return i;
+								break;
+							}
+						}
+					}
+				}
+				break;
+			case SCOPE::FUN:
+				return posI;
+				break;
+			case SCOPE::ERROR:
+			case SCOPE::LIT:
+				break;
+		}
+		return TI_NULLIDX; 
 	}
 
 	void IT::logIT(IdTable& idTable, Log::LOG log)
@@ -147,6 +273,10 @@ namespace IT {
 			{
 			case INT: std::cout << std::setw(10) << std::left;
 				std::cout << "integer" << " | "; break;
+			case FL: std::cout << std::setw(10) << std::left;
+				 std::cout << "float" << " | "; break;
+			case BL: std::cout << std::setw(10) << std::left;
+				std::cout << "bool" << " | "; break;
 			case STR: std::cout << std::setw(10) << std::left;
 				std::cout << "string" << " | "; break;
 			default: std::cout << std::setw(10) << std::left << "unknown" << " | "; break;
@@ -166,6 +296,10 @@ namespace IT {
 				std::cout << std::setw(18) << std::left << idTable.table[i].value.vint;
 			else if (idTable.table[i].iddatatype == STR && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
 				std::cout << "[" << (int)idTable.table[i].value.vstr->len << "] \"" << idTable.table[i].value.vstr->str << "\"";
+			else if (idTable.table[i].iddatatype == FL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
+				std::cout << std::setw(18) << std::left << idTable.table[i].value.vfl;
+			else if (idTable.table[i].iddatatype == BL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
+				std::cout << std::setw(18) << std::left << idTable.table[i].value.vbool;
 			else
 				std::cout << "-";
 			std::cout << std::endl;

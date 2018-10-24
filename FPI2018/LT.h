@@ -3,18 +3,24 @@
 #include "Log.h"
 
 #define EMPTYSTR ""
-#define INTEGER "integer"
-#define STRING "string"
-#define RETURN "return"
-#define DECLARE "declare"
-#define PRINT "print"
-#define MAIN "main"
+#define INTEGER "int"
+#define STRING "str"
+#define LESS '<'
+#define MORE '>'
+#define RETURN "=>"
+#define INPUT "p<"
+#define OUTPUT "p>"
+#define BOOL "bool"
+#define FLOAT "fl"
+#define MAIN "program"
 #define NOTYPE "NOTYPE"
-#define FUNCTION "function"
+#define FUNCTION "def"
 #define STRLEN "strlen"
 #define SUBSTR "substr"
 #define SEMICOLON ';'
 #define COMMA ','
+#define FALSE false
+#define TRUE true
 #define LEFTBRACET '{'
 #define RIGHTBRACELET '}'
 #define LEFTHESIS '('
@@ -22,6 +28,7 @@
 #define PLUS '+'
 #define MINUS '-'
 #define STAR '*'
+#define EXCLAM '!'
 #define EQUAL '='
 #define QUOTES 34
 #define DIRSLASH '/'
@@ -32,22 +39,28 @@
 #define GETLEX 0
 #define LT_MAXSIZE 4096
 #define LT_TI_NULLIDX 0xffffffff
+#define LEX_BOOL 't'
+#define LEX_FLOAT 't'
 #define LEX_INTEGER 't'
 #define LEX_STRING 't'
 #define LEX_TYPE 't'
 #define LEX_ID 'i'
+#define LEX_BRANCH 'b'
 #define LEX_MAIN 'm'
+#define LEX_ÑOMPARISONOPER 's'
 #define LEX_LITERAL 'l'
 #define LEX_FUNCTION 'f'
 #define LEX_DECLARE 'd'
 #define LEX_RETURN 'r'
-#define LEX_PRINT 'p'
+#define LEX_OUTPUT 'o'
+#define LEX_INPUT 'p'
 #define LEX_SEMICOLON ';'
 #define LEX_COMMA ','
 #define LEX_LEFTBRACE '{'
 #define LEX_BRACELET '}'
 #define LEX_LEFTHESIS '('
 #define LEX_RIGHTHESIS ')'
+#define LEX_CYCLE 'c'
 #define LEX_PLUS 'v'
 #define LEX_MINUS 'v'
 #define LEX_STAR 'v'
@@ -58,6 +71,8 @@
 
 namespace LT
 {
+	enum CO { m = 1, l = 2, e = 3, ne = 4, me = 5, le = 6};
+
 	struct Entry
 	{
 		char lexema[LEX_FIXSIZE];
@@ -65,6 +80,7 @@ namespace LT
 		int idxTI;
 		short amountArg;
 		char operation = NULL;
+		CO co;
 	};
 
 	Entry Lex(char lexema, int numstr, int idx);
@@ -80,6 +96,7 @@ namespace LT
 	};
 
 	bool isOperOrSep(char lit);
+	bool isCO(char lit);
 
 	LexTable Create(
 		int size

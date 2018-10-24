@@ -1,6 +1,6 @@
 #pragma once
 #include "Log.h"
-#define ID_MAXSIZE 5 
+#define ID_MAXSIZE 255 
 #define SIZEBUFFDEC 6
 #define TI_MAXSIZE 1024
 #define TI_INT_DEFAULT 0x00000000
@@ -18,8 +18,9 @@ namespace LT {
 
 namespace IT
 {
-	enum IDDATATYPE {INT = 1, STR = 2};
+	enum IDDATATYPE { INT = 1, STR = 2, FL = 3, BL = 4 };
 	enum IDTYPE {V = 1, F = 2, L = 3, P = 4};
+	enum SCOPE { G = 1, LF = 2, LB = 3, FUN = 4, LIT = 5, ERROR = 6};
 
 	struct Entry 
 	{
@@ -27,8 +28,11 @@ namespace IT
 		char id[ID_MAXSIZE];
 		IDDATATYPE iddatatype;
 		IDTYPE idtype;
+		SCOPE scope;
 		union 
 		{
+			float vfl;
+			bool vbool;
 			int vint; 
 			struct
 			{
@@ -71,6 +75,8 @@ namespace IT
 		char id[ID_MAXSIZE]
 	);
 	void logIT(IdTable& idTable, Log::LOG log);
+
+	SCOPE retScope(LT::LexTable lexTable, bool global);
 
 	void Delete(IdTable &idtable);
 }
