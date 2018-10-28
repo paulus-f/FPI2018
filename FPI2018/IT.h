@@ -1,5 +1,6 @@
 #pragma once
 #include "Log.h"
+
 #define ID_MAXSIZE 255 
 #define SIZEBUFFDEC 6
 #define TI_MAXSIZE 1024
@@ -31,7 +32,7 @@ namespace IT
 		SCOPE scope;
 		union 
 		{
-			float vfl;
+			double vfl;
 			bool vbool;
 			int vint; 
 			struct

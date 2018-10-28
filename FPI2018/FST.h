@@ -204,6 +204,16 @@
 	FST::NODE(1, FST::RELATION('r', 6)),\
 	FST::NODE()
 
+#define FST_STRFIND 8,	\
+	FST::NODE(1, FST::RELATION('s', 1)),\
+	FST::NODE(1, FST::RELATION('t', 2)),\
+	FST::NODE(1, FST::RELATION('r', 3)),\
+	FST::NODE(1, FST::RELATION('f', 4)),\
+	FST::NODE(1, FST::RELATION('i', 5)),\
+	FST::NODE(1, FST::RELATION('n', 6)),\
+	FST::NODE(1, FST::RELATION('n', 7)),\
+	FST::NODE()
+
 #define FST_UNTIL 6,	\
 	FST::NODE(1, FST::RELATION('u', 1)),\
 	FST::NODE(1, FST::RELATION('n', 2)),\

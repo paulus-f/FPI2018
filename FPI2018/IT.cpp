@@ -4,6 +4,8 @@
 #include <iostream>
 #include "LT.h"
 #include <iomanip>
+#include <sstream>
+
 namespace IT {
 	void addFun(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType)
 	{
@@ -65,7 +67,8 @@ namespace IT {
 		else if (!strcmp(buffType, FLOAT))
 		{
 			indType.iddatatype = IT::FL;
-			indType.value.vfl = 0.0;
+			std::istringstream ss("0.0");
+			ss >> indType.value.vfl;
 		}
 		else if (!strcmp(buffType, BOOL))
 		{
@@ -106,7 +109,7 @@ namespace IT {
 	{
 		if (n < idtable.size)
 		{
-			return idtable.table[n - 1];
+			return idtable.table[n];
 		}
 		else
 		{

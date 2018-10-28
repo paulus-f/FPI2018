@@ -9,6 +9,7 @@
 #include <vector>
 #include "stanlib.h"
 #include "RPN.h"
+#include <sstream>
 ////////////////////////////////
 // Error > in LA!!!!!!!!!!!!!!!!
 // Error p> .... in LA !!!!!!!!!
@@ -268,23 +269,6 @@ namespace LT {
 						flagBuffReady = false;
 					}
 
-					FST::FST fstFlLit(buff, FST_FLLIT);
-					if (FST::execute(fstFlLit) && flagBuffReady)
-					{
-						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
-						Add(lexTable, lexEntry);
-
-						IT::Entry litFlid;
-						litFlid.scope = IT::SCOPE::LIT;
-						litFlid.idxfirstLE = lexTable.head;
-						litFlid.iddatatype = IT::FL;
-						litFlid.idtype = IT::L;
-						strcpy(litFlid.id, "FL LIT");
-						litFlid.value.vfl = std::stod(buff);
-						IT::Add(idTable, litFlid);
-						flagBuffReady = false;
-					}
-
 					FST::FST fstTrueLit(buff, FST_LITTRUE);
 					if (FST::execute(fstTrueLit) && flagBuffReady)
 					{
@@ -336,11 +320,29 @@ namespace LT {
 						flagBuffReady = false;
 					}
 					
+					FST::FST fstFlLit(buff, FST_FLLIT);
+					if (FST::execute(fstFlLit) && flagBuffReady)
+					{
+						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						Add(lexTable, lexEntry);
+
+						IT::Entry litFlid;
+						litFlid.scope = IT::SCOPE::LIT;
+						litFlid.idxfirstLE = lexTable.head;
+						litFlid.iddatatype = IT::FL;
+						litFlid.idtype = IT::L;
+						strcpy(litFlid.id, "FL LIT");
+						std::istringstream ss(buff);
+						ss >> litFlid.value.vfl;
+						IT::Add(idTable, litFlid);
+						flagBuffReady = false;
+					}
+
 					// standart lib ///////////////////////////////////
 					FST::FST fstStrlen(buff, FST_STRLEN);
 					if (FST::execute(fstStrlen) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 				
@@ -348,7 +350,7 @@ namespace LT {
 					FST::FST fstSubstr(buff, FST_SUBSTR);
 					if (FST::execute(fstSubstr) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -356,7 +358,7 @@ namespace LT {
 					FST::FST fstMsin(buff, FST_MSIN);
 					if (FST::execute(fstMsin) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -364,7 +366,7 @@ namespace LT {
 					FST::FST fstMcos(buff, FST_MCOS);
 					if (FST::execute(fstMcos) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -372,7 +374,7 @@ namespace LT {
 					FST::FST fstMtan(buff, FST_MTAN);
 					if (FST::execute(fstMtan) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -380,7 +382,7 @@ namespace LT {
 					FST::FST fstMctan(buff, FST_MCTAN);
 					if (FST::execute(fstMctan) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -388,7 +390,7 @@ namespace LT {
 					FST::FST fstMabs(buff, FST_MABS);
 					if (FST::execute(fstMabs) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -396,7 +398,7 @@ namespace LT {
 					FST::FST fstMln(buff, FST_MLN);
 					if (FST::execute(fstMln) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
@@ -404,7 +406,15 @@ namespace LT {
 					FST::FST fstMsqr(buff, FST_MSQR);
 					if (FST::execute(fstMsqr) && flagBuffReady)
 					{
-						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstStrfind(buff, FST_STRFIND);
+					if (FST::execute(fstStrfind) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, numLine);
 						flagBuffReady = false;
 					}
 
