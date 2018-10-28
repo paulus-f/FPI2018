@@ -9,7 +9,10 @@
 #include <vector>
 #include "stanlib.h"
 #include "RPN.h"
-
+////////////////////////////////
+// Error > in LA!!!!!!!!!!!!!!!!
+// Error p> .... in LA !!!!!!!!!
+////////////////////////////////
 
 namespace LT {
 	LT::Entry retLex(char lex, int numstr, int idx)
@@ -28,22 +31,22 @@ namespace LT {
 			throw ERROR_THROW_IN(118, 0, 0);
 		}
 
-		int  numLine = 1;
-		int  numCol = 0;
-		int  indCO = 0;
+		int  numLine				= 1;
+		int  numCol					= 0;
+		int  indCO					= 0;
+		char *strCode				= str;
+		bool flagBuffReady			= false;
+		bool flagParametr			= false;
+		bool flagCycle				= false;
+		bool flagBranch				= false;
+		bool idFlag					= false;
+		bool errorLex				= false;
+		bool boolOper				= false;
+		bool flagMain				= false;
 		char buff[TI_STR_MAXSIZE];
 		char buffL[TI_STR_MAXSIZE];
 		char buffCO[10];
 		char buffType[TI_STR_MAXSIZE];
-		char *strCode = str;
-		bool flagBuffReady = false;
-		bool flagParametr = false;
-		bool flagCycle = false;
-		bool flagBranch = false;
-		bool idFlag = false;
-		bool errorLex = false;
-		bool boolOper = false;
-		bool flagMain = false;
 		LT::Entry lexEntry;
 		Error::ERROR errarr[100];
 		int errhead = 0;
@@ -332,19 +335,76 @@ namespace LT {
 						IT::Add(idTable, litIntId);
 						flagBuffReady = false;
 					}
+					
 					// standart lib ///////////////////////////////////
 					FST::FST fstStrlen(buff, FST_STRLEN);
 					if (FST::execute(fstStrlen) && flagBuffReady)
 					{
-						flagParametr = SL::funStrlen(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
 						flagBuffReady = false;
 					}
-
+				
 					// standart lib ///////////////////////////////////
 					FST::FST fstSubstr(buff, FST_SUBSTR);
 					if (FST::execute(fstSubstr) && flagBuffReady)
 					{
-						flagParametr = SL::funStrlen(lexTable, idTable, buff, buffType, numLine);
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMsin(buff, FST_MSIN);
+					if (FST::execute(fstMsin) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMcos(buff, FST_MCOS);
+					if (FST::execute(fstMcos) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMtan(buff, FST_MTAN);
+					if (FST::execute(fstMtan) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMctan(buff, FST_MCTAN);
+					if (FST::execute(fstMctan) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMabs(buff, FST_MABS);
+					if (FST::execute(fstMabs) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMln(buff, FST_MLN);
+					if (FST::execute(fstMln) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
+						flagBuffReady = false;
+					}
+
+					// standart lib ///////////////////////////////////
+					FST::FST fstMsqr(buff, FST_MSQR);
+					if (FST::execute(fstMsqr) && flagBuffReady)
+					{
+						flagParametr = SL::funStandLib(lexTable, idTable, buff, buffType, numLine);
 						flagBuffReady = false;
 					}
 
@@ -608,8 +668,6 @@ namespace LT {
 		}
 		/////TABLE OF LEXEM AND IND. ARE ALL RIGHT BEFORE POLISH NOTATION
 		std::cout << "LexicalAnalysis is made copmlete" << std::endl;
-		// polish notation
-	
 		LogLA(lexTable, log);
 		IT::logIT(idTable, log);
 	}

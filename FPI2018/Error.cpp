@@ -34,7 +34,13 @@ namespace Error {
 		ERROR_ENTRY(602, "Ошибка в выражение"),
 		ERROR_ENTRY(603, "Ошибка в параметрах функции"),
 		ERROR_ENTRY(604, "Ошибка в параметрах вызываемой функции"),
-		ERROR_ENTRY_NODEF100(700),ERROR_ENTRY_NODEF100(800),ERROR_ENTRY_NODEF100(900)
+		ERROR_ENTRY(700, "Ошибка семантическом анализаторе"),
+		ERROR_ENTRY(701, "Не соответствуют типы при сравнение"),
+		ERROR_ENTRY(702, "Не возращает нужный тип"),
+		ERROR_ENTRY(703, "Не соответствуют типы в операции присваивание"),
+		ERROR_ENTRY(704, "Не соответствуют типы в параметрах функции"),
+		ERROR_ENTRY_NODEF100(800),
+		ERROR_ENTRY_NODEF100(900)
 	};
 	
 	ERROR geterror(int id)
