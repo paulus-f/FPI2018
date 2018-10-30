@@ -135,6 +135,24 @@ namespace IT {
 		return i;
 	}
 
+	//int breakBlockLeft(LT::LexTable lexTable, int i)
+	//{
+	//	int line = lexTable.table[i].sn;
+	//	for (;; --i)
+	//	{
+	//		if (lexTable.table[i].lexema[GETLEX] == LEFTBRACET)
+	//		{
+	//			i = breakBlockLeft(lexTable, i - 1) - 1;
+	//		}
+	//		if (i == 0)
+	//		{
+	//			throw ERROR_THROW_IN(120, line, -1);
+	//		}
+	//		if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE) return i;
+	//	}
+	//	return i;
+	//}
+
 	IT::SCOPE retScope(LT::LexTable lexTable, bool isGlobal)
 	{
 		if (isGlobal)
@@ -172,14 +190,14 @@ namespace IT {
 
 	int IT::IsId(IdTable  &idTable, LT::LexTable &lexTable, char id[ID_MAXSIZE])
 	{
-		int posI = 0;
+		int posI;
 		bool exit = false;
 		//for (int j = lexTable.head - 1; j != 0; j--) 
 		for (int j = 0; j < lexTable.head ; j++)
 		{
 			if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
 			{
-				for (int i = 0; i < idTable.head; i++)
+				for (int i = j; i >= 0; i--)
 				{
 					if (!strcmp(idTable.table[i].id, id) && lexTable.table[j].idxTI == i)
 					{
@@ -194,15 +212,16 @@ namespace IT {
 				}
 			}
 		}
-
-		switch (idTable.table[posI].scope)
+		if (exit)
 		{
-			case SCOPE::G: 
+			switch (idTable.table[posI].scope)
+			{
+			case SCOPE::G:
 				return posI;
 				break;
 			case SCOPE::LF:
 				for (int j = lexTable.head - 1; j != 0; j--)
-				{					
+				{
 					if (lexTable.table[j].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[j].lexema[GETLEX] == LEX_MAIN)
 					{
 						break;
@@ -254,6 +273,7 @@ namespace IT {
 			case SCOPE::ERROR:
 			case SCOPE::LIT:
 				break;
+			}
 		}
 		return TI_NULLIDX; 
 	}

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "SemanticAnalysis.h"
 #include "stanlib.h"
-bool Semantic::startSemantic(LT::LexTable lexTable, IT::IdTable idTable, Log::LOG log)
+#include "Error.h"
+bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	bool errorSem = false;
 	Error::ERROR errarr[100];
@@ -17,17 +18,17 @@ bool Semantic::startSemantic(LT::LexTable lexTable, IT::IdTable idTable, Log::LO
 				if (!checkType(i, lexTable, idTable))
 				{
 					errorSem = true;
-					errarr[errhead++] = ERROR_THROW_IN(703, lexTable.table[i].sn, -1);
+					errarr[errhead++] = Error::geterrorin(504, lexTable.table[i].sn, 0);
 					break;
 				}
 			}
 				
-			if (lexTable.table[i - 1].lexema[GETLEX] == LEX_FUNCTION && idTable.table[lexTable.table[i].idxTI].idtype == IT::IDTYPE::F)
+			if (lexTable.table[i - 1].lexema[GETLEX] != LEX_FUNCTION && idTable.table[lexTable.table[i].idxTI].idtype == IT::IDTYPE::F)
 			{
 				if (!Semantic::checkFun(i, lexTable, idTable))
 				{
 					errorSem = true;
-					errarr[errhead++] = ERROR_THROW_IN(704, lexTable.table[i].sn, -1);
+					errarr[errhead++] = Error::geterrorin(505, lexTable.table[i].sn, 0);
 				}
 			}
 		break;
@@ -35,35 +36,36 @@ bool Semantic::startSemantic(LT::LexTable lexTable, IT::IdTable idTable, Log::LO
 			if (!Semantic::checkBranch(i, lexTable, idTable))
 			{
 				errorSem = true;
-				errarr[errhead++] = ERROR_THROW_IN(701, lexTable.table[i].sn, -1);
+				errarr[errhead++] = Error::geterrorin(502, lexTable.table[i].sn, 0);
 			}
 			break;
 		case LEX_CYCLE: 
 			if (!Semantic::checkCycle(i, lexTable, idTable))
 			{
 				errorSem = true;
-				errarr[errhead++] = ERROR_THROW_IN(701, lexTable.table[i].sn, -1);
+				errarr[errhead++] = Error::geterrorin(502, lexTable.table[i].sn, 0);
 			}
 			break;
 		case LEX_FOR: 
 			if (!Semantic::checkCycle(i, lexTable, idTable))
 			{
 				errorSem = true;
-				errarr[errhead++] = ERROR_THROW_IN(701, lexTable.table[i].sn, -1);
+				errarr[errhead++] = Error::geterrorin(504, lexTable.table[i].sn, 0);
 			}
 			break;
 		case LEX_FUNCTION: 
 			if (!Semantic::checkSegFun(i, lexTable, idTable))
 			{
 				errorSem = true;
-				errarr[errhead++] = ERROR_THROW_IN(702, lexTable.table[i].sn, -1);
+				errarr[errhead++] = Error::geterrorin(503, lexTable.table[i].sn, 0);
 			}
 			break;
 		}
 	}
+	
 	if (errorSem)
 	{
-		throw Error::getarrayerror(errarr, log, 700, errhead);
+		throw Error::getarrayerror(errarr, log, 501, errhead);
 		return false;
 	}
 	else
@@ -80,33 +82,33 @@ bool Semantic::checkId(int numIT, LT::LexTable lexTable, IT::IdTable idTable)
 bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::Entry itentry = IT::GetEntry(idTable, lexTable.table[numLT].idxTI);
-	if (itentry.id == MLN    || itentry.id == MSIN    || itentry.id == MCOS || itentry.id == MTAN   || itentry.id == MCTAN)  
+	if (!strcmp(itentry.id, MLN)    || !strcmp(itentry.id, MSIN)    || !strcmp(itentry.id, MCOS) || !strcmp(itentry.id, MTAN)   || !strcmp(itentry.id, MCTAN))
 	{ 
 		return checkStandlib(SL::parmFun().trigonmetry, numLT, lexTable, idTable)? true: false;
 	}
-	else if(itentry.id == MSQR) 
+	else if(!strcmp(itentry.id, MSQR))
 	{
 		return checkStandlib(SL::parmFun().msqr, numLT, lexTable, idTable) ? true : false;
 	}
-	else if(itentry.id == STRLEN)
+	else if(!strcmp(itentry.id, STRLEN))
 	{
 		return checkStandlib(SL::parmFun().strlen, numLT, lexTable, idTable) ? true : false;
 	}
-	else if (itentry.id == STRFIND)
+	else if (!strcmp(itentry.id, STRFIND))
 	{
 		return checkStandlib(SL::parmFun().srtfind, numLT, lexTable, idTable) ? true : false;
 
 	}
-	else if (itentry.id == MABS)
+	else if (!strcmp(itentry.id, MABS))
 	{
 		return checkStandlib(SL::parmFun().mabs, numLT, lexTable, idTable) ? true : false;
 	}
 	else
 	{
 		int count = 0;
-		int arrParm[10/*maxparm*/];
+		int arrParm[10/*maxparm*/];  
 		//count the parameters
-		for (int i = itentry.idxfirstLE; lexTable.table[i].lexema[GETLEX] != LEX_RIGHTHESIS ; i++)
+		for (int i = itentry.idxfirstLE+1; lexTable.table[i].lexema[GETLEX] != LEX_RIGHTHESIS ; i++)
 		{
 			if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
 			{
@@ -121,7 +123,7 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 			parmFun[i] = arrParm[i];
 		}
 
-		if (checkStandlib(SL::parmFun().mabs, numLT, lexTable, idTable))
+		if (!checkStandlib(parmFun, numLT, lexTable, idTable))
 		{
 			delete parmFun;
 			return true;
@@ -137,20 +139,24 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 bool Semantic::checkSegFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::IDDATATYPE typefun = idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype;
-	for (int i = numLT; lexTable.table[i].lexema[GETLEX] != LEX_MAIN || lexTable.table[i].lexema[GETLEX] != LEX_FUNCTION;i++)
+	for (int i = numLT;; i++)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_RETURN)
 		{
-			int j = i;
-			for (j = i; lexTable.table[i].lexema[GETLEX] != LEX_SEMICOLON; j++)
+			int j;
+			for (j = i; lexTable.table[j].lexema[GETLEX] != LEX_SEMICOLON; j++)
 			{
-				if (lexTable.table[i].lexema[GETLEX] == LEX_ID || lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
+				if (lexTable.table[j].lexema[GETLEX] == LEX_ID || lexTable.table[j].lexema[GETLEX] == LEX_LITERAL)
 				{
-					if (!(idTable.table[lexTable.table[i].lexema[GETLEX]].iddatatype == typefun))
+					if (!(idTable.table[lexTable.table[j].idxTI].iddatatype == typefun))
 						return false;
 				}
 			}
 			i = j;
+		}
+		if (lexTable.table[i].lexema[GETLEX] != LEX_MAIN || lexTable.table[i].lexema[GETLEX] != LEX_FUNCTION)
+		{
+			break;
 		}
 		if (i + 1 == lexTable.head)
 		{
@@ -168,10 +174,17 @@ bool Semantic::checkBranch(int numLT, LT::LexTable lexTable, IT::IdTable idTable
 
 bool Semantic::checkType(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
-	IT::IDDATATYPE typeId = idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype;
-	for (int i = numLT; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i)
+	IT::IDDATATYPE typeId = idTable.table[lexTable.table[numLT].idxTI].iddatatype;
+	for (int i = numLT+1; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i)
 	{
-		if (typeId != idTable.table[lexTable.table[i].idxTI].iddatatype) return false;
+		if (lexTable.table[i].lexema[GETLEX] == LEX_ID || lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
+		{
+			if (typeId != idTable.table[lexTable.table[i].idxTI].iddatatype) return false;
+			if (idTable.table[lexTable.table[i].idxTI].idtype == IT::IDTYPE::F)
+			{
+				for (; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++);
+			}
+		}
 		if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
 	}
 	return true;
@@ -194,16 +207,16 @@ bool Semantic::checkCycle(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 bool Semantic::checkStandlib(int type[], int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	int countParm = 0;
-	for (int i = numLT; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++)
+	for (int i = numLT+1; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++)
 	{
-		if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
+		if (lexTable.table[i].lexema[GETLEX] == LEX_ID || lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
 		{
 			if (!IT::GetEntry(idTable, lexTable.table[i].idxTI).iddatatype == type[countParm++])
 			{
 				return false;
 			}
 		}
-		if (countParm >= sizeof(type) / sizeof(int)) return false;
+		if (countParm > sizeof(type) / sizeof(int)) return false;
 		if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
 	}
 	return true;

@@ -272,7 +272,7 @@ namespace LT {
 					FST::FST fstTrueLit(buff, FST_LITTRUE);
 					if (FST::execute(fstTrueLit) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_LITERAL, numLine, idTable.head);
 						Add(lexTable, lexEntry);
 
 						IT::Entry litTrueid;
@@ -289,7 +289,7 @@ namespace LT {
 					FST::FST fstFalseLit(buff, FST_LITFALSE);
 					if (FST::execute(fstFalseLit) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_LITERAL, numLine, idTable.head);
 						Add(lexTable, lexEntry);
 
 						IT::Entry litFalse;
@@ -306,7 +306,7 @@ namespace LT {
 					FST::FST fstIntLit(buff, FST_INTLIT);
 					if (FST::execute(fstIntLit) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_LITERAL, numLine, idTable.head);
 						Add(lexTable, lexEntry);
 
 						IT::Entry litIntId;
@@ -323,7 +323,7 @@ namespace LT {
 					FST::FST fstFlLit(buff, FST_FLLIT);
 					if (FST::execute(fstFlLit) && flagBuffReady)
 					{
-						lexEntry = retLex(LEX_LITERAL, numLine, LT_TI_NULLIDX);
+						lexEntry = retLex(LEX_LITERAL, numLine, idTable.head);
 						Add(lexTable, lexEntry);
 
 						IT::Entry litFlid;

@@ -6,7 +6,7 @@
 
 namespace Semantic
 {
-	bool startSemantic(LT::LexTable lexTable, IT::IdTable idTable, Log::LOG log);
+	bool startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	bool checkId(int numIT, LT::LexTable lexTable, IT::IdTable idTable);
 	bool checkFun(int numIT, LT::LexTable lexTable, IT::IdTable idTable);
 	bool checkSegFun(int numIT, LT::LexTable lexTable, IT::IdTable idTable);
