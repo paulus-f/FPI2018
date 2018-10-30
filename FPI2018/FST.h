@@ -11,11 +11,11 @@
 	FST::NODE()
 
 #define FST_L 2,	\
-	FST::NODE(1, FST::RELATION('>', 1)),\
+	FST::NODE(1, FST::RELATION('<', 1)),\
 	FST::NODE()
 
 #define FST_M 2,	\
-	FST::NODE(1, FST::RELATION('<', 1)),\
+	FST::NODE(1, FST::RELATION('>', 1)),\
 	FST::NODE()
 
 #define FST_LE 3,	\
@@ -124,7 +124,7 @@
 
 #define FST_INPUT 3,	\
 	FST::NODE(1, FST::RELATION('p', 1)),\
-	FST::NODE(1, FST::RELATION('>', 3)),\
+	FST::NODE(1, FST::RELATION('>', 2)),\
 	FST::NODE()
 
 #define FST_STRLEN 7,	\

@@ -10,10 +10,11 @@
 #include "stanlib.h"
 #include "RPN.h"
 #include <sstream>
-////////////////////////////////
-// Error > in LA!!!!!!!!!!!!!!!!
-// Error p> .... in LA !!!!!!!!!
-////////////////////////////////
+//////////////////////////////////
+// Error > in LA!!!!!!!!!!!!!!!!//
+// Error p> .... in LA !!!!!!!!!//
+// IS FIX ////////////////////////
+//////////////////////////////////
 
 namespace LT {
 	LT::Entry retLex(char lex, int numstr, int idx)

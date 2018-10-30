@@ -1,0 +1,68 @@
+int def fi(int x, int y)
+{
+ int $z = 123;
+ int x;
+ int $test = 10;
+ fl lol = 75.356;
+ bool notfalse = false;
+for(x = 0;x == 0;x=x+1)
+{
+ int lol = 3;
+}
+
+ unless(notfalse == true)
+ {
+	int b = 10;
+	  notfalse = true;
+	  while($z >= 10)
+	  {
+			while($z>= 10)
+			{
+				int vc =4;
+			 }
+		 int vc =4;
+	   }
+ }
+
+if (10 == 10)
+{
+ int v = 3;
+}
+alias 
+{
+  int dsdf = 324;
+}
+
+
+if (10 < 10)
+{ int b =32;}
+
+ $z = x*(x)+(12);
+
+ r x; 
+};
+Program
+{
+bool kek = false;
+int x = 24;
+x = strlen("jsdgjs");
+$test = 20;
+$z = 232;
+ 
+int i = 4;
+while(kek == true)
+{
+i = i+1;
+int b;
+}
+int b = 33;
+x = strlen("dsdskjh");
+int y;
+ str sa;
+ x = 1+y+x;
+ y = 5;
+ x = fi(x,y)+22+x;
+ sa = "1234567890";
+ p< sa;
+ p< "wqew    ewewweew";
+};

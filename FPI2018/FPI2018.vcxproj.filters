@@ -57,6 +57,9 @@
     <ClInclude Include="SemanticAnalysis.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="CodeGeneration.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FPI2018.cpp">
@@ -99,6 +102,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="SemanticAnalysis.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGeneration.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

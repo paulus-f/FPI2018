@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CodeGeneration.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="FST.h" />
     <ClInclude Include="GRB.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CodeGeneration.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="FPI2018.cpp" />
     <ClCompile Include="FST.cpp" />
