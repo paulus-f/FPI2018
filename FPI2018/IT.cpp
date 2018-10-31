@@ -282,9 +282,9 @@ namespace IT {
 	{
 		int i, numberOP = 0;
 		std::cout << std::endl;
-		std::cout << std::setfill('-') << std::setw(87) << '-' << std::endl;
-		std::cout << "   №" << " | " << "Идентификатор" << " | " << "Тип данных" << " | " << "Тип идентификатора" << " | " << "Индекс в ТЛ" << " | " << "Значение    " << std::endl;
-		std::cout << std::setw(87) << '-' << std::endl;
+		std::cout << std::setfill('-') << std::setw(120) << '-' << std::endl;
+		std::cout << "   №" << " | " << "Идентификатор" << " | " << "Тип данных" << " | " << "Тип идентификатора" << " | " <<"Индекс в ТЛ" << " | " << " Область видимости  " << " | " << "Значение    " << std::endl;
+		std::cout << std::setw(120) << '-' << std::endl;
 		for (i = 0; i < idTable.head; i++)
 		{
 			std::cout << std::setfill('0') << std::setw(4) << std::right << i << " | ";
@@ -312,6 +312,17 @@ namespace IT {
 			default: std::cout << std::setw(18) << std::left << "unknown" << " | "; break;
 			}
 			std::cout << std::setw(11) << std::left << idTable.table[i].idxfirstLE << " | ";
+			switch (idTable.table[i].scope)
+			{
+			case LF: std::cout << std::setw(20) << std::left << "В локальной функции" << " | "; break;
+			case G: std::cout << std::setw(20) << std::left << "Глобальная" << " | "; break;
+			case LB: std::cout << std::setw(20) << std::left << "В ветке" << " | "; break;
+			case FUN: std::cout << std::setw(20) << std::left << "-" << " | "; break;
+			case LIT: std::cout << std::setw(20) << std::left << "-" << " | "; break;
+				break;
+			default: std::cout << std::setw(20) << std::left << "unknown" << " | "; break;
+			}
+			//std::cout << std::setw(11) << std::left << idTable.table[i].idxfirstLE << " | ";
 			if (idTable.table[i].iddatatype == INT && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
 				std::cout << std::setw(18) << std::left << idTable.table[i].value.vint;
 			else if (idTable.table[i].iddatatype == STR && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
@@ -324,9 +335,9 @@ namespace IT {
 				std::cout << "-";
 			std::cout << std::endl;
 		}
-		std::cout << std::setfill('-') << std::setw(87) << '-' << std::endl;
+		std::cout << std::setfill('-') << std::setw(120) << '-' << std::endl;
 		std::cout << "Количество идентификаторов: " << i - numberOP << std::endl;
-		std::cout << std::setw(87) << '-' << std::endl;
+		std::cout << std::setw(120) << '-' << std::endl;
 	}
 
 	void IT::Delete(IdTable & idtable)

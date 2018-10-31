@@ -53,13 +53,14 @@ namespace Polska
 				vectOper.push_back(tempVarLexTable.table[i]);
 				break;
 			case RIGHTHESIS:
-				while (vectOper.empty())
+				while (vectOper.back().lexema[GETLEX] != LEFTHESIS)
 				{
 					lexTable.table[posLT++] = vectOper.back();
 					vectOper.pop_back();
 					//valChar = vectOper.back().lexema[GETLEX];
 				}
-				break; 
+				vectOper.pop_back();
+				break;
 			case LEX_OPERATION: 
 				if(vectOper.empty() || vectOper[0].lexema[GETLEX] == LEFTHESIS)
 				{
@@ -67,13 +68,12 @@ namespace Polska
 				}
 				else
 				{
-					int a = checkPrior(vectOper.back().operation);
-					int b = checkPrior(tempVarLexTable.table[i].operation);
-					while (!vectOper.empty() && a >= b)
+					while (!vectOper.empty() && checkPrior(vectOper.back().operation) >= checkPrior(tempVarLexTable.table[i].operation))
 					{
 						lexTable.table[posLT++] = vectOper.back();
 						vectOper.pop_back();
 					}
+					vectOper.push_back(tempVarLexTable.table[i]);
 				}
 			break;
 			case LEX_ID: case LEX_LITERAL: case EQUAL:
@@ -129,6 +129,22 @@ namespace Polska
 		delete tempVarLexTable.table;
 		return true;
 	}
+	//јлгоритм построени€ :
+	//-исходна€ строка : выражение;
+	//-результирующа€ строка : польска€ запись;
+	//-стек: пустой;
+	//-исходна€ строка просматриваетс€ слева направо;
+	//-операнды перенос€тс€ в результирующую строку в пор€дке их
+	//	следовани€;
+	//-операци€ записываетс€ в стек, если стек пуст или в вершине стека лежит
+	//	отрывающа€ скобка;
+	//-операци€ выталкивает все операции с большим или равным
+	//	приоритетом в результирующую строку;
+	//-отрывающа€ скобка помещаетс€ в стек;
+	//-закрывающа€ скобка выталкивает все операции до открывающей
+	//	скобки, после чего обе скобки уничтожаютс€;
+	//-по концу разбора исходной строки все операции, оставшиес€ в стеке,
+	//	выталкиваютс€ в результирующую строку.
 
 	bool doRPNinLexTable(LT::LexTable lexTable, IT::IdTable idTable)
 	{

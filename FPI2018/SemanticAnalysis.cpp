@@ -73,11 +73,7 @@ bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::
 		return true;
 	}
 }
-///////////////////////////////////////////////////////////////////////////////
-bool Semantic::checkId(int numIT, LT::LexTable lexTable, IT::IdTable idTable)
-{
-	return false;
-}
+
 ///////////////////////////////////////////////////////////////////////////////
 bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
