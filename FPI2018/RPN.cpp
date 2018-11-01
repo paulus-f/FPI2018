@@ -17,6 +17,19 @@ namespace Polska
 		}
 	}
 
+	int checkComparPrior(LT::Entry lexEntry)
+	{
+		if (lexEntry.lexema[GETLEX] == RIGHTHESIS || lexEntry.lexema[GETLEX] == LEFTHESIS)
+		{
+			return 1;
+		}
+		switch (lexEntry.co)
+		{
+		case LT::ne: case LT::e: case LT::l: case LT::le:case LT::me:case LT::m: return 2;
+		default: return -1;
+		}
+	}
+
 	bool PolishNotation(int posLexTable, LT::LexTable lexTable, IT::IdTable idTable)
 	{
 		std::vector<LT::Entry> vectOper;
@@ -57,7 +70,6 @@ namespace Polska
 				{
 					lexTable.table[posLT++] = vectOper.back();
 					vectOper.pop_back();
-					//valChar = vectOper.back().lexema[GETLEX];
 				}
 				vectOper.pop_back();
 				break;
@@ -68,7 +80,7 @@ namespace Polska
 				}
 				else
 				{
-					while (!vectOper.empty() && checkPrior(vectOper.back().operation) >= checkPrior(tempVarLexTable.table[i].operation))
+					while(!vectOper.empty() && checkPrior(vectOper.back().operation) >= checkPrior(tempVarLexTable.table[i].operation))
 					{
 						lexTable.table[posLT++] = vectOper.back();
 						vectOper.pop_back();
@@ -76,13 +88,26 @@ namespace Polska
 					vectOper.push_back(tempVarLexTable.table[i]);
 				}
 			break;
+			case LEX_ÑOMPARISONOPER:
+				if (vectOper.empty() || vectOper[0].lexema[GETLEX] == LEFTHESIS)
+				{
+					vectOper.push_back(tempVarLexTable.table[i]);
+				}
+				else
+				{
+					while (!vectOper.empty() && checkComparPrior(vectOper.back()) >= checkComparPrior(tempVarLexTable.table[i]))
+					{
+						lexTable.table[posLT++] = vectOper.back();
+						vectOper.pop_back();
+					}
+					vectOper.push_back(tempVarLexTable.table[i]);
+				}
 			case LEX_ID: case LEX_LITERAL: case EQUAL:
 				if(IT::isFun(idTable, tempVarLexTable.table[i]))
 				{
 					LT::Entry entryFun = tempVarLexTable.table[i];
 					entryFun.lexema[GETLEX] = '@';
 					int cnt = 0;
-
 					i++;
 					while(tempVarLexTable.table[i].lexema[GETLEX] != RIGHTHESIS)
 					{
@@ -103,7 +128,6 @@ namespace Polska
 				break;
 			default: return false;
 			}
-			
 			if (i + 1 == count)
 			{
 				while (!vectOper.empty())
@@ -155,11 +179,12 @@ namespace Polska
 				if (!PolishNotation(i - 1, lexTable, idTable)) return false;
 				continue;
 			}
-			/*if (lexTable.table[i - 1].lexema[GETLEX] == LEX_RETURN && lexTable.table[i].lexema[GETLEX] == LEX_ID)
+
+			if (lexTable.table[i - 1].lexema[GETLEX] == LEX_RETURN && lexTable.table[i].lexema[GETLEX] == LEX_ID)
 			{
 				if (!PolishNotation(i, lexTable, idTable)) return false;
 				continue;
-			}*/
+			}
 		}
 		return true;
 	}

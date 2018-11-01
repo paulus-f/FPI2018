@@ -32,7 +32,7 @@ namespace IT
 		SCOPE scope;
 		union 
 		{
-			double vfl;
+			float vfl;
 			bool vbool;
 			int vint; 
 			struct

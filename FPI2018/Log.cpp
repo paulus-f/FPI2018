@@ -23,6 +23,8 @@ namespace Log {
 		}
 		return tempLog;
 	}
+
+
 	void WriteLine(LOG log,  char *c, ...)
 	{
 		char **ptr = &c;

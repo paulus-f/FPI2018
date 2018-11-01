@@ -5,6 +5,7 @@
 #include "LT.h"
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 
 namespace IT {
 	void addFun(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType)
@@ -166,10 +167,6 @@ namespace IT {
 			{
 				i = breakBlock(lexTable, i-1) - 1;
 			}
-			/*if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS)
-			{
-				continue;
-			}*/
 			if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE)
 			{
 				return SCOPE::LB;
@@ -281,63 +278,64 @@ namespace IT {
 	void IT::logIT(IdTable& idTable, Log::LOG log)
 	{
 		int i, numberOP = 0;
-		std::cout << std::endl;
-		std::cout << std::setfill('-') << std::setw(120) << '-' << std::endl;
-		std::cout << "   №" << " | " << "Идентификатор" << " | " << "Тип данных" << " | " << "Тип идентификатора" << " | " <<"Индекс в ТЛ" << " | " << " Область видимости  " << " | " << "Значение    " << std::endl;
-		std::cout << std::setw(120) << '-' << std::endl;
+
+		*log.stream << "Таблица идентификаторов" << std::endl;
+		*log.stream << std::setfill('-') << std::setw(120) << '-' << std::endl;
+		*log.stream << "   №" << " | " << "Идентификатор" << " | " << "Тип данных" << " | " << "Тип идентификатора" << " | " <<"Индекс в ТЛ" << " | " << " Область видимости  " << " | " << "Значение    " << std::endl;
+		*log.stream << std::setw(120) << '-' << std::endl;
 		for (i = 0; i < idTable.head; i++)
 		{
-			std::cout << std::setfill('0') << std::setw(4) << std::right << i << " | ";
-			std::cout << std::setfill(' ') << std::setw(13) << std::left << idTable.table[i].id << " | ";
+			*log.stream << std::setfill('0') << std::setw(4) << std::right << i << " | ";
+			*log.stream << std::setfill(' ') << std::setw(13) << std::left << idTable.table[i].id << " | ";
 			switch (idTable.table[i].iddatatype)
 			{
-			case INT: std::cout << std::setw(10) << std::left;
-				std::cout << "integer" << " | "; break;
-			case FL: std::cout << std::setw(10) << std::left;
-				 std::cout << "float" << " | "; break;
-			case BL: std::cout << std::setw(10) << std::left;
-				std::cout << "bool" << " | "; break;
-			case STR: std::cout << std::setw(10) << std::left;
-				std::cout << "string" << " | "; break;
-			default: std::cout << std::setw(10) << std::left << "unknown" << " | "; break;
+			case INT: *log.stream << std::setw(10) << std::left;
+				*log.stream << "integer" << " | "; break;
+			case FL: *log.stream << std::setw(10) << std::left;
+				*log.stream << "float" << " | "; break;
+			case BL: *log.stream << std::setw(10) << std::left;
+				*log.stream << "bool" << " | "; break;
+			case STR: *log.stream << std::setw(10) << std::left;
+				*log.stream << "string" << " | "; break;
+			default: *log.stream << std::setw(10) << std::left << "unknown" << " | "; break;
 			}
 			switch (idTable.table[i].idtype)
 			{
-			case V: std::cout << std::setw(18) << std::left << "переменная" << " | "; break;
-			case F: std::cout << std::setw(18) << std::left << "функция" << " | "; break;
-			case P: std::cout << std::setw(18) << std::left << "параметр" << " | "; break;
-			case L: std::cout << std::setw(18) << std::left << "литерал" << " | "; break;
+			case V: *log.stream << std::setw(18) << std::left << "переменная" << " | "; break;
+			case F: *log.stream << std::setw(18) << std::left << "функция" << " | "; break;
+			case P: *log.stream << std::setw(18) << std::left << "параметр" << " | "; break;
+			case L: *log.stream << std::setw(18) << std::left << "литерал" << " | "; break;
 				numberOP++;
 				break;
-			default: std::cout << std::setw(18) << std::left << "unknown" << " | "; break;
+			default: *log.stream << std::setw(18) << std::left << "unknown" << " | "; break;
 			}
-			std::cout << std::setw(11) << std::left << idTable.table[i].idxfirstLE << " | ";
+			*log.stream << std::setw(11) << std::left << idTable.table[i].idxfirstLE << " | ";
 			switch (idTable.table[i].scope)
 			{
-			case LF: std::cout << std::setw(20) << std::left << "В локальной функции" << " | "; break;
-			case G: std::cout << std::setw(20) << std::left << "Глобальная" << " | "; break;
-			case LB: std::cout << std::setw(20) << std::left << "В ветке" << " | "; break;
-			case FUN: std::cout << std::setw(20) << std::left << "-" << " | "; break;
-			case LIT: std::cout << std::setw(20) << std::left << "-" << " | "; break;
+			case LF: *log.stream << std::setw(20) << std::left << "В локальной функции" << " | "; break;
+			case G: *log.stream << std::setw(20) << std::left << "Глобальная" << " | "; break;
+			case LB: *log.stream << std::setw(20) << std::left << "В ветке" << " | "; break;
+			case FUN: *log.stream << std::setw(20) << std::left << "-" << " | "; break;
+			case LIT: *log.stream << std::setw(20) << std::left << "-" << " | "; break;
 				break;
-			default: std::cout << std::setw(20) << std::left << "unknown" << " | "; break;
+			default: *log.stream << std::setw(20) << std::left << "unknown" << " | "; break;
 			}
 			//std::cout << std::setw(11) << std::left << idTable.table[i].idxfirstLE << " | ";
 			if (idTable.table[i].iddatatype == INT && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
-				std::cout << std::setw(18) << std::left << idTable.table[i].value.vint;
+				*log.stream << std::setw(18) << std::left << idTable.table[i].value.vint;
 			else if (idTable.table[i].iddatatype == STR && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
-				std::cout << "[" << (int)idTable.table[i].value.vstr->len << "] \"" << idTable.table[i].value.vstr->str << "\"";
+				*log.stream << "[" << (int)idTable.table[i].value.vstr->len << "] \"" << idTable.table[i].value.vstr->str << "\"";
 			else if (idTable.table[i].iddatatype == FL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
-				std::cout << std::setw(18) << std::left << idTable.table[i].value.vfl;
+				*log.stream << std::setw(18) << std::left << idTable.table[i].value.vfl;
 			else if (idTable.table[i].iddatatype == BL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
-				std::cout << std::setw(18) << std::left << idTable.table[i].value.vbool;
+				*log.stream << std::setw(18) << std::left << idTable.table[i].value.vbool;
 			else
-				std::cout << "-";
-			std::cout << std::endl;
+				*log.stream << "-";
+			*log.stream << std::endl;
 		}
-		std::cout << std::setfill('-') << std::setw(120) << '-' << std::endl;
-		std::cout << "Количество идентификаторов: " << i - numberOP << std::endl;
-		std::cout << std::setw(120) << '-' << std::endl;
+		*log.stream << std::setfill('-') << std::setw(120) << '-' << std::endl;
+		*log.stream << "Количество идентификаторов: " << i - numberOP << std::endl;
+		*log.stream << std::setw(120) << '-' << std::endl;
 	}
 
 	void IT::Delete(IdTable & idtable)

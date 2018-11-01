@@ -10,13 +10,15 @@
 #include "stanlib.h"
 #include "RPN.h"
 #include <sstream>
+#include <iomanip>
+#include <fstream>
 //////////////////////////////////////////////////////////////////////////////////
 //+ Error > in LA!!!!!!!!!!!!!!!//////////////////////////////////////////////////
 //+ Error p> .... in LA !!!!!!!!!/////////////////////////////////////////////////
 //+ IS FIX ///////////////////////////////////////////////////////////////////////
 //+ add namespace in LogIT////////////////////////////////////////////////////////
 //+ fix bug in polska/////////////////////////////////////////////////////////////
-//- add bool operation in polska//////////////////////////////////////////////////
+//+ add bool operation in polska//////////////////////////////////////////////////
 //+ test semantic ////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 namespace LT {
@@ -724,41 +726,30 @@ namespace LT {
 
 	void LT::LogLA(LexTable& lexTable, Log::LOG log)
 	{
-		for (int i = 0; i < lexTable.head; i++)
-		{
-			std::cout << lexTable.table[i].lexema[GETLEX];
-		}
-
 		char lexAnStr[] = "---Лексический анализатор---";
-		char buff[2] = " ";
-		char space[5] = "    ";
-		char num[6] = "0    ";
 		char newLine[2] = "\n";
 		Log::WriteLine(log, lexAnStr, EMPTYSTR);
 
-		for (int numLine = 0, ind = 0, strOutPut = 3; ind < lexTable.head; ind++)
+		*log.stream << std::endl;
+		*log.stream << 0 << 1 << "   ";
+
+		for (int numLine = 1, ind = 0; ind < lexTable.head; ind++)
 		{
 			if(lexTable.table[ind].lexema[GETLEX] == '^')
 			{
 				continue;
 			}
+			else if (numLine != lexTable.table[ind+1].sn)
+			{
+				*log.stream << lexTable.table[ind].lexema[GETLEX] << std::endl;
+				*log.stream << 0 << numLine++ << std::setw(5) << std::left << "   ";
+			}
 			else if (numLine == lexTable.table[ind].sn)
 			{
-				buff[0] = lexTable.table[ind].lexema[GETLEX];
-				Log::WriteLine(log, buff, EMPTYSTR);
-			}
-			else
-			{
-				buff[0] = lexTable.table[ind].lexema[GETLEX];
-				Log::WriteLine(log, newLine, EMPTYSTR);
-				_itoa(numLine, num + 1, 10);
-				Log::WriteLine(log, num, space, EMPTYSTR);
-				Log::WriteLine(log, buff, EMPTYSTR);
-
-				numLine++;
+				*log.stream << lexTable.table[ind].lexema[GETLEX];
 			}
 		}
-		Log::WriteLine(log, newLine, EMPTYSTR);
+		*log.stream << std::endl;
 	}
 
 	bool LT::isOperOrSep(char lit)
