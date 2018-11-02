@@ -171,7 +171,7 @@ bool Semantic::checkBranch(int numLT, LT::LexTable lexTable, IT::IdTable idTable
 bool Semantic::checkType(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::IDDATATYPE typeId = idTable.table[lexTable.table[numLT].idxTI].iddatatype;
-	for (int i = numLT+1; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i)
+	for (int i = numLT+1; ; ++i)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_ID || lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
 		{
@@ -180,6 +180,10 @@ bool Semantic::checkType(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 			{
 				for (; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++);
 			}
+		}
+		if (lexTable.table[i].lexema[GETLEX] != SEMICOLON || lexTable.table[i].lexema[GETLEX] != RIGHTHESIS)
+		{
+			break;
 		}
 		if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
 	}
@@ -195,7 +199,8 @@ bool Semantic::checkCycle(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 	}
 	else
 	{
-		if (idTable.table[lexTable.table[numLT + 6].idxTI].iddatatype == idTable.table[lexTable.table[numLT + 8].idxTI].iddatatype) return true;
+		for (numLT++ ; lexTable.table[numLT].lexema[GETLEX] != LEX_ÑOMPARISONOPER; numLT++);
+		if (idTable.table[lexTable.table[numLT-1].idxTI].iddatatype == idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype) return true;
 		else return false;
 	}
 }

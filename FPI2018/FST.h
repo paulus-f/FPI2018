@@ -10,12 +10,13 @@
 	FST::NODE(1, FST::RELATION('=', 2)),\
 	FST::NODE()
 
-#define FST_L 2,	\
-	FST::NODE(1, FST::RELATION('<', 1)),\
-	FST::NODE()
 
 #define FST_M 2,	\
 	FST::NODE(1, FST::RELATION('>', 1)),\
+	FST::NODE()
+
+#define FST_L 2,	\
+	FST::NODE(1, FST::RELATION('<', 1)),\
 	FST::NODE()
 
 #define FST_LE 3,	\

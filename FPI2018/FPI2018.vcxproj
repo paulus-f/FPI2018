@@ -162,6 +162,7 @@
     <ClInclude Include="stanlib.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tetrads.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CodeGeneration.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="SemanticAnalysis.cpp" />
     <ClCompile Include="stanlib.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Tetrads.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
