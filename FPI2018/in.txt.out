@@ -1,0 +1,29 @@
+.586
+.model FLAT, C , stdcall
+includelib kernel32.lib 
+ExitProcess PROTO : DWORD 
+.stack 4096
+
+.const
+	FLLIT0		REAL4	3.54
+	INTLIT0		DWORD	0
+	INTLIT1		DWORD	1
+	INTLIT2		DWORD	23
+	INTLIT3		DWORD	3
+	INTLIT4		DWORD	13
+	FLLIT1		REAL4	23.45
+	INTLIT5		DWORD	10
+
+.data
+	DEFPadda			DWORD	0
+	DEFPaddb			DWORD	0
+	abcdq			REAL4	0.0
+	count			DWORD	0
+
+.code
+	add PROC DEFPadda : DWORD, DEFPaddb : DWORD 
+		MUV	EAX,b
+		ADD	EAX,a
+		ret
+	add ENDP
+
