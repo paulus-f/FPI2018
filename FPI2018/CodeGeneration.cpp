@@ -1,16 +1,23 @@
 #include "stdafx.h"
 #include "CodeGeneration.h"
+#define OUT							*log.stream
 #define GETIDFROMLT(i)				idTable.table[lexTable.table[i].idxTI]
 #define PARDEF						"DEFP"
-#define OUT							*log.stream
+#define MUV(parm1, parm2)			"\t\tMUV\t" << parm1 << ',' << parm2
+#define ADD(parm1, parm2)			"\t\tADD\t" << parm1 << ',' << parm2
+#define SUB(parm1, parm2)			"\t\tSUB\t" << parm1 << ',' << parm2
+#define MUL(parm1, parm2)			"\t\tMUL\t" << parm1 << ',' << parm2
+#define DIV(parm1, parm2)			"\t\tDIV\t" << parm1 << ',' << parm2
+#define RET							'\t' << "\tret"
 #define ENDL						std::endl;
 #define ASMTEMPLATE					".586\n.model FLAT, C , stdcall\nincludelib kernel32.lib \nExitProcess PROTO : DWORD \n.stack 4096" 
 #define ASM_CONST					"\n.const" 
 #define ASM_CODE					"\n.code" 
 #define ASM_DATA					"\n.data"
+#define PUSH(VAR)					"\t\tPUSH \t"<< VAR
 #define TINT						"DWORD"
-#define TSTR						"BYTE"
 #define TFL							"REAL4"
+#define TSTR						"BYTE"
 #define TBL							"BYTE"
 #define INTLIT(num)					"\tINTLIT" << num << '\t' << '\t' << "DWORD" << '\t'
 #define STRLIT(num)					"\tSTRLIT" << num << '\t' << '\t' << "BYTE" << '\t'
@@ -101,7 +108,6 @@ void CG::addData(IT::IdTable & idTable, Log::LOG log)
 			char *nameFun;
 			for(numFun = i; idTable.table[numFun].idtype != IT::IDTYPE::F; numFun--);
 			
-
 			switch (idTable.table[i].iddatatype)
 			{
 			case IT::INT:
@@ -133,70 +139,141 @@ int CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log)
 			int amountarg = getAmountPar(idTable, lexTable.table[i].idxTI);
 			IT::Entry itentry = GETIDFROMLT(i);
 			OUT << PROC(itentry.id);
-			for (i++; amountarg != 0;i++)
+			i++;
+			for (int j = amountarg; j != 0;i++)
 			{
 				if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
 				{
 					switch (GETIDFROMLT(i).iddatatype)
 					{
 					case IT::INT:
-						if (amountarg == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : DWORD ";
+						if (j == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : DWORD " << ENDL
 						else OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : DWORD, ";
-						amountarg--;
+						j--;
 						break;
 					case IT::STR:
-						if (amountarg == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE ";
+						if (j == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE " << ENDL
 						else OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE, ";
-						amountarg--;
+						j--;
 						break;
 					case IT::FL:
-						if (amountarg == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : REAL4 ";
+						if (j == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : REAL4 " << ENDL
 						else OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : REAL4, ";
-						amountarg--;
+						j--;
 						break;
 					case IT::BL:
-						if (amountarg == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE ";
+						if (j == 1) OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE "<< ENDL
 						else OUT << PARDEF << itentry.id << GETIDFROMLT(i).id << " : BYTE, ";
-						amountarg--;
+						j--;
 						break;
 					}
 				}
 			}
+
+			i = releaseFun(lexTable, idTable, log, i);
+			OUT << ENDP(itentry.id) << ENDL;
+			
 		}
 	}
 	OUT << ENDL;
 	return numMain;
 }
 
+int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int pos)
+{
+	for (int i = pos;; i++)
+	{
+		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN || lexTable.table[i].lexema[GETLEX] == LEX_FUNCTION || i + 1 == lexTable.head)
+		{
+			OUT << RET << ENDL;
+			return i;
+		}
+		switch (lexTable.table[i].lexema[GETLEX])
+		{
+			case LEX_INPUT: break;
+			case LEX_OUTPUT: break;
+			case LEX_CYCLE: break;
+			case LEX_FOR: break;
+			case LEX_EQUAL: break;
+			case LEX_BRANCH: break;
+			case LEX_ALIAS: break;
+			case LEX_RETURN:
+			isExpression(lexTable, idTable,log, i++);
+			break;
+		}
+	}
+	return -1;
+}
+
+
+
 void CG::mainImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int numMain)
 {
 }
 
-void CG::isExpression(LT::LexTable & lexTable, IT::IdTable & idTable, int num)
+void CG::isExpression(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num)
+{
+	int start = num;
+	for (int i = num, count = 0;; i++)
+	{
+		if (lexTable.table[i].lexema[GETLEX] == '^' || lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON) break;
+
+		if (lexTable.table[i].lexema[GETLEX] == LEX_ID && lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON)
+		{
+			OUT << MUV("EAX", GETIDFROMLT(i).id) << ENDL
+		}
+		if (lexTable.table[i].lexema[GETLEX] == LEX_OPERATION)
+		{
+			count++;
+			OUT << MUV("EAX", GETIDFROMLT(i - count).id) << ENDL;
+			switch (lexTable.table[i].operation)
+			{
+			case PLUS:
+				count++;
+				OUT << ADD("EAX", GETIDFROMLT(i - count).id) << ENDL;
+				break;
+			case MINUS: 
+				count++;
+				OUT << SUB("EAX", GETIDFROMLT(i - count).id) << ENDL;
+				break;
+			case STAR: 
+				count++;
+				OUT << MUL("EAX", GETIDFROMLT(i - count).id) << ENDL;
+				break;
+			case DIRSLASH:
+				count++;
+				OUT << DIV("EAX", GETIDFROMLT(i - count).id) << ENDL;
+				break;
+			}
+		}
+		if (lexTable.table[i].lexema[GETLEX] == LEX_ÑOMPARISONOPER)
+		{
+
+		}
+	}
+}
+
+void CG::isInit(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num)
 {
 }
 
-void CG::isInit(LT::LexTable & lexTable, IT::IdTable & idTable, int num)
+
+void CG::branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num)
 {
 }
 
-
-void CG::branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, int num)
+void CG::cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num)
 {
 }
 
-void CG::cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, int num)
+void CG::cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num)
 {
 }
 
-void CG::cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, int num)
+void CG::cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num)
 {
 }
 
-void CG::cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, int num)
-{
-}
-
-void CG::genProce(LT::LexTable& lexTable, IT::IdTable& idTable, int num)
+void CG::genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num)
 {
 }

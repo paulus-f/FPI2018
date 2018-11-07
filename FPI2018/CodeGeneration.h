@@ -11,12 +11,13 @@ namespace CG
 	void addLiterals(IT::IdTable& idTable, Log::LOG log);
 	void addData(IT::IdTable& idTable, Log::LOG log);
 	int  protImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
+	int  releaseFun(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int pos);
 	void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain);
-	void isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void isInit(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
-	void genProce(LT::LexTable& lexTable, IT::IdTable& idTable, int num);
+	void isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
+	void genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num);
 }
