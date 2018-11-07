@@ -1,0 +1,40 @@
+int def fi(int x, int y)
+{
+int $z = 123;
+	if(45.9 < 100.324)
+	{
+		$z = 23+34*45/5+436/2*43;
+	}
+ int $z = 123;
+ int x = 24+43*324+54;
+ r x; 
+};
+
+fl def foo(fl kek)
+{
+	fl pi = 3.14 * msin(30.0);
+	r kek*pi;
+};
+
+Program
+{
+ int x;
+ str stringIsMy = "jhghjk";
+ fl num = 12.32;
+ int i;
+ for(i = 2;i >= 10; i=i+1)
+ {
+	num = num + 3.14/2.0;
+	if(num < 100.324)
+	{
+		num = num - 20.11;
+	}
+ }
+ 
+ if(x > 10) 
+ {
+	bool lel;
+	x = 19*(42+24)+43;
+ }
+ 
+};

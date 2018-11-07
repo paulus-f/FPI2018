@@ -52,7 +52,7 @@ namespace IT
 	};
 
 	void addFun(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType);
-
+	int getAmountPar(IdTable &idTable, int num);
 	void addVarOrPar(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num);
 
 	bool isFun(IdTable  &idTable, LT::Entry lexEntry);

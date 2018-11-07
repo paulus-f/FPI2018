@@ -39,6 +39,17 @@ namespace IT {
 		IT::Add(idTable, indFun);
 	}
 
+	int getAmountPar(IdTable & idTable, int num)
+	{
+		int count = 0;
+		for (int i = num+1;; i++)
+		{
+			if (idTable.table[i].idtype == IT::P) count++;
+			if (idTable.table[i].idtype != IT::P) break;
+		}
+		return count;
+	}
+
 	void addVarOrPar(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num)
 	{
 		IT::Entry indType;
@@ -161,7 +172,7 @@ namespace IT {
 			return SCOPE::G;
 		}
 
-		for (int i = lexTable.head; i != 0; --i)
+		for (int i = lexTable.head; i >= 0; --i)
 		{
 			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
 			{
@@ -189,7 +200,6 @@ namespace IT {
 	{
 		int posI;
 		bool exit = false;
-		//for (int j = lexTable.head - 1; j != 0; j--) 
 		for (int j = 0; j < lexTable.head ; j++)
 		{
 			if (lexTable.table[j].lexema[GETLEX] == LEX_ID)

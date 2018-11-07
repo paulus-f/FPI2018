@@ -272,7 +272,7 @@
 	FST::NODE(1, FST::RELATION('*', 1)),\
 	FST::NODE()
 #define FST_DIR 2,	\
-	FST::NODE(1, FST::RELATION('\'', 1)),\
+	FST::NODE(1, FST::RELATION('/', 1)),\
 	FST::NODE()
 #define FST_INTLIT 2,	\
 	FST::NODE(20,	\

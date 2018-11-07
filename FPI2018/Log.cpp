@@ -2,6 +2,7 @@
 #include "Log.h"
 #include "Error.h"
 #include <fstream>
+#include <iomanip>
 #include <ctime>
 
 namespace Log {
@@ -53,7 +54,7 @@ namespace Log {
 
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
-
+		*log.stream << "-------------------------------"<< " FPI2018++ " << "-------------------------------";
 		*log.stream << "\n---Протокол--- Дата: "<< asctime(timeinfo) << std::endl;
 	}
 	void WriteParm(LOG log, Parm::PARM  parm)

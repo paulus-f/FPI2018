@@ -121,7 +121,7 @@ namespace LT
 		int size
 	);
 
-	void LexicalAnalysis(char* str, LexTable& lexTable, IT::IdTable idTable, Log::LOG log);
+	void LexicalAnalysis(char* str, LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 
 	void Add(
 		LexTable& lextable,

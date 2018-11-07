@@ -7,15 +7,11 @@ namespace GRB
 {
 	#define NS(n) GRB::Rule::Chain::N(n)
 	#define TS(n) GRB::Rule::Chain::T(n)
-	////////////////////////////////
-	// Error > in LA!!!!!!!!!!!!!!!!
-	// Error p> .... in LA !!!!!!!!!
-	////////////////////////////////
 	Greibach greibach(NS('S'), TS('$'), 8,
 		Rule(NS('S'), GRB_ERROR_SERIES + 0, 3
-			, Rule::Chain(5,  TS('m'), TS('{'), NS('N'), TS('}'), TS(';'))
-			, Rule::Chain(14, TS('t'), TS('f'), TS('i'), TS('('), NS('F'), TS(')'), TS('{'), NS('N'), TS('r'), NS('E'), TS(';'), TS('}'), TS(';'), NS('S'))
-			, Rule::Chain(6,  TS('m'), TS('{'), NS('N'), TS('}'), TS(';'), NS('S')))
+			, Rule::Chain(4,  TS('m'), TS('{'), NS('N'), TS('}'))
+			, Rule::Chain(13, TS('t'), TS('f'), TS('i'), TS('('), NS('F'), TS(')'), TS('{'), NS('N'), TS('r'), NS('E'), TS(';'), TS('}'), NS('S'))
+			, Rule::Chain(5,  TS('m'), TS('{'), NS('N'), TS('}'), NS('S')))
 		, Rule(NS('N'), GRB_ERROR_SERIES + 1, 22
 			, Rule::Chain(7,  TS('b'), TS('('), NS('Y'), TS(')'), TS('{'), NS('N'), TS('}'))
 			, Rule::Chain(7,  TS('c'), TS('('), NS('Y'), TS(')'), TS('{'), NS('N'), TS('}'))
@@ -68,13 +64,16 @@ namespace GRB
 			, Rule::Chain(1, TS('l'))
 			, Rule::Chain(3, TS('i'), TS(','), NS('W'))
 			, Rule::Chain(3, TS('l'), TS(','), NS('W')))
-		, Rule(NS('X'), GRB_ERROR_SERIES + 7, 6
+		, Rule(NS('X'), GRB_ERROR_SERIES + 7, 9
 			, Rule::Chain(12, TS('i'), TS('='), TS('i'), TS(';'), TS('i'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
 			, Rule::Chain(12, TS('i'), TS('='), TS('i'), TS(';'), TS('i'), TS('s'), TS('l'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
 			, Rule::Chain(12, TS('i'), TS('='), TS('i'), TS(';'), TS('l'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
 			, Rule::Chain(12, TS('i'), TS('='), TS('l'), TS(';'), TS('i'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
 			, Rule::Chain(12, TS('i'), TS('='), TS('l'), TS(';'), TS('i'), TS('s'), TS('l'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
-			, Rule::Chain(12, TS('i'), TS('='), TS('l'), TS(';'), TS('l'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M')))
+			, Rule::Chain(12, TS('i'), TS('='), TS('l'), TS(';'), TS('l'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
+			, Rule::Chain(10, TS('i'), TS(';'), TS('i'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
+			, Rule::Chain(10, TS('i'), TS(';'), TS('i'), TS('s'), TS('l'), TS(';'), TS('i'), TS('='), TS('i'), NS('M'))
+			, Rule::Chain(10, TS('i'), TS(';'), TS('l'), TS('s'), TS('i'), TS(';'), TS('i'), TS('='), TS('i'), NS('M')))
 	);
 
 	Rule::Chain::Chain(short psize, GRBALPHABET s, ...)

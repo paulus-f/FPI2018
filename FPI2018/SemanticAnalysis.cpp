@@ -74,7 +74,6 @@ bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////
 bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::Entry itentry = IT::GetEntry(idTable, lexTable.table[numLT].idxTI);
@@ -131,7 +130,6 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 		}
 	}
 }
-/////////////////////////////////////////////////////////////////////////////////
 bool Semantic::checkSegFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::IDDATATYPE typefun = idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype;

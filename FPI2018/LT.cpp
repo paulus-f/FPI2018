@@ -31,7 +31,7 @@ namespace LT {
 		return tempEntry;
 	}
 
-	void LT::LexicalAnalysis(char* str, LT::LexTable& lexTable, IT::IdTable idTable, Log::LOG log)
+	void LT::LexicalAnalysis(char* str, LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 	{
 		if (str == EMPTYSTR)
 		{
@@ -50,6 +50,8 @@ namespace LT {
 		bool errorLex				= false;
 		bool boolOper				= false;
 		bool flagMain				= false;
+		//std::vector<int> *checkThesis = new std::vector<int>();
+		std::vector<int> checkThesis;
 		char buff[TI_STR_MAXSIZE];
 		char buffL[TI_STR_MAXSIZE];
 		char buffCO[10];
@@ -597,13 +599,12 @@ namespace LT {
 					Add(lexTable, lexEntry);
 					continue;
 				}
-
 				FST::FST fstRightBrac(buff, FST_RIGHTTHESIS);
 				if (FST::execute(fstRightBrac))
 				{
-					flagParametr = false;
-					flagBranch = false;
-					flagCycle = false;
+					flagParametr	= false;
+					flagBranch		= false;
+					flagCycle		= false;
 					lexEntry = retLex(LEX_RIGHTHESIS, numLine, LT_TI_NULLIDX);
 					Add(lexTable, lexEntry);
 					continue;
@@ -675,6 +676,34 @@ namespace LT {
 					lexEntry.operation = DIRSLASH;
 					Add(lexTable, lexEntry);
 					continue;
+				}
+			}
+		}
+		for (int i = 0; i < lexTable.head; i++)
+		{
+			if (lexTable.table[i].lexema[GETLEX] == LEX_LEFTHESIS)
+			{
+				checkThesis.push_back(-1);
+				checkThesis.push_back(lexTable.table[i].sn);
+			}
+			if (lexTable.table[i].lexema[GETLEX] == LEX_RIGHTHESIS)
+			{
+				for (int j = 0; j < checkThesis.size(); j++)
+				{
+					if (checkThesis[j] == -1 && checkThesis[j + 1] == lexTable.table[i].sn)
+					{
+						checkThesis.pop_back();
+						checkThesis.pop_back();
+						j++;
+					}
+					else
+					{
+						errorLex = true;
+						errarr[errhead++] = ERROR_THROW_IN(109, checkThesis[j + 1], -1);
+						checkThesis.pop_back();
+						checkThesis.pop_back();
+						j++;
+					}
 				}
 			}
 		}
