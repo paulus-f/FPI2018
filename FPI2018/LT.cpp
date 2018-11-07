@@ -681,6 +681,11 @@ namespace LT {
 		}
 		for (int i = 0; i < lexTable.head; i++)
 		{
+			std::cout << lexTable.table[i].lexema[0];
+		}
+
+		for (int i = 0; i < lexTable.head; i++)
+		{
 			if (lexTable.table[i].lexema[GETLEX] == LEX_LEFTHESIS)
 			{
 				checkThesis.push_back(-1);
@@ -688,6 +693,11 @@ namespace LT {
 			}
 			if (lexTable.table[i].lexema[GETLEX] == LEX_RIGHTHESIS)
 			{
+				if (checkThesis.empty())
+				{
+					errorLex = true;
+					errarr[errhead++] = ERROR_THROW_IN(109, lexTable.table[i].sn, -1);
+				}
 				for (int j = 0; j < checkThesis.size(); j++)
 				{
 					if (checkThesis[j] == -1 && checkThesis[j + 1] == lexTable.table[i].sn)

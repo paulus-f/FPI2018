@@ -15,15 +15,15 @@ ExitProcess PROTO : DWORD
 	INTLIT5		DWORD	10
 
 .data
-	DEFPadda			DWORD	0
-	DEFPaddb			DWORD	0
+	adda			DWORD	0
+	addb			DWORD	0
 	abcdq			REAL4	0.0
 	count			DWORD	0
 
 .code
-	add PROC DEFPadda : DWORD, DEFPaddb : DWORD 
-		MUV	EAX,b
-		ADD	EAX,a
+	add PROC adda : DWORD, addb : DWORD 
+		MUV	EAX,addb
+		ADD	EAX,adda
 		ret
 	add ENDP
 
