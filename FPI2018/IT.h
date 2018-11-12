@@ -43,6 +43,7 @@ namespace IT
 		}value;
 	};
 
+
 	struct IdTable
 	{
 		int maxsize;
@@ -56,6 +57,9 @@ namespace IT
 	void addVarOrPar(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num);
 
 	bool isFun(IdTable  &idTable, LT::Entry lexEntry);
+
+	int getIDLIT(IdTable idtable, IDDATATYPE type, IT::Entry itentry);
+
 
 	IdTable Create(
 		int size

@@ -3,13 +3,13 @@
 #include "IT.h"
 #include "Log.h"
 #include <fstream>
-
+#include <vector>
 namespace CG
 {
 	void StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	void branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun);
 	void addLiterals(IT::IdTable& idTable, Log::LOG log );
-	void addData(IT::IdTable& idTable, Log::LOG log);
+	void addData(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  protImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  releaseFun(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int pos, char *idfun);
 	void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);

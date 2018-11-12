@@ -1,6 +1,6 @@
 int def add(int a, int b)
 {
-	r a+b;
+	r (a+b)*10;
 }
 
 Program 

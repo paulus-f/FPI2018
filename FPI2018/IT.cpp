@@ -8,6 +8,15 @@
 #include <fstream>
 
 namespace IT {
+	int getIDLIT(IT::IdTable idtable, IDDATATYPE type, IT::Entry itentry)
+	{
+		for (int i = 0, j =0; i < idtable.head; i++)
+		{
+			if (!strcmp(idtable.table[i].id, itentry.id)) return j;
+			if (idtable.table[i].iddatatype ==  itentry.iddatatype && idtable.table[i].idtype == IDTYPE::L) j++;
+		}
+		return -1;
+	}
 	void addFun(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType)
 	{
 		LT::Add(lexTable, lexEntry);

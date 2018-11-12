@@ -94,7 +94,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalOptions>"D:\\Proga\\Project\\JaP\\asm\\Debug\\asmd.lib" %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>..\Debug\asmd.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -7,7 +7,7 @@
  include \masm32\include\masm32.inc
  includelib \masm32\lib\masm32.lib
 includelib kernel32.lib
-includelib "D:/Proga/Project/JaP/asm/Debug/asmA.lib" 
+includelib "D:/Proga/Project/FPI2018/asm/Debug/asmA.lib" 
 
 SetConsoleTitleA PROTO :DWORD
 GetStdHandle PROTO     :DWORD
