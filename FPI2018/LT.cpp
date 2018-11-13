@@ -189,7 +189,6 @@ namespace LT {
 						if (!flagMain)
 						{
 							lexEntry = retLex(LEX_MAIN, numLine, LT_TI_NULLIDX);
-							Add(lexTable, lexEntry);
 							IT::addFun(idTable, lexTable, lexEntry, (char*)MAIN, (char*)"int");
 							flagMain = !flagMain;
 						}

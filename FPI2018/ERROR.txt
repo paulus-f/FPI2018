@@ -1,14 +1,12 @@
 int def add(int a, int b)
 {
-	
-	fl kek = a;
-	r kek;
+	r 30*(a+b);
 }
 
 Program 
 {
 	fl abcdq = 3.54;
-	int count = 0;
+	int count = abcdq;
 	for(count = 1;count < 23;count=count+3)
 	{
 		if(count == 13)

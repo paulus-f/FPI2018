@@ -234,16 +234,16 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 						switch (GETIDFROMLT(i).iddatatype)
 						{
 						case IT::IDDATATYPE::INT: 
-							OUT << POP2("INTLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::INT, GETIDFROMLT(i))) << ENDL
+							OUT << PUSH2("INTLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::INT, GETIDFROMLT(i))) << ENDL
 							break;
 						case IT::IDDATATYPE::STR:
-							OUT << POP2("STRLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::STR, GETIDFROMLT(i))) << ENDL
+							OUT << PUSH2("STRLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::STR, GETIDFROMLT(i))) << ENDL
 							break;
 						case IT::IDDATATYPE::FL:
-							OUT << POP2("FLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::FL, GETIDFROMLT(i))) << ENDL
+							OUT << PUSH2("FLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::FL, GETIDFROMLT(i))) << ENDL
 							break;
 						case IT::IDDATATYPE::BL:
-							OUT << POP2("BLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::BL, GETIDFROMLT(i))) << ENDL
+							OUT << PUSH2("BLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::BL, GETIDFROMLT(i))) << ENDL
 							break;
 						}
 					}

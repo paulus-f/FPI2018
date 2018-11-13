@@ -34,24 +34,22 @@ namespace Polska
 	{
 		std::vector<LT::Entry> vectOper;
 		int count = 0;
-		for (int i = posLexTable; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i)
+		for (int i = posLexTable;; ++i)
 		{
+			if (lexTable.table[i].lexema[GETLEX] == SEMICOLON || (lexTable.table[i].lexema[GETLEX] == RIGHTHESIS && lexTable.table[i+1].lexema[GETLEX] == LEFTBRACET))
+			{
+				break;
+			}
 			count++;
 			if (i >= lexTable.head) ERROR_THROW(999)// going out of the array
 		}
 
 		LT::LexTable tempVarLexTable;
 		tempVarLexTable.table = new LT::Entry[count];
-
-
-		int countThesis = 0;
-		for (int i = posLexTable, j = 0; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i, ++j)
+		for (int i = posLexTable, j = 0; j < count ; ++i, ++j)
 		{
 			tempVarLexTable.table[j] = lexTable.table[i];
-			if (tempVarLexTable.table[j].lexema[GETLEX] == LEFTHESIS) countThesis++;
-			else if (tempVarLexTable.table[j].lexema[GETLEX] == RIGHTHESIS) countThesis--;
 		}
-		if (countThesis) return false;
 
 		bool beginVar = true;
 		int posLT = posLexTable;
@@ -176,11 +174,23 @@ namespace Polska
 		{
 			if (lexTable.table[i].lexema[GETLEX] == LEX_EQUAL && lexTable.table[i - 1].lexema[GETLEX] == LEX_ID)
 			{
-				if (!PolishNotation(i - 1, lexTable, idTable)) return false;
+				if (!PolishNotation(i-1, lexTable, idTable)) return false;
 				continue;
 			}
 
 			if (lexTable.table[i - 1].lexema[GETLEX] == LEX_RETURN && lexTable.table[i].lexema[GETLEX] == LEX_ID)
+			{
+				if (!PolishNotation(i, lexTable, idTable)) return false;
+				continue;
+			}
+
+			if (lexTable.table[i - 1].lexema[GETLEX] == LEX_RETURN && lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
+			{
+				if (!PolishNotation(i, lexTable, idTable)) return false;
+				continue;
+			}
+
+			if (lexTable.table[i - 1].lexema[GETLEX] == LEX_RETURN && lexTable.table[i].lexema[GETLEX] == LEX_LEFTHESIS)
 			{
 				if (!PolishNotation(i, lexTable, idTable)) return false;
 				continue;
