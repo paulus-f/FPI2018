@@ -133,7 +133,7 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 bool Semantic::checkSegFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::IDDATATYPE typefun = idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype;
-	for (int i = numLT;; i++)
+	for (int i = numLT+1;; i++)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_RETURN)
 		{
@@ -148,7 +148,7 @@ bool Semantic::checkSegFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable
 			}
 			i = j;
 		}
-		if (lexTable.table[i].lexema[GETLEX] != LEX_MAIN || lexTable.table[i].lexema[GETLEX] != LEX_FUNCTION)
+		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN || lexTable.table[i].lexema[GETLEX] == LEX_FUNCTION)
 		{
 			break;
 		}
@@ -179,7 +179,7 @@ bool Semantic::checkType(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 				for (; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++);
 			}
 		}
-		if (lexTable.table[i].lexema[GETLEX] != SEMICOLON || lexTable.table[i].lexema[GETLEX] != RIGHTHESIS)
+		if (lexTable.table[i].lexema[GETLEX] == SEMICOLON || (lexTable.table[i].lexema[GETLEX] == RIGHTHESIS && lexTable.table[i+1].lexema[GETLEX] == LEFTBRACET))
 		{
 			break;
 		}

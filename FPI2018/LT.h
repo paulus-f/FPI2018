@@ -93,6 +93,8 @@
 namespace LT
 {
 	enum CO { m = 1, l = 2, e = 3, ne = 4, me = 5, le = 6};
+	enum Cycle { w = 1, ut = 2 };
+	enum Branch{ i = 1, ul = 2 };
 
 	struct Entry
 	{
@@ -102,6 +104,15 @@ namespace LT
 		short amountArg;
 		char operation = NULL;
 		CO co;
+		union 
+		{
+			Branch br;
+		}branching;
+		union
+		{
+			Cycle cycle;
+		}cycling;
+
 	};
 
 	Entry retLex(char lex, int numstr, int idx);

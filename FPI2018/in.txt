@@ -1,20 +1,24 @@
 int def add(int a, int b)
 {
-	
-	fl kek = a;
-	r kek;
+	r (a+b)/10;
 }
 
 Program 
 {
-	fl abcdq = 3.54;
-	int count = 0;
-	for(count = 1;count < 23;count=count+3)
+	fl flnum = 3.54;
+	str strHello = "lol";
+	if(kek == count)
+	{
+		int cthree = strlen(kek);
+	}
+	
+	for(count = 1;count < 23;count=count)
 	{
 		if(count == 13)
 		{
 			abcdq = 23.45;
-		}alias
+		}
+		alias
 		{
 			count = count +10;
 		}

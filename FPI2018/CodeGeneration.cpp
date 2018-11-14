@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "CodeGeneration.h"
+#define CURRLEX(i)						lexTable.table[i].lexema[0]
+#define CURRLE(i)						lexTable.table[i]	
+#define LABEL(name)						name << ':'
 #define OUT								*log.stream
 #define GETIDFROMLT(i)					idTable.table[lexTable.table[i].idxTI]
 #define PARDEF							"DEFP"
@@ -45,17 +48,72 @@
 #define ENDP(name)						'\t' << name << " ENDP"	
 #define EMPTY							""
 #define ISGLOBAL(str)					str[0] == '$'
+#define EXITMAIN						"\tpush 0\n\tcall ExitProcess\n"
+#define ENDMAIN							"end main"
+#define LESS
+#define MORE
+#define LESSEQUAL
+#define MOREEQUAL
+#define EQUAL
+#define NOTEQUAL
+#define CMP(par1, par2, par3, par4) 	"\t\t cmp\t"<< par1 << par2 << ',' << par3 << par4
+#define CMPCHECK						if (lentry.scope == IT::SCOPE::G && rentry.scope == IT::SCOPE::G)	\
+										{																	\
+										OUT << CMP(EMPTY, lentry.id, EMPTY, lentry.id) << ENDL				\
+										}																	\
+										if (lentry.scope == IT::SCOPE::G && rentry.scope != IT::SCOPE::G)	\
+										{																	\
+											OUT << CMP(EMPTY, lentry.id, idfun, lentry.id) << ENDL			\
+										}																	\
+										if (lentry.scope != IT::SCOPE::G && rentry.scope == IT::SCOPE::G)	\
+										{																	\
+											OUT << CMP(idfun, lentry.id, EMPTY, lentry.id) << ENDL			\
+										}																	\
+										if (lentry.scope != IT::SCOPE::G && rentry.scope != IT::SCOPE::G)	\
+										{																	\
+											OUT << CMP(idfun, lentry.id, idfun, lentry.id) << ENDL			\
+										}																	\
+//jb until1
+//je enduntil1
+//ja enduntil1
+#define JB(parm1, parm2)					"\t\t jb" << parm1 << parm2 
+#define JE(parm1, parm2)					"\t\t je" << parm1 << parm2 
+#define JZ(parm1, parm2)					"\t\t jz" << parm1 << parm2 
+#define JA(parm1, parm2)					"\t\t ja" << parm1 << parm2 
+
+//if else 
+//test AX, 11111111111111111111111111111111b
+//
+//jz  f1
+//jnz f0
+//
+//f1 : add EDX, 0
+//	jmp cont
+//
+//	f0 : add EDX, 1
+// 
+// for
+
+//; EXAMPLE for (i = 3; i < 10; i = i + 2)
+//	MOV i, 3
+//	for1:
+//; code
+//add 	i, 2
+//cmp		i, 10
+//jb for1
+//je endfor1
+//ja endfor1
+//endfor1 :
 
 void CG::StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	OUT << ASMTEMPLATE << ENDL;
 	addLiterals(idTable, log);
 	addData(lexTable, idTable, log);
-	//protImplem --- return nummain in lextable;
-	mainImplem(lexTable, idTable, log, protImplem(lexTable, idTable, log), (char*)"main" );
+	protImplem(lexTable, idTable, log);
 }
 
-void CG::branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun)
+int CG::branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun)
 {
 }
 
@@ -147,13 +205,18 @@ void CG::addData(LT::LexTable& lexTable, IT::IdTable & idTable, Log::LOG log)
 	}
 }
 
-int CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log)
+void CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log)
 {
 	int numMain = 0;
 	OUT << ASM_CODE << ENDL;
-	for(int i = 0; i < lexTable.head; i++)
+	for (int i = 0; i < lexTable.head; i++)
 	{
-		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN) numMain = i;
+		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN)
+		{
+			OUT << PROC("Main");
+			i = releaseFun(lexTable, idTable, log, i, (char*)"Main");
+			OUT << ENDP("Main") << ENDL;
+		}
 		if (lexTable.table[i-1].lexema[GETLEX] == LEX_FUNCTION && lexTable.table[i].lexema[GETLEX] == LEX_ID)
 		{
 			int amountarg = getAmountPar(idTable, lexTable.table[i].idxTI);
@@ -189,38 +252,108 @@ int CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log)
 					}
 				}
 			}
-
 			i = releaseFun(lexTable, idTable, log, i, itentry.id);
 			OUT << ENDP(itentry.id) << ENDL;
-			
 		}
 	}
 	OUT << ENDL;
-	return numMain;
 }
 
 int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int pos, char *idfun)
 {
+	std::vector<LabelStruct> stackblock;
+	int numBlock = 0;
+
+//	std::string strblock;
 	for (int i = pos;; i++)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN || lexTable.table[i].lexema[GETLEX] == LEX_FUNCTION || i + 1 == lexTable.head)
 		{
-			OUT << RET << ENDL;
+			if (i + 1 == lexTable.head) OUT << EXITMAIN << ENDL
+			else OUT << RET << ENDL;
 			return i;
 		}
 		switch (lexTable.table[i].lexema[GETLEX])
 		{
+			case LEX_BRACELET: 
+				int posBlock = stackblock.back()._pos;
+				LT::CO co;
+				IT::Entry lentry, rentry;
+				switch (stackblock.back()._tb)
+				{
+				case typeBlock::f: break;
+				case typeBlock::w: 
+					for (;;posBlock++)
+					{
+						if (CURRLEX(posBlock) == LEX_RIGHTHESIS && CURRLEX(posBlock + 1) == LEX_LEFTBRACE) break;
+						if ((CURRLEX(posBlock) == LEX_ID || CURRLEX(posBlock) == LEX_LITERAL) && CURRLEX(posBlock + 1) == LEX_ÑOMPARISONOPER) lentry = GETIDFROMLT(posBlock);
+						if ((CURRLEX(posBlock) == LEX_ID || CURRLEX(posBlock) == LEX_LITERAL) && CURRLEX(posBlock - 1) == LEX_ÑOMPARISONOPER) rentry = GETIDFROMLT(posBlock);
+						if (CURRLEX(posBlock) == LEX_ÑOMPARISONOPER) co = CURRLE(posBlock).co;
+					}
+					CMPCHECK
+					switch (co)
+					{
+						case LT::CO::e:
+							OUT << JE(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JZ("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+						case LT::CO::ne: 
+							OUT << JZ(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JE("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+						case LT::CO::le: 
+							OUT << JA(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JE(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JB("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+						case LT::CO::me: 
+							OUT << JB(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JE(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JA("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+						case LT::CO::l: 
+							OUT << JA(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JB("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+						case LT::CO::m: 
+							OUT << JB(EMPTY, stackblock.back()._name) << ENDL
+							OUT << JA("end", stackblock.back()._name) << ENDL
+							OUT << "end" << LABEL(stackblock.back()._name) << ENDL
+							break;
+					}
+					/*jb until1
+					je enduntil1
+					ja enduntil1*/
+					break;
+				case typeBlock::ut: 
+					for(;;i++)
+					break;
+				case typeBlock::i: break;
+				case typeBlock::ul: break;
+				}
+				stackblock.pop_back();
+				break;
 			case LEX_INPUT: break;
 			case LEX_OUTPUT: break;
-			case LEX_CYCLE: break;
-			case LEX_FOR: break;
+			case LEX_CYCLE: 
+				if (CURRLE(i).cycling.cycle == LT::Cycle::ut) stackblock.push_back(LabelStruct("until" + numBlock, i, typeBlock::ut));
+				else stackblock.push_back(LabelStruct("while" + numBlock, i, typeBlock::w));
+				OUT << LABEL(stackblock.back()._name) << ENDL
+				break;
+			case LEX_FOR: 
+				stackblock.push_back(LabelStruct("for" + numBlock, i, typeBlock::ut));
+				break;
 			case LEX_EQUAL: break;
-			case LEX_BRANCH: break;
-			case LEX_ALIAS: break;
+			case LEX_BRANCH: 
+				if (CURRLE(i).branching.br== LT::Branch::i) stackblock.push_back(LabelStruct("if" + numBlock, i, typeBlock::i));
+				else stackblock.push_back(LabelStruct("unless" + numBlock, i, typeBlock::ul));
+				break;
 			case LEX_RETURN:
-			//isExpression(lexTable, idTable,log, i++, idfun);
-				
-					//std::vector<LT::Entry> vecEntr;
 				for (;; i++)
 				{
 					if (lexTable.table[i].lexema[GETLEX] == '^' || lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON) break;
@@ -297,40 +430,33 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 	return -1;
 }
 
-
-
-
-void CG::mainImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int numMain, char *idfun)
-{
-}
-
-void CG::isExpression(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num, char *idfun)
+int CG::isExpression(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num, char *idfun)
 {
 	int start = num;
 	
 }
 
-void CG::isInit(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num, char *idfun)
+int CG::isInit(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int num, char *idfun)
 {
 }
 
 
-void CG::branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
+int CG::branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
 {
 }
 
-void CG::cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
+int CG::cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
 {
 }
 
-void CG::cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
+int CG::cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
 {
 }
 
-void CG::cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
+int CG::cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
 {
 }
 
-void CG::genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
+int CG::genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun)
 {
 }

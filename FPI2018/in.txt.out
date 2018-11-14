@@ -7,25 +7,35 @@ ExitProcess PROTO : DWORD
 .stack 4096
 
 .const
+	INTLIT0		DWORD	21
 	FLLIT0		REAL4	3.54
-	INTLIT0		DWORD	0
-	INTLIT1		DWORD	1
-	INTLIT2		DWORD	23
-	INTLIT3		DWORD	3
-	INTLIT4		DWORD	13
+	INTLIT1		DWORD	0
+	INTLIT2		DWORD	1
+	INTLIT3		DWORD	23
+	INTLIT4		DWORD	3
+	INTLIT5		DWORD	13
 	FLLIT1		REAL4	23.45
-	INTLIT5		DWORD	10
+	INTLIT6		DWORD	10
 
 .data
 	adda			DWORD	0
 	addb			DWORD	0
-	addkek			REAL4	0.0
 	programabcdq			REAL4	0.0
 	programcount			DWORD	0
 
 .code
 	add PROC adda : DWORD, addb : DWORD 
-		PUSH 	addkek
+		PUSH 	adda
+		PUSH 	addb
+		POP 	EAX
+		POP 	EBX
+		ADD	EAX,EBX
+		PUSH 	EAX
+		PUSH 	INTLIT0
+		POP 	EAX
+		POP 	EBX
+		MUL	EBX
+		PUSH 	EAX
 		POP 	EAX
 		ret
 	add ENDP

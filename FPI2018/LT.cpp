@@ -236,6 +236,7 @@ namespace LT {
 					if (FST::execute(fstWhite) && flagBuffReady)
 					{
 						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						lexEntry.cycling.cycle = Cycle::w;
 						Add(lexTable, lexEntry);
 						flagCycle = true;
 						flagBuffReady = false;
@@ -245,6 +246,7 @@ namespace LT {
 					if (FST::execute(fstUntil) && flagBuffReady)
 					{
 						lexEntry = retLex(LEX_CYCLE, numLine, LT_TI_NULLIDX);
+						lexEntry.cycling.cycle = Cycle::ut;
 						Add(lexTable, lexEntry);
 						flagCycle = true;
 						flagBuffReady = false;
@@ -254,6 +256,7 @@ namespace LT {
 					if (FST::execute(fstUnless) && flagBuffReady)
 					{
 						lexEntry = retLex(LEX_BRANCH, numLine, LT_TI_NULLIDX);
+						lexEntry.branching.br = Branch::ul;
 						Add(lexTable, lexEntry);
 						flagBranch = true;
 						flagBuffReady = false;
@@ -263,6 +266,7 @@ namespace LT {
 					if (FST::execute(fstIf) && flagBuffReady)
 					{
 						lexEntry = retLex(LEX_BRANCH, numLine, LT_TI_NULLIDX);
+						lexEntry.branching.br = Branch::i;
 						Add(lexTable, lexEntry);
 						flagBranch = true;
 						flagBuffReady = false;

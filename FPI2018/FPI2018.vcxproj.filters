@@ -60,9 +60,6 @@
     <ClInclude Include="CodeGeneration.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Tetrads.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FPI2018.cpp">
@@ -108,9 +105,6 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CodeGeneration.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Tetrads.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

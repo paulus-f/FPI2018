@@ -6,7 +6,7 @@ int def add(int a, int b)
 Program 
 {
 	fl abcdq = 3.54;
-	int count = abcdq;
+	int count = 0;
 	for(count = 1;count < 23;count=count+3)
 	{
 		if(count == 13)

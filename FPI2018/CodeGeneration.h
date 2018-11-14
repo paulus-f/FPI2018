@@ -6,18 +6,41 @@
 #include <vector>
 namespace CG
 {
+	enum typeBlock
+	{
+		w = 1,
+		ut = 2,
+		f = 3,
+		i = 4,
+		ul = 5
+	};
+
+	struct LabelStruct
+	{
+		std::string _name;
+		int _pos;
+		typeBlock _tb;
+
+		LabelStruct(std::string name, int pos, typeBlock tb)
+		{
+			_name = name;
+			_pos = pos;
+			_tb = tb;
+		}
+	}LS;
+
 	void StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
-	void branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun);
 	void addLiterals(IT::IdTable& idTable, Log::LOG log );
 	void addData(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
-	int  protImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
+	void protImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  releaseFun(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int pos, char *idfun);
-	void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);
-	void isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	void genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	//void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);
+	int isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun);
+	int branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
+	int genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
 }
