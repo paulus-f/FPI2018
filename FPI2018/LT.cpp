@@ -50,7 +50,6 @@ namespace LT {
 		bool errorLex				= false;
 		bool boolOper				= false;
 		bool flagMain				= false;
-		//std::vector<int> *checkThesis = new std::vector<int>();
 		std::vector<int> checkThesis;
 		char buff[TI_STR_MAXSIZE];
 		char buffL[TI_STR_MAXSIZE];
@@ -516,9 +515,9 @@ namespace LT {
 				if (FST::execute(fstLogEqual))
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::e;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 2;
 					continue;
 				}
@@ -527,9 +526,9 @@ namespace LT {
 				if (FST::execute(fstLogNotEqual))
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::ne;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 2;
 					continue;
 				}
@@ -538,9 +537,9 @@ namespace LT {
 				if (FST::execute(fstLogMore) && strCode[i - 1] != 'p')
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::m;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 1;
 					continue;
 				}
@@ -549,9 +548,9 @@ namespace LT {
 				if (FST::execute(fstLogLess) && strCode[i - 1] != 'p')
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::l;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 1;
 					continue;
 				}
@@ -560,9 +559,9 @@ namespace LT {
 				if (FST::execute(fstLogLessEqual))
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::le;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 2;
 					continue;
 				}
@@ -571,9 +570,9 @@ namespace LT {
 				if (FST::execute(fstLogMoreEqual))
 				{
 					lexEntry = retLex(LEX_ÑOMPARISONOPER, numLine, LT_TI_NULLIDX);
-					Add(lexTable, lexEntry);
 					lexEntry.co = CO::me;
 					indCO = 0;
+					Add(lexTable, lexEntry);
 					i = i + 2;
 					continue;
 				}

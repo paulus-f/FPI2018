@@ -26,6 +26,7 @@ namespace IT
 	struct Entry 
 	{
 		int idxfirstLE;
+		int countlex = -1;
 		char id[ID_MAXSIZE];
 		IDDATATYPE iddatatype;
 		IDTYPE idtype;
@@ -52,13 +53,13 @@ namespace IT
 		Entry* table;
 	};
 
+	void retIDlit(IdTable &idTable, int numLT, char* out);
 	void addFun(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType);
 	int getAmountPar(IdTable &idTable, int num);
 	void addVarOrPar(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num);
-
 	bool isFun(IdTable  &idTable, LT::Entry lexEntry);
-
-	int getIDLIT(IdTable idtable, IDDATATYPE type, IT::Entry itentry);
+	int getIDLIT(IdTable &idtable, IDDATATYPE type, IT::Entry itentry);
+	void retIDwithScope(IdTable &idTable, LT::LexTable& lexTable, int numLT, char* out);
 
 
 	IdTable Create(

@@ -5,23 +5,9 @@ int def add(int a, int b)
 
 Program 
 {
-	fl flnum = 3.54;
-	str strHello = "lol";
-	if(kek == count)
+	int b = 0;
+	while(b < 10)
 	{
-		int cthree = strlen(kek);
+		b=b+1;	
 	}
-	
-	for(count = 1;count < 23;count=count)
-	{
-		if(count == 13)
-		{
-			abcdq = 23.45;
-		}
-		alias
-		{
-			count = count +10;
-		}
-	}
-	p< abcdq;
 }

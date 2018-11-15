@@ -8,7 +8,7 @@
 #include <fstream>
 
 namespace IT {
-	int getIDLIT(IT::IdTable idtable, IDDATATYPE type, IT::Entry itentry)
+	int getIDLIT(IT::IdTable& idtable, IDDATATYPE type, IT::Entry itentry)
 	{
 		for (int i = 0, j =0; i < idtable.head; i++)
 		{
@@ -16,6 +16,69 @@ namespace IT {
 			if (idtable.table[i].iddatatype ==  itentry.iddatatype && idtable.table[i].idtype == IDTYPE::L) j++;
 		}
 		return -1;
+	}
+
+	void retIDwithScope(IdTable& idTable, LT::LexTable& lexTable, int numLT, char *out)
+	{
+		for (int i = 0; i < idTable.head; i++)
+		{
+			if (idTable.table[i].idxfirstLE == numLT)
+			{
+				if (idTable.table[i].scope == SCOPE::G) strcpy(out, idTable.table[i].id);
+				else
+				{
+					for (int j = i; j >= 0; j--)
+					{
+						if (lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
+						{
+							char buff[300];
+							strcpy(buff, idTable.table[j].id);
+							strcat(buff, idTable.table[i].id);
+							strcpy(out, buff);
+						}
+					}
+				}
+			}
+		}
+	}
+	void retIDlit(IdTable & idTable, int numLT, char *out)
+	{
+		for (int i = 0; i < idTable.head; i++)
+		{
+			if (idTable.table[i].idxfirstLE == numLT)
+			{
+				char buffnum[30];
+				char bufftype[30];;
+
+				switch (idTable.table[i].iddatatype)
+				{
+					case IDDATATYPE::FL: 
+						strcpy(bufftype, "FLLIT");
+						_itoa(idTable.table[i].countlex, buffnum, 10);
+						strcat(bufftype, buffnum);
+						strcpy(out, bufftype);
+						return;
+					case IDDATATYPE::BL:
+						strcpy(bufftype, "BLLIT");
+						_itoa(idTable.table[i].countlex, buffnum, 10);
+						strcat(bufftype, buffnum);
+						strcpy(out, bufftype);
+						return;
+					case IDDATATYPE::INT:
+						strcpy(bufftype, "INTLIT");
+						_itoa(idTable.table[i].countlex, buffnum, 10);
+						strcat(bufftype, buffnum);
+						strcpy(out, bufftype);
+						return;
+					case IDDATATYPE::STR:
+						strcpy(bufftype, "STRLIT");
+						_itoa(idTable.table[i].countlex, buffnum, 10);
+						strcat(bufftype, buffnum);
+						strcpy(out, bufftype);
+						return;
+				}
+			}
+		}
 	}
 	void addFun(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType)
 	{
