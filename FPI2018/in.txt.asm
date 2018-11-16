@@ -9,8 +9,11 @@ ExitProcess PROTO : DWORD
 .const
 	INTLIT0		DWORD	10
 	INTLIT1		DWORD	0
-	INTLIT2		DWORD	10
+	INTLIT2		DWORD	0
 	INTLIT3		DWORD	1
+	INTLIT4		DWORD	12
+	INTLIT5		DWORD	20
+	INTLIT6		DWORD	15
 
 .data
 	adda			DWORD	0
@@ -35,10 +38,17 @@ ExitProcess PROTO : DWORD
 	add ENDP
 	Main PROC 
 while0:
-		 cmp		programb,INTLIT2
+		 cmp	programb,INTLIT2
 		 ja		while0
 		 jb		endwhile0
 endwhile0:
+		 cmp	programb,INTLIT4
+		 jb		if01
+		 ja		endif1
+if01:
+		 jmp		endalias1
+endif1:
+endalias1:
 	push 0
 	call ExitProcess
 

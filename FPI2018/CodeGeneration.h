@@ -12,7 +12,8 @@ namespace CG
 		ut = 2,
 		f = 3,
 		i = 4,
-		ul = 5
+		ul = 5,
+		a = 6
 	};
 
 	struct LabelStructFPI
@@ -36,6 +37,8 @@ namespace CG
 	void addData(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	void protImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  releaseFun(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int pos, char *idfun);
+	void jumpfun(LT::CO co, std::string strlable, Log::LOG log);
+	void cmpfun(IT::Entry le, IT::Entry re, char* idname1, char* idname2, LT::LexTable lexTable, IT::IdTable idTable, Log::LOG log);
 	////void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);
 	//*int isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
 	//int isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);

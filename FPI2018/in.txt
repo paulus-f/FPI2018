@@ -6,8 +6,17 @@ int def add(int a, int b)
 Program 
 {
 	int b = 0;
-	while(b < 10)
+	while(b<10)
 	{
 		b=b+1;	
+	}
+	
+	if(b > 12)
+	{
+		b=b+20;
+	}
+	alias 
+	{
+		b=b+15;
 	}
 }
