@@ -103,8 +103,10 @@ namespace Polska
 			case LEX_ID: case LEX_LITERAL: case EQUAL:
 				if(IT::isFun(idTable, tempVarLexTable.table[i]))
 				{
+					int posFun = posLT;
 					LT::Entry entryFun = tempVarLexTable.table[i];
 					entryFun.lexema[GETLEX] = '@';
+					lexTable.table[posLT++] = entryFun;
 					int cnt = 0;
 					i++;
 					while(tempVarLexTable.table[i].lexema[GETLEX] != RIGHTHESIS)
@@ -116,8 +118,7 @@ namespace Polska
 						}
 						i++;
 					}
-					entryFun.amountArg = cnt;
-					lexTable.table[posLT++] = entryFun;
+					lexTable.table[posFun].amountArg = cnt;
 				}
 				else
 				{

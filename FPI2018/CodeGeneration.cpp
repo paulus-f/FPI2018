@@ -48,14 +48,15 @@
 #define ENDP(name)						'\t' << name << " ENDP"	
 #define EMPTY							""
 #define ISGLOBAL(str)					str[0] == '$'
-#define EXITMAIN						"\tpush 0\n\tcall ExitProcess\n"
+#define EXITMAIN						"\tPUSH 0\n\tCALL ExitProcess\n"
 #define ENDMAIN							"end main"
-#define CMP(par1, par2, par3, par4) 	"\t\t cmp\t"<< par1 << par2 << ',' << par3 << par4
-#define JB(parm1, parm2)					"\t\t jb\t\t" << parm1 << parm2 
-#define JE(parm1, parm2)					"\t\t je\t\t" << parm1 << parm2 
-#define JZ(parm1, parm2)					"\t\t jz\t\t" << parm1 << parm2 
-#define JA(parm1, parm2)					"\t\t ja\t\t" << parm1 << parm2 
-#define JMP(parm1, parm2)					"\t\t jmp\t\t" << parm1 << parm2 
+#define CMP(par1, par2, par3, par4) 	"\t\tCMP\t"<< par1 << par2 << ',' << par3 << par4
+#define JB(parm1, parm2)				"\t\tJB\t\t" << parm1 << parm2 
+#define JE(parm1, parm2)				"\t\tJE\t\t" << parm1 << parm2 
+#define JZ(parm1, parm2)				"\t\tJZ\t\t" << parm1 << parm2 
+#define JA(parm1, parm2)				"\t\tJA\t\t" << parm1 << parm2 
+#define JMP(parm1, parm2)				"\t\tJMP\t\t" << parm1 << parm2 
+#define CALL(parm)						"\t\tCALL\t\t" << parm
 //; EXAMPLE for (i = 3; i < 10; i = i + 2)
 //	MOV i, 3
 //	for1:
@@ -307,15 +308,39 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 					IT::retIDwithScope(idTable, lexTable, numID, idname2);
 					for (;; i++)
 					{
+						
 						if (CURRLEX(i) == '^' || CURRLEX(i) == LEX_SEMICOLON || (CURRLEX(i) == LEX_RIGHTHESIS && CURRLEX(i+1) == LEX_LEFTBRACE)) break;
 						if (CURRLEX(i) == LEX_ID)
 						{
-							IT::retIDwithScope(idTable,lexTable,i, idname1);
+							IT::retIDwithScope(idTable,lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
 							OUT << PUSH(idname1) << ENDL
+						}
+						if (CURRLEX(i) == '@')
+						{
+							int posFun = i;
+							for (int j = 0; j < CURRLE(posFun).amountArg;i++)
+							{
+								if (CURRLEX(i) == LEX_LITERAL)
+								{
+									IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+									OUT << PUSH(idname1) << ENDL
+									j++;
+								}
+								if (CURRLEX(i) == LEX_ID)
+								{
+									IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
+									OUT << PUSH(idname1) << ENDL
+									j++;
+								}
+							}
+							OUT << CALL(GETIDFROMLT(posFun).id) << ENDL;
+							OUT << PUSH("EAX") << ENDL;
+							/*IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
+							OUT << PUSH(idname1) << ENDL*/
 						}
 						if (CURRLEX(i) == LEX_LITERAL)
 						{
-							IT::retIDlit(idTable, i, idname1);
+							IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
 							OUT << PUSH(idname1) << ENDL
 						}
 						if (CURRLEX(i) == LEX_OPERATION)
@@ -324,28 +349,28 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 							{
 							case PLUS:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLADD("EAX", "EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLADD("EAX", "EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case MINUS:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLSUB("EAX", "EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLSUB("EAX", "EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case STAR:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLMUL("EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLMUL("EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case DIRSLASH:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLDIV("EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLDIV("EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							}
 						}
 					}
@@ -418,28 +443,28 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 							{
 							case PLUS:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLADD("EAX", "EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLADD("EAX", "EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case MINUS:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLSUB("EAX", "EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLSUB("EAX", "EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case STAR:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLMUL("EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLMUL("EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							case DIRSLASH:
 								OUT << POP("EAX") << ENDL
-									OUT << POP("EBX") << ENDL
-									OUT << GLDIV("EBX") << ENDL
-									OUT << PUSH("EAX") << ENDL
-									break;
+								OUT << POP("EBX") << ENDL
+								OUT << GLDIV("EBX") << ENDL
+								OUT << PUSH("EAX") << ENDL
+								break;
 							}
 						}
 					}

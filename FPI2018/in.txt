@@ -5,7 +5,7 @@ int def add(int a, int b)
 
 Program 
 {
-	int b = 0;
+	int b = add(10,60);
 	while(b<10)
 	{
 		b=b+1;	
