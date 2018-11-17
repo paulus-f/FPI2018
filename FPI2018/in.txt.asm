@@ -37,17 +37,44 @@ ExitProcess PROTO : DWORD
 		ret
 	add ENDP
 	Main PROC 
+		PUSH 	INTLIT1
+		POP 	EAX
+		MOV	programb,EAX
 while0:
+		PUSH 	INTLIT1
+		PUSH 	INTLIT1
+		POP 	EAX
+		POP 	EBX
+		ADD	EAX,EBX
+		PUSH 	EAX
+		POP 	EAX
+		MOV	programb,EAX
 		 cmp	programb,INTLIT2
 		 ja		while0
 		 jb		endwhile0
 endwhile0:
 		 cmp	programb,INTLIT4
 		 jb		if01
-		 ja		endif1
+		 ja		endif01
 if01:
+		PUSH 	programb
+		PUSH 	programb
+		POP 	EAX
+		POP 	EBX
+		ADD	EAX,EBX
+		PUSH 	EAX
+		POP 	EAX
+		MOV	programb,EAX
 		 jmp		endalias1
-endif1:
+endif01:
+		PUSH 	programb
+		PUSH 	programb
+		POP 	EAX
+		POP 	EBX
+		ADD	EAX,EBX
+		PUSH 	EAX
+		POP 	EAX
+		MOV	programb,EAX
 endalias1:
 	push 0
 	call ExitProcess

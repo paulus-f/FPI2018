@@ -56,21 +56,6 @@
 #define JZ(parm1, parm2)					"\t\t jz\t\t" << parm1 << parm2 
 #define JA(parm1, parm2)					"\t\t ja\t\t" << parm1 << parm2 
 #define JMP(parm1, parm2)					"\t\t jmp\t\t" << parm1 << parm2 
-
-//if else 
-//test AX, 11111111111111111111111111111111b
-//
-//jz  f1
-//jnz f0
-//
-//f1 : add EDX, 0
-//	jmp cont
-//
-//	f0 : add EDX, 1
-// cont:	
-// add EBX, 2
-// for
-
 //; EXAMPLE for (i = 3; i < 10; i = i + 2)
 //	MOV i, 3
 //	for1:
@@ -81,7 +66,6 @@
 //je endfor1
 //ja endfor1
 //endfor1 :
-
 void CG::StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	OUT << ASMTEMPLATE << ENDL;
@@ -241,12 +225,13 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 	std::vector<LabelStructFPI> stackblock;
 	int numBlock = 0;
 	int posBlock = 0;
+	int numID = 0;
 	std::string nameBlock;
 	LT::CO co;
 	IT::Entry lentry, rentry;
 	char buffint[20];
-	char *idname1 = new char [255];
-	char *idname2 = new char[255];
+	char *idname1 = new char [300];
+	char *idname2 = new char[300];
 	for (int i = pos+1;; i++)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_MAIN || lexTable.table[i].lexema[GETLEX] == LEX_FUNCTION || i + 1 == lexTable.head)
@@ -313,7 +298,66 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				nameBlock = "for" + std::string(buffint);
 				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::ut));
 				break;
-			case LEX_EQUAL: break;
+			case LEX_EQUAL: 
+				switch (GETIDFROMLT(i-1).iddatatype)
+				{
+				case IT::IDDATATYPE::INT:
+				case IT::IDDATATYPE::FL:
+					numID = GETIDFROMLT(i - 1).idxfirstLE;
+					IT::retIDwithScope(idTable, lexTable, numID, idname2);
+					for (;; i++)
+					{
+						if (CURRLEX(i) == '^' || CURRLEX(i) == LEX_SEMICOLON || (CURRLEX(i) == LEX_RIGHTHESIS && CURRLEX(i+1) == LEX_LEFTBRACE)) break;
+						if (CURRLEX(i) == LEX_ID)
+						{
+							IT::retIDwithScope(idTable,lexTable,i, idname1);
+							OUT << PUSH(idname1) << ENDL
+						}
+						if (CURRLEX(i) == LEX_LITERAL)
+						{
+							IT::retIDlit(idTable, i, idname1);
+							OUT << PUSH(idname1) << ENDL
+						}
+						if (CURRLEX(i) == LEX_OPERATION)
+						{
+							switch (CURRLE(i).operation)
+							{
+							case PLUS:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLADD("EAX", "EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case MINUS:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLSUB("EAX", "EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case STAR:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLMUL("EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case DIRSLASH:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLDIV("EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							}
+						}
+					}
+					OUT << POP("EAX") << ENDL;
+					OUT << MOV(EMPTY, idname2, EMPTY, "EAX") << ENDL
+					break;
+				case IT::IDDATATYPE::STR:
+					break;
+				case IT::IDDATATYPE::BL:
+					break;
+				}
+				break;
 			case LEX_BRANCH: 
 				if (CURRLE(i).branching.br == LT::Branch::i)
 				{
@@ -338,75 +382,73 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::a));
 				break;
 			case LEX_RETURN:
-				for (;; i++)
+				switch (GETIDFROMLT(i+1).iddatatype)
 				{
-					if (lexTable.table[i].lexema[GETLEX] == '^' || lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON) break;
-					if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
+				case IT::IDDATATYPE::INT:
+				case IT::IDDATATYPE::FL:
+					for (;; i++)
 					{
-						if (ISGLOBAL(GETIDFROMLT(i).id)) OUT << PUSH(GETIDFROMLT(i).id) << ENDL
-						else OUT << PUSH2(idfun, GETIDFROMLT(i).id) << ENDL;
-					}
-					if (lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
-					{
-						switch (GETIDFROMLT(i).iddatatype)
+						if (lexTable.table[i].lexema[GETLEX] == '^' || lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON) break;
+						if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
 						{
-						case IT::IDDATATYPE::INT: 
-							OUT << PUSH2("INTLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::INT, GETIDFROMLT(i))) << ENDL
-							break;
-						case IT::IDDATATYPE::STR:
-							OUT << PUSH2("STRLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::STR, GETIDFROMLT(i))) << ENDL
-							break;
-						case IT::IDDATATYPE::FL:
-							OUT << PUSH2("FLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::FL, GETIDFROMLT(i))) << ENDL
-							break;
-						case IT::IDDATATYPE::BL:
-							OUT << PUSH2("BLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::BL, GETIDFROMLT(i))) << ENDL
-							break;
+							if (ISGLOBAL(GETIDFROMLT(i).id)) OUT << PUSH(GETIDFROMLT(i).id) << ENDL
+							else OUT << PUSH2(idfun, GETIDFROMLT(i).id) << ENDL;
+						}
+						if (lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
+						{
+							switch (GETIDFROMLT(i).iddatatype)
+							{
+							case IT::IDDATATYPE::INT:
+								OUT << PUSH2("INTLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::INT, GETIDFROMLT(i))) << ENDL
+									break;
+							case IT::IDDATATYPE::STR:
+								OUT << PUSH2("STRLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::STR, GETIDFROMLT(i))) << ENDL
+									break;
+							case IT::IDDATATYPE::FL:
+								OUT << PUSH2("FLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::FL, GETIDFROMLT(i))) << ENDL
+									break;
+							case IT::IDDATATYPE::BL:
+								OUT << PUSH2("BLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::BL, GETIDFROMLT(i))) << ENDL
+									break;
+							}
+						}
+						if (lexTable.table[i].lexema[GETLEX] == LEX_OPERATION)
+						{
+							switch (lexTable.table[i].operation)
+							{
+							case PLUS:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLADD("EAX", "EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case MINUS:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLSUB("EAX", "EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case STAR:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLMUL("EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							case DIRSLASH:
+								OUT << POP("EAX") << ENDL
+									OUT << POP("EBX") << ENDL
+									OUT << GLDIV("EBX") << ENDL
+									OUT << PUSH("EAX") << ENDL
+									break;
+							}
 						}
 					}
-					if (lexTable.table[i].lexema[GETLEX] == LEX_OPERATION)
-					{
-						switch (lexTable.table[i].operation)
-						{
-						case PLUS:
-							OUT << POP("EAX") << ENDL
-							OUT << POP("EBX") << ENDL
-							OUT << GLADD("EAX", "EBX") << ENDL
-							OUT << PUSH("EAX") << ENDL
-							break;
-						case MINUS:
-							OUT << POP("EAX") << ENDL
-							OUT << POP("EBX") << ENDL
-							OUT << GLSUB("EAX", "EBX") << ENDL
-							OUT << PUSH("EAX") << ENDL
-							break;
-						case STAR:
-							OUT << POP("EAX") << ENDL
-							OUT << POP("EBX") << ENDL
-							OUT << GLMUL("EBX") << ENDL
-							OUT << PUSH("EAX") << ENDL
-							break;
-						case DIRSLASH:
-							OUT << POP("EAX") << ENDL
-							OUT << POP("EBX") << ENDL
-							OUT << GLDIV("EBX") << ENDL
-							OUT << PUSH("EAX") << ENDL
-							break;
-						}
-					}	
+					break;
+				case IT::IDDATATYPE::STR:
+					break;
+				case IT::IDDATATYPE::BL:
+					break;
 				}
-
-			/*	if (GETIDFROMLT(lexTable.table[i].idxTI).iddatatype == IT::IDDATATYPE::BL)
-				{
-					for (int count = 0;; i++)
-					{
-						if (lexTable.table[i].lexema[GETLEX] == LEX_ÑOMPARISONOPER)
-						{
-
-						}
-					}
-				}*/
-
 				OUT << POP("EAX") << ENDL;
 			break;
 		}

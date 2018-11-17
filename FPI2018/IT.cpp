@@ -35,6 +35,7 @@ namespace IT {
 							strcpy(buff, idTable.table[j].id);
 							strcat(buff, idTable.table[i].id);
 							strcpy(out, buff);
+							break;
 						}
 					}
 				}
@@ -136,7 +137,7 @@ namespace IT {
 		{
 			indType.idtype = IT::V;
 		}
-		indType.idxfirstLE = lexTable.head;
+		indType.idxfirstLE = lexTable.head - 1;
 		if (!strcmp(buffType, INTEGER))
 		{
 			indType.iddatatype = IT::INT;

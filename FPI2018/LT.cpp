@@ -288,7 +288,7 @@ namespace LT {
 
 						IT::Entry litTrueid;
 						litTrueid.scope = IT::SCOPE::LIT;
-						litTrueid.idxfirstLE = lexTable.head;
+						litTrueid.idxfirstLE = lexTable.head - 1;
 						litTrueid.iddatatype = IT::BL;
 						litTrueid.idtype = IT::L;
 						strcpy(litTrueid.id, "BOOL LIT");
@@ -305,7 +305,7 @@ namespace LT {
 
 						IT::Entry litFalse;
 						litFalse.scope = IT::SCOPE::LIT;
-						litFalse.idxfirstLE = lexTable.head;
+						litFalse.idxfirstLE = lexTable.head - 1;
 						litFalse.iddatatype = IT::BL;
 						litFalse.idtype = IT::L;
 						strcpy(litFalse.id, "BOOL LIT");
@@ -322,7 +322,7 @@ namespace LT {
 
 						IT::Entry litIntId;
 						litIntId.scope = IT::SCOPE::LIT;
-						litIntId.idxfirstLE = lexTable.head;
+						litIntId.idxfirstLE = lexTable.head - 1;
 						litIntId.iddatatype = IT::INT;
 						litIntId.idtype = IT::L;
 						strcpy(litIntId.id, "INT LIT");
@@ -339,7 +339,7 @@ namespace LT {
 
 						IT::Entry litFlid;
 						litFlid.scope = IT::SCOPE::LIT;
-						litFlid.idxfirstLE = lexTable.head;
+						litFlid.idxfirstLE = lexTable.head-1;
 						litFlid.iddatatype = IT::FL;
 						litFlid.idtype = IT::L;
 						strcpy(litFlid.id, "FL LIT");
