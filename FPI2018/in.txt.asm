@@ -8,13 +8,14 @@ ExitProcess PROTO : DWORD
 
 .const
 	INTLIT0		DWORD	10
-	INTLIT1		DWORD	10
-	INTLIT2		DWORD	60
-	INTLIT3		DWORD	0
-	INTLIT4		DWORD	1
-	INTLIT5		DWORD	12
-	INTLIT6		DWORD	20
-	INTLIT7		DWORD	15
+	INTLIT1		DWORD	30
+	INTLIT2		DWORD	40
+	INTLIT3		DWORD	2
+	INTLIT4		DWORD	10
+	INTLIT5		DWORD	1
+	INTLIT6		DWORD	12
+	INTLIT7		DWORD	20
+	INTLIT8		DWORD	15
 
 .data
 	adda			DWORD	0
@@ -25,63 +26,75 @@ ExitProcess PROTO : DWORD
 	add PROC adda : DWORD, addb : DWORD 
 		PUSH 	adda
 		PUSH 	addb
-		POP 	EAX
 		POP 	EBX
+		POP 	EAX
 		ADD	EAX,EBX
 		PUSH 	EAX
 		PUSH 	INTLIT0
-		POP 	EAX
 		POP 	EBX
+		POP 	EAX
 		DIV	EBX
 		PUSH 	EAX
 		POP 	EAX
 		ret
 	add ENDP
-	Main PROC 
+	main PROC 
 		PUSH 	INTLIT1
 		PUSH 	INTLIT2
 		CALL		add
 		PUSH 	EAX
+		PUSH 	INTLIT3
+		POP 	EBX
+		POP 	EAX
+		MUL	EBX
+		MOV	EDX,0
+		MOV	EBX,EAX
+		PUSH 	EBX
 		POP 	EAX
 		MOV	programb,EAX
 while0:
 		PUSH 	programb
-		PUSH 	INTLIT4
-		POP 	EAX
+		PUSH 	INTLIT5
+		POP 	EDX
 		POP 	EBX
-		ADD	EAX,EBX
-		PUSH 	EAX
+		ADD	EBX,EDX
+		PUSH 	EBX
 		POP 	EAX
 		MOV	programb,EAX
-		CMP	programb,INTLIT3
-		JA		while0
-		JB		endwhile0
+		MOV	EAX,programb
+		CMP	EAX,INTLIT4
+		JB		while0
+		JA		endwhile0
+
 endwhile0:
-		CMP	programb,INTLIT5
-		JB		if01
-		JA		endif01
+		MOV	EAX,programb
+		CMP	EAX,INTLIT6
+		JA		if01
+		JB		endif01
+
 if01:
 		PUSH 	programb
-		PUSH 	INTLIT6
-		POP 	EAX
+		PUSH 	INTLIT7
+		POP 	EDX
 		POP 	EBX
-		ADD	EAX,EBX
-		PUSH 	EAX
+		ADD	EBX,EDX
+		PUSH 	EBX
 		POP 	EAX
 		MOV	programb,EAX
 		JMP		endalias1
 endif01:
 		PUSH 	programb
-		PUSH 	INTLIT7
-		POP 	EAX
+		PUSH 	INTLIT8
+		POP 	EDX
 		POP 	EBX
-		ADD	EAX,EBX
-		PUSH 	EAX
+		ADD	EBX,EDX
+		PUSH 	EBX
 		POP 	EAX
 		MOV	programb,EAX
 endalias1:
 	PUSH 0
 	CALL ExitProcess
 
-	Main ENDP
+	main ENDP
+end main
 

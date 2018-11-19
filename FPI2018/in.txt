@@ -5,8 +5,8 @@ int def add(int a, int b)
 
 Program 
 {
-	int b = add(10,60);
-	while(b<10)
+	int b = add(30, 40) * 2;
+	while(b< 10)
 	{
 		b=b+1;	
 	}

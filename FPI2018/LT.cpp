@@ -551,7 +551,6 @@ namespace LT {
 					lexEntry.co = CO::l;
 					indCO = 0;
 					Add(lexTable, lexEntry);
-					i = i + 1;
 					continue;
 				}
 
