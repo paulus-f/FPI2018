@@ -57,16 +57,7 @@
 #define JA(parm1, parm2)				"\t\tJA\t\t" << parm1 << parm2 
 #define JMP(parm1, parm2)				"\t\tJMP\t\t" << parm1 << parm2 
 #define CALL(parm)						"\t\tCALL\t\t" << parm
-//; EXAMPLE for (i = 3; i < 10; i = i + 2)
-//	MOV i, 3
-//	for1:
-//; code
-//add 	i, 2
-//cmp		i, 10
-//jb for1
-//je endfor1
-//ja endfor1
-//endfor1 :
+
 void CG::StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	OUT << ASMTEMPLATE << ENDL;
@@ -252,7 +243,25 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				posBlock = stackblock.back()._posstruct;
 				switch (stackblock.back()._tbstruct)
 				{
-				case typeBlock::f: break;
+				case typeBlock::f: 
+					//; EXAMPLE for (i = 3; i < 10; i = i + 2)
+					//	MOV i, 3
+					//	for1:
+					//; code
+					//add 	i, 2
+					//cmp		i, 10
+					//jb for1
+					//je endfor1
+					//ja endfor1
+					//endfor1 :
+					doExpression(lexTable, idTable, posBlock + 11, idname1, idname2, log);
+					lentry = GETIDFROMLT(posBlock + 6);
+					rentry = GETIDFROMLT(posBlock + 8);
+					co = CURRLE(posBlock + 7).co;
+					cmpfun(lentry, rentry, idname1, idname2, lexTable, idTable, log);
+					jumpfun(co, stackblock.back()._namestruct, log);
+					OUT << "end" << LABEL(stackblock.back()._namestruct) << ENDL
+					break;
 				case typeBlock::w:
 				case typeBlock::ut: 
 					lentry = GETIDFROMLT(posBlock + 2);
@@ -299,7 +308,13 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 			case LEX_FOR: 
 				_itoa(numBlock++, buffint, 10);
 				nameBlock = "for" + std::string(buffint);
-				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::ut));
+				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::f));
+				i = doExpression(lexTable, idTable, i + 3, idname1, idname2, log);
+				OUT << LABEL(stackblock.back()._namestruct) << ENDL
+				for (;; i++)
+				{
+					if (CURRLEX(i) == LEX_LEFTBRACE) break;
+				}
 				break;
 			case LEX_EQUAL: 
 				i =  doExpression(lexTable, idTable, i, idname1, idname2, log);

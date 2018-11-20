@@ -146,6 +146,7 @@ namespace Polska
 
 		for (int i = posLT; lexTable.table[i].lexema[GETLEX] != SEMICOLON; ++i)
 		{
+			if (lexTable.table[i].lexema[GETLEX] == RIGHTHESIS && lexTable.table[i + 1].lexema[GETLEX] == LEFTBRACET) break;
 			lexTable.table[posLT++] = LT::retLex('^', -1, -1);
 		}
 

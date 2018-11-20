@@ -19,3 +19,18 @@ Program
 	}
 	p< abcdq;
 }
+
+	while(b< 10)
+	{
+		int c = 3;
+		b=b+c+1;	
+	}
+	
+	if(b > 12)
+	{
+		b=b+20;
+	}
+	alias 
+	{
+		b=b+15;
+	}

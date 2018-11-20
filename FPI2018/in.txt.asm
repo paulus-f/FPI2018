@@ -11,18 +11,18 @@ ExitProcess PROTO : DWORD
 	INTLIT1		DWORD	30
 	INTLIT2		DWORD	40
 	INTLIT3		DWORD	2
-	INTLIT4		DWORD	10
-	INTLIT5		DWORD	3
-	INTLIT6		DWORD	1
-	INTLIT7		DWORD	12
-	INTLIT8		DWORD	20
-	INTLIT9		DWORD	15
+	INTLIT4		DWORD	1
+	INTLIT5		DWORD	1
+	INTLIT6		DWORD	0
+	INTLIT7		DWORD	10
+	INTLIT8		DWORD	1
+	INTLIT9		DWORD	2
 
 .data
 	foo__adda			DWORD	0
 	foo__addb			DWORD	0
 	foo__programb			DWORD	0
-	lb_foo__programc			DWORD	0
+	foo__programi			DWORD	0
 
 .code
 	foo__add PROC foo__adda : DWORD, foo__addb : DWORD 
@@ -57,58 +57,43 @@ ExitProcess PROTO : DWORD
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-while0:
-		PUSH 	lb_foo__programc
+		PUSH 	foo__programi
+		PUSH 	INTLIT4
+		POP 	EAX
+		MOV	foo__programi,EAX
+		PUSH 	foo__programb
 		PUSH 	INTLIT5
 		POP 	EAX
-		MOV	lb_foo__programc,EAX
-		PUSH 	foo__programb
-		PUSH 	foo__programb
-		PUSH 	lb_foo__programc
-		POP 	EDX
-		POP 	EBX
-		ADD	EBX,EDX
-		PUSH 	EBX
+		MOV	foo__programb,EAX
+		PUSH 	foo__programi
 		PUSH 	INTLIT6
-		POP 	EDX
+		POP 	EAX
+for0:
+		PUSH 	foo__programb
+		PUSH 	foo__programb
+		PUSH 	INTLIT9
 		POP 	EBX
-		ADD	EBX,EDX
+		POP 	EAX
+		MOV	EDX,0
+		MUL	EBX
+		MOV	EBX,EAX
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-		MOV	EAX,foo__programb
-		CMP	EAX,INTLIT4
-		JB		while0
-		JA		endwhile0
-
-endwhile0:
-		MOV	EAX,foo__programb
-		CMP	EAX,INTLIT7
-		JA		if01
-		JB		endif01
-
-if01:
-		PUSH 	foo__programb
-		PUSH 	foo__programb
+		PUSH 	foo__programi
+		PUSH 	foo__programi
 		PUSH 	INTLIT8
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
 		PUSH 	EBX
 		POP 	EAX
-		MOV	foo__programb,EAX
-		JMP		endalias1
-endif01:
-		PUSH 	foo__programb
-		PUSH 	foo__programb
-		PUSH 	INTLIT9
-		POP 	EDX
-		POP 	EBX
-		ADD	EBX,EDX
-		PUSH 	EBX
-		POP 	EAX
-		MOV	foo__programb,EAX
-endalias1:
+		MOV	EAX,foo__programi
+		CMP	EAX,INTLIT7
+		JB		for0
+		JA		endfor0
+
+endfor0:
 	PUSH 0
 	CALL ExitProcess
 
