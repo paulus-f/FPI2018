@@ -112,32 +112,31 @@ void CG::addLiterals(IT::IdTable& idTable, Log::LOG log)
 void CG::addData(LT::LexTable& lexTable, IT::IdTable & idTable, Log::LOG log)
 {
 	OUT << ASM_DATA << ENDL;
-	char fun[255];
+	char fun[300];
 	for (int i = 0; i < idTable.head; ++i)
 	{
 		if (idTable.table[i].idtype == IT::IDTYPE::F)
 		{
-			strcpy(fun, idTable.table[i].id);
+			strcpy(fun, "foo__");
+			strcat(fun, idTable.table[i].id);
 		}
 		if (idTable.table[i].idtype == IT::IDTYPE::V)
 		{
+			char idName[300];
+			IT::retIDwithScope(idTable, lexTable, idTable.table[i].idxfirstLE, idName);
 			switch (idTable.table[i].iddatatype)
 			{
 			case IT::INT:
-				if(ISGLOBAL(idTable.table[i].id)) OUT << VARINT(fun, idTable.table[i].id) << ENDL
-				else	OUT << VRINT(fun,idTable.table[i].id) << ENDL
+				OUT << VRINT(EMPTY,idName) << ENDL;
 				break;
 			case IT::STR:
-				if (ISGLOBAL(idTable.table[i].id)) OUT << VARSTR(fun, idTable.table[i].id) << ENDL
-				else	OUT << VRSTR(fun, idTable.table[i].id) << ENDL
+				OUT << VRSTR(EMPTY, idName) << ENDL;
 				break;
 			case IT::FL:
-				if (ISGLOBAL(idTable.table[i].id)) OUT << VARFL(fun, idTable.table[i].id) << ENDL
-				else	OUT << VRFL(fun, idTable.table[i].id) << ENDL
+				OUT << VRFL(EMPTY, idName) << ENDL;
 				break;
 			case IT::BL:
-				if (ISGLOBAL(idTable.table[i].id)) OUT << VARBL(fun, idTable.table[i].id) << ENDL
-				else	OUT << VRBL(fun, idTable.table[i].id) << ENDL
+				OUT << VRBL(EMPTY, idName) << ENDL; 
 				break;
 			}
 		}
@@ -151,16 +150,16 @@ void CG::addData(LT::LexTable& lexTable, IT::IdTable & idTable, Log::LOG log)
 			switch (idTable.table[i].iddatatype)
 			{
 			case IT::INT:
-				OUT << DEFPINT(idTable.table[numFun].id, idTable.table[i].id) << ENDL;
+				OUT << DEFPINT(fun, idTable.table[i].id) << ENDL;
 				break;
 			case IT::STR:
-				OUT << DEFPSTR(idTable.table[numFun].id, idTable.table[i].id) << ENDL;
+				OUT << DEFPSTR(fun, idTable.table[i].id) << ENDL;
 				break;
 			case IT::FL:
-				OUT << DEFPFL(idTable.table[numFun].id, idTable.table[i].id) << ENDL;
+				OUT << DEFPFL(fun, idTable.table[i].id) << ENDL;
 				break;
 			case IT::BL:
-				OUT << DEFPBL(idTable.table[numFun].id, idTable.table[i].id) << ENDL;
+				OUT << DEFPBL(fun, idTable.table[i].id) << ENDL;
 				break;
 			}
 		}
@@ -184,39 +183,42 @@ void CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log
 		{
 			int amountarg = getAmountPar(idTable, lexTable.table[i].idxTI);
 			IT::Entry itentry = GETIDFROMLT(i);
-			OUT << PROC(itentry.id);
+			char nameFun[300];
+			IT::retNameFun(idTable, lexTable, i, nameFun);
+			OUT << PROC(nameFun);
 			i++;
 			for (int j = amountarg; j != 0;i++)
 			{
 				if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
 				{
+					
 					switch (GETIDFROMLT(i).iddatatype)
 					{
 					case IT::INT:
-						if (j == 1) OUT << itentry.id << GETIDFROMLT(i).id << " : DWORD " << ENDL
-						else OUT << itentry.id << GETIDFROMLT(i).id << " : DWORD, ";
+						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : DWORD " << ENDL
+						else OUT << nameFun << GETIDFROMLT(i).id << " : DWORD, ";
 						j--;
 						break;
 					case IT::STR:
-						if (j == 1) OUT << itentry.id << GETIDFROMLT(i).id << " : BYTE " << ENDL
-						else OUT << itentry.id << GETIDFROMLT(i).id << " : BYTE, ";
+						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : BYTE " << ENDL
+						else OUT << nameFun << GETIDFROMLT(i).id << " : BYTE, ";
 						j--;
 						break;
 					case IT::FL:
-						if (j == 1) OUT << itentry.id << GETIDFROMLT(i).id << " : REAL4 " << ENDL
-						else OUT << itentry.id << GETIDFROMLT(i).id << " : REAL4, ";
+						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : REAL4 " << ENDL
+						else OUT << nameFun << GETIDFROMLT(i).id << " : REAL4, ";
 						j--;
 						break;
 					case IT::BL:
-						if (j == 1) OUT << itentry.id << GETIDFROMLT(i).id << " : BYTE "<< ENDL
-						else OUT << itentry.id << GETIDFROMLT(i).id << " : BYTE, ";
+						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : BYTE "<< ENDL
+						else OUT << nameFun << GETIDFROMLT(i).id << " : BYTE, ";
 						j--;
 						break;
 					}
 				}
 			}
 			i = releaseFun(lexTable, idTable, log, i, itentry.id);
-			OUT << ENDP(itentry.id) << ENDL;
+			OUT << ENDP(nameFun) << ENDL;
 		}
 	}
 	OUT << ENDL;
@@ -300,7 +302,7 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::ut));
 				break;
 			case LEX_EQUAL: 
-				i =  doExpressionIntFl(lexTable, idTable, i, idname1, idname2, log);
+				i =  doExpression(lexTable, idTable, i, idname1, idname2, log);
 				OUT << MOV(EMPTY, idname2, EMPTY, "EAX") << ENDL
 				break;
 			case LEX_BRANCH: 
@@ -327,75 +329,8 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				stackblock.push_back(LabelStructFPI(nameBlock, i, typeBlock::a));
 				break;
 			case LEX_RETURN:
-				switch (GETIDFROMLT(i+1).iddatatype)
-				{
-				case IT::IDDATATYPE::INT:
-				case IT::IDDATATYPE::FL:
-					for (;; i++)
-					{
-						if (lexTable.table[i].lexema[GETLEX] == '^' || lexTable.table[i].lexema[GETLEX] == LEX_SEMICOLON) break;
-						if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
-						{
-							if (ISGLOBAL(GETIDFROMLT(i).id)) OUT << PUSH(GETIDFROMLT(i).id) << ENDL
-							else OUT << PUSH2(idfun, GETIDFROMLT(i).id) << ENDL;
-						}
-						if (lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
-						{
-							switch (GETIDFROMLT(i).iddatatype)
-							{
-							case IT::IDDATATYPE::INT:
-								OUT << PUSH2("INTLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::INT, GETIDFROMLT(i))) << ENDL
-									break;
-							case IT::IDDATATYPE::STR:
-								OUT << PUSH2("STRLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::STR, GETIDFROMLT(i))) << ENDL
-									break;
-							case IT::IDDATATYPE::FL:
-								OUT << PUSH2("FLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::FL, GETIDFROMLT(i))) << ENDL
-									break;
-							case IT::IDDATATYPE::BL:
-								OUT << PUSH2("BLLIT", IT::getIDLIT(idTable, IT::IDDATATYPE::BL, GETIDFROMLT(i))) << ENDL
-									break;
-							}
-						}
-						if (lexTable.table[i].lexema[GETLEX] == LEX_OPERATION)
-						{
-							switch (lexTable.table[i].operation)
-							{
-							case PLUS:
-								OUT << POP("EBX") << ENDL
-								OUT << POP("EAX") << ENDL
-								OUT << GLADD("EAX", "EBX") << ENDL
-								OUT << PUSH("EAX") << ENDL
-								break;
-							case MINUS:
-								OUT << POP("EBX") << ENDL
-								OUT << POP("EAX") << ENDL
-								OUT << GLSUB("EAX", "EBX") << ENDL
-								OUT << PUSH("EAX") << ENDL
-								break;
-							case STAR:
-								OUT << POP("EBX") << ENDL
-								OUT << POP("EAX") << ENDL
-								OUT << GLMUL("EBX") << ENDL
-								OUT << PUSH("EAX") << ENDL
-								break;
-							case DIRSLASH:
-								OUT << POP("EBX") << ENDL
-								OUT << POP("EAX") << ENDL
-								OUT << GLDIV("EBX") << ENDL
-								OUT << PUSH("EAX") << ENDL
-								break;
-							}
-						}
-					}
-					break;
-				case IT::IDDATATYPE::STR:
-					break;
-				case IT::IDDATATYPE::BL:
-					break;
-				}
-				OUT << POP("EAX") << ENDL;
-			break;
+				i = doExpression(lexTable, idTable, i, idname1, idname2, log);
+				break;
 		}
 	}
 	delete idname1;
@@ -442,15 +377,17 @@ void CG::jumpfun(LT::CO co, std::string strlable, Log::LOG log)
 	}
 }
 
-int  CG::doExpressionIntFl(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log)
+int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log)
 {
-	int i = numLT;
+	int  i;
+	if (CURRLEX(numLT) == LEX_RETURN) i = numLT+1;
+	else i = numLT - 1;
 	int numID = 0;
-	switch (GETIDFROMLT(i - 1).iddatatype)
+	switch (GETIDFROMLT(i).iddatatype)
 	{
 	case IT::IDDATATYPE::INT:
 	case IT::IDDATATYPE::FL:
-		numID = GETIDFROMLT(i - 1).idxfirstLE;
+		numID = GETIDFROMLT(i).idxfirstLE;
 		IT::retIDwithScope(idTable, lexTable, numID, idname2);
 		for (;; i++)
 		{
@@ -478,10 +415,9 @@ int  CG::doExpressionIntFl(LT::LexTable& lexTable, IT::IdTable& idTable, int num
 							j++;
 					}
 				}
-				OUT << CALL(GETIDFROMLT(posFun).id) << ENDL;
+				IT::retNameFun(idTable, lexTable, posFun, idname1);
+				OUT << CALL(idname1) << ENDL;
 				OUT << PUSH("EAX") << ENDL;
-				/*IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-				OUT << PUSH(idname1) << ENDL*/
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
@@ -507,16 +443,16 @@ int  CG::doExpressionIntFl(LT::LexTable& lexTable, IT::IdTable& idTable, int num
 				case STAR:
 					OUT << POP("EBX") << ENDL
 					OUT << POP("EAX") << ENDL
-					OUT << GLMUL("EBX") << ENDL
 					OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
+					OUT << GLMUL("EBX") << ENDL
 					OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
 					OUT << PUSH("EBX") << ENDL
 					break;
 				case DIRSLASH:
 					OUT << POP("EBX") << ENDL
 					OUT << POP("EAX") << ENDL
-					OUT << GLDIV("EBX") << ENDL
 					OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
+					OUT << GLDIV("EBX") << ENDL
 					OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
 					OUT << PUSH("EBX") << ENDL
 					break;

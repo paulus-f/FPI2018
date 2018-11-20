@@ -39,7 +39,7 @@ namespace CG
 	int  releaseFun(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int pos, char *idfun);
 	void jumpfun(LT::CO co, std::string strlable, Log::LOG log);
 	void cmpfun(IT::Entry le, IT::Entry re, char* idname1, char* idname2, LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
-	int  doExpressionIntFl(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log);
+	int  doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log);
 	////void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);
 	//*int isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
 	//int isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);

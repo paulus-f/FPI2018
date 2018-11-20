@@ -8,7 +8,8 @@ Program
 	int b = add(30, 40) * 2;
 	while(b< 10)
 	{
-		b=b+1;	
+		int c = 3;
+		b=b+c+1;	
 	}
 	
 	if(b > 12)

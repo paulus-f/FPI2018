@@ -60,6 +60,7 @@ namespace IT
 	bool isFun(IdTable  &idTable, LT::Entry lexEntry);
 	int getIDLIT(IdTable &idtable, IDDATATYPE type, IT::Entry itentry);
 	void retIDwithScope(IdTable &idTable, LT::LexTable& lexTable, int numLT, char* out);
+	void retNameFun(IdTable &idTable, LT::LexTable& lexTable, int numLT, char* out);
 
 
 	IdTable Create(

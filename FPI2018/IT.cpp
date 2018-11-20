@@ -25,22 +25,43 @@ namespace IT {
 			if (idTable.table[i].idxfirstLE == numLT)
 			{
 				if (idTable.table[i].scope == SCOPE::G) strcpy(out, idTable.table[i].id);
+				else if (idTable.table[i].scope == SCOPE::LB)
+				{
+					for (int j = i; j >= 0; j--)
+					{
+						if (lexTable.table[idTable.table[j].idxfirstLE - 1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
+						{
+							char buff[300];
+							strcpy(buff, "lb_foo__");
+							strcat(buff, idTable.table[j].id);
+							strcat(buff, idTable.table[i].id);
+							strcpy(out, buff);
+							return;
+						}
+					}
+				}
 				else
 				{
 					for (int j = i; j >= 0; j--)
 					{
-						if (lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
+						if (lexTable.table[idTable.table[j].idxfirstLE-1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
 						{
 							char buff[300];
-							strcpy(buff, idTable.table[j].id);
+							strcpy(buff, "foo__");
+							strcat(buff, idTable.table[j].id);
 							strcat(buff, idTable.table[i].id);
 							strcpy(out, buff);
-							break;
+							return;
 						}
 					}
 				}
 			}
 		}
+	}
+	void retNameFun(IdTable & idTable, LT::LexTable & lexTable, int numLT, char * out)
+	{
+		strcpy(out, "foo__");
+		strcat(out, idTable.table[lexTable.table[numLT].idxTI].id);
 	}
 	void retIDlit(IdTable & idTable, int numLT, char *out)
 	{
