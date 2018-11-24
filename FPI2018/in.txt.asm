@@ -5,6 +5,19 @@ includelib StanLib.lib
 includelib kernel32.lib 
 ExitProcess PROTO : DWORD 
 .stack 4096
+inputfpi PROTO: DWORD
+ outputstrfpi PROTO : DWORD
+ outputflfpi  PROTO : REAL4
+ outputintfpi  PROTO : DWORD
+ msin  PROTO : REAL4
+ mcos  PROTO : REAL4
+ mtan  PROTO : REAL4
+ mctan PROTO : REAL4
+ mln   PROTO : REAL4
+ mabs  PROTO : DWORD
+ msqr  PROTO : DWORD
+ strlen  PROTO : DWORD
+ strfind PROTO : DWORD, : DWORD
 
 .const
 	INTLIT0		DWORD	10
@@ -19,15 +32,13 @@ ExitProcess PROTO : DWORD
 	INTLIT9		DWORD	2
 
 .data
-	foo__adda			DWORD	0
-	foo__addb			DWORD	0
 	foo__programb			DWORD	0
 	foo__programi			DWORD	0
 
 .code
-	foo__add PROC foo__adda : DWORD, foo__addb : DWORD 
-		PUSH 	foo__adda
-		PUSH 	foo__addb
+	foo__funadd PROC foo__funadda : DWORD, foo__funaddc : DWORD 
+		PUSH 	foo__funadda
+		PUSH 	foo__funaddc
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
@@ -41,12 +52,11 @@ ExitProcess PROTO : DWORD
 		PUSH 	EBX
 		POP 	EAX
 		ret
-	foo__add ENDP
+	foo__funadd ENDP
 	main PROC 
-		PUSH 	foo__programb
 		PUSH 	INTLIT1
 		PUSH 	INTLIT2
-		CALL		foo__add
+		CALL		foo__funadd
 		PUSH 	EAX
 		PUSH 	INTLIT3
 		POP 	EBX
@@ -57,19 +67,15 @@ ExitProcess PROTO : DWORD
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	foo__programi
 		PUSH 	INTLIT4
 		POP 	EAX
 		MOV	foo__programi,EAX
-		PUSH 	foo__programb
 		PUSH 	INTLIT5
 		POP 	EAX
-		MOV	foo__programb,EAX
-		PUSH 	foo__programi
+		MOV	foo__programi,EAX
 		PUSH 	INTLIT6
 		POP 	EAX
 for0:
-		PUSH 	foo__programb
 		PUSH 	foo__programb
 		PUSH 	INTLIT9
 		POP 	EBX
@@ -79,8 +85,7 @@ for0:
 		MOV	EBX,EAX
 		PUSH 	EBX
 		POP 	EAX
-		MOV	foo__programb,EAX
-		PUSH 	foo__programi
+		MOV	foo__programi,EAX
 		PUSH 	foo__programi
 		PUSH 	INTLIT8
 		POP 	EDX

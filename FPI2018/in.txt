@@ -1,11 +1,11 @@
-int def add(int a, int b)
+int def funadd(int a, int c)
 {
-	r (a+b)/10;
+	r (a+c)/10;
 }
 
 Program 
 {
-	int b = add(30, 40) * 2;
+	int b = funadd(30, 40) * 2;
 	int i = 1;
 	b = 1;
 	for(i = 0; i < 10; i=i+1)

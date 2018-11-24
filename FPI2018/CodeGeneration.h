@@ -40,13 +40,4 @@ namespace CG
 	void jumpfun(LT::CO co, std::string strlable, Log::LOG log);
 	void cmpfun(IT::Entry le, IT::Entry re, char* idname1, char* idname2, LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log);
-	////void mainImplem(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int numMain, char *idfun);
-	//*int isExpression(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//int isInit(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//int branchIf(LT::LexTable& lexTable, IT::IdTable& idTable, int num, char *idfun);
-	//int branchUnless(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//int cycleWhile(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//int cycleUntil(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//int cycleFor(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
-	//*/int genProce(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log, int num, char *idfun);
 }

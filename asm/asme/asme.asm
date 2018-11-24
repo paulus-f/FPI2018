@@ -3,9 +3,9 @@
 includelib libucrt.lib
 includelib kernel32.lib
 includelib D:\Proga\Project\FPI2018\asm\Debug\asmd.lib
- getmin : proc
- getmax : proc
- input1 : proc
+ EXTRN getmin : proc
+ EXTRN getmax : proc
+ EXTRN input1 : proc
 
 ExitProcess PROTO: DWORD 
 

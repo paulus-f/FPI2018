@@ -34,3 +34,14 @@ Program
 	{
 		b=b+15;
 	}
+	
+	fld dword ptr [FLLIT2]
+		fstp dword ptr [realvar]
+
+		fld dword ptr [FLLIT1]
+		fstp dword ptr [realvar_two]
+
+		fld  dword ptr [realvar]  
+		fld  dword ptr [realvar_two]
+		fadd                             ;st0 := st1 + st0
+		fstp   dword ptr [realvar]    ;store the sum result into mem

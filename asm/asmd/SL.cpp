@@ -14,18 +14,18 @@ extern "C"
 		return max;
 	}
 
-	char input1()
+	char inputfpi()
 	{
 		char str[255];
 		scanf("%s", &str, 255);
 		return *str;
 	}
 
-	int  output1(char *str)
-	{
-		printf("%s", str);
-		return -1;
-	}
+	//int  output1(char *str)
+	//{
+	//	printf("%s", str);
+	//	return -1;
+	//}
 
 	int  getmin(int * arr, int size)
 	{
