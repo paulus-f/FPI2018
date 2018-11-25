@@ -12,15 +12,6 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
-//////////////////////////////////////////////////////////////////////////////////
-//- Error < in LA!!!!!!!!!!!!!!!//////////////////////////////////////////////////
-//+ Error p> .... in LA !!!!!!!!!/////////////////////////////////////////////////
-//+ IS FIX ///////////////////////////////////////////////////////////////////////
-//+ add namespace in LogIT////////////////////////////////////////////////////////
-//+ fix bug in polska/////////////////////////////////////////////////////////////
-//+ add bool operation in polska//////////////////////////////////////////////////
-//+ test semantic ////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
 namespace LT {
 	LT::Entry retLex(char lex, int numstr, int idx)
 	{
@@ -37,7 +28,6 @@ namespace LT {
 		{
 			throw ERROR_THROW_IN(118, 0, 0);
 		}
-
 		int  numLine				= 1;
 		int  numCol					= 0;
 		int  indCO					= 0;
@@ -71,7 +61,6 @@ namespace LT {
 			{
 				int j = i;
 				buffIndL = 0;
-				buffL[buffIndL++] = strCode[i];
 				for (j++; strcmp((strCode[j] + EMPTYSTR), QUOTES + EMPTYSTR); j++)
 				{
 					buffL[buffIndL++] = strCode[j];
@@ -81,9 +70,7 @@ namespace LT {
 						errarr[errhead++] = ERROR_THROW_IN(116, numLine, numCol);
 					}
 				}
-
 				i = j;
-				buffL[buffIndL++] = strCode[i];
 				buffL[buffIndL] = '\0';
 				
 				FST::FST fstTypeStr(buffL, FST_STRLIT);
@@ -91,7 +78,6 @@ namespace LT {
 				{
 					lexEntry = retLex(LEX_LITERAL, numLine, idTable.head);
 					Add(lexTable, lexEntry);
-
 					IT::Entry litStrId;
 					litStrId.scope = IT::SCOPE::LIT;
 					litStrId.idxfirstLE = lexTable.head;
@@ -99,9 +85,9 @@ namespace LT {
 					litStrId.idtype = IT::L;
 					int len = strlen(buffL);
 					strcpy(litStrId.id, "STR LIT");
-					litStrId.value.vstr->len = len - 2;
-					strncpy(litStrId.value.vstr->str, buffL + 1, len - 2);
-					litStrId.value.vstr->str[len - 2] = '\0';
+					litStrId.value.vstr->len = len;
+					strncpy(litStrId.value.vstr->str, buffL, len);
+					litStrId.value.vstr->str[len] = '\0';
 					IT::Add(idTable, litStrId);
 				}
 				else

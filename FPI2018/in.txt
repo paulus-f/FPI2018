@@ -3,8 +3,12 @@ int def funadd(int a, int c)
 	r (a+c)/10;
 }
 
-Program 
+Program
 {
+	fl testflone = 4.54;
+	str strokaa= "fisrts string";
+	str srokabb = "second string";
+	fl testfltwo = 23.43 - testflone;
 	int b = funadd(30, 40) * 2;
 	int i = 1;
 	b = 1;

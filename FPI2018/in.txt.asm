@@ -5,7 +5,7 @@ includelib StanLib.lib
 includelib kernel32.lib 
 ExitProcess PROTO : DWORD 
 .stack 4096
-inputfpi PROTO: DWORD
+ inputfpi PROTO: DWORD
  outputstrfpi PROTO : DWORD
  outputflfpi  PROTO : REAL4
  outputintfpi  PROTO : DWORD
@@ -21,6 +21,10 @@ inputfpi PROTO: DWORD
 
 .const
 	INTLIT0		DWORD	10
+	FLLIT0		REAL4	4.54
+	STRLIT0		DB	"fisrts string", 0
+	STRLIT1		DB	"second string", 0
+	FLLIT1		REAL4	23.43
 	INTLIT1		DWORD	30
 	INTLIT2		DWORD	40
 	INTLIT3		DWORD	2
@@ -32,6 +36,10 @@ inputfpi PROTO: DWORD
 	INTLIT9		DWORD	2
 
 .data
+	foo__programtestflone			REAL4	0.0
+	foo__programstrokaa			DB	0
+	foo__programsrokabb			DB	0
+	foo__programtestfltwo			REAL4	0.0
 	foo__programb			DWORD	0
 	foo__programi			DWORD	0
 
@@ -54,6 +62,12 @@ inputfpi PROTO: DWORD
 		ret
 	foo__funadd ENDP
 	main PROC 
+		FLD	[FLLIT0]
+		FSTP	[foo__programtestflone]
+		FLD	[FLLIT1]
+		FLD	foo__programtestflone
+		FADD
+		FSTP	[foo__programtestfltwo]
 		PUSH 	INTLIT1
 		PUSH 	INTLIT2
 		CALL		foo__funadd
@@ -75,6 +89,7 @@ inputfpi PROTO: DWORD
 		MOV	foo__programi,EAX
 		PUSH 	INTLIT6
 		POP 	EAX
+		MOV	foo__programi,EAX
 for0:
 		PUSH 	foo__programb
 		PUSH 	INTLIT9
@@ -93,6 +108,7 @@ for0:
 		ADD	EBX,EDX
 		PUSH 	EBX
 		POP 	EAX
+		MOV	foo__programi,EAX
 		MOV	EAX,foo__programi
 		CMP	EAX,INTLIT7
 		JB		for0

@@ -3,6 +3,7 @@
 #include "IT.h"
 #include "Log.h"
 #include <fstream>
+#include "Error.h"
 #include <vector>
 namespace CG
 {
@@ -40,4 +41,5 @@ namespace CG
 	void jumpfun(LT::CO co, std::string strlable, Log::LOG log);
 	void cmpfun(IT::Entry le, IT::Entry re, char* idname1, char* idname2, LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	int  doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, char* idname1, char* idname2, Log::LOG log);
+
 }
