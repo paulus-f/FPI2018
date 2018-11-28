@@ -33,14 +33,15 @@ namespace IT
 		SCOPE scope;
 		union 
 		{
+			struct
+			{
+				int len;
+				char str[TI_STR_MAXSIZE];
+			}vstr;
+
 			float vfl;
 			bool vbool;
 			int vint; 
-			struct
-			{
-				char len;
-				char str[TI_STR_MAXSIZE - 1];
-			} vstr[TI_STR_MAXSIZE];
 		}value;
 	};
 

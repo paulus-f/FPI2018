@@ -85,9 +85,9 @@ namespace LT {
 					litStrId.idtype = IT::L;
 					int len = strlen(buffL);
 					strcpy(litStrId.id, "STR LIT");
-					litStrId.value.vstr->len = len;
-					strncpy(litStrId.value.vstr->str, buffL, len);
-					litStrId.value.vstr->str[len] = '\0';
+					litStrId.value.vstr.len = len;
+					strncpy(litStrId.value.vstr.str, buffL, len);
+					litStrId.value.vstr.str[len] = '\0';
 					IT::Add(idTable, litStrId);
 				}
 				else

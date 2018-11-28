@@ -10,7 +10,7 @@ namespace SL {
 		int msqr[1] = { 1 };
 		int mabs[1] = { 1 };
 		int strlen[1] = { 2 };
-		int srtfind[2] = { 1 , 2 };
+		int srtfind[2] = { 2 , 2 };
 	};
 
 	bool funStandLib(LT::LexTable& lexTable, IT::IdTable& idTable, char* buff, int numLine);

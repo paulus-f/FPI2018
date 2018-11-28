@@ -212,7 +212,7 @@
 	FST::NODE(1, FST::RELATION('f', 4)),\
 	FST::NODE(1, FST::RELATION('i', 5)),\
 	FST::NODE(1, FST::RELATION('n', 6)),\
-	FST::NODE(1, FST::RELATION('n', 7)),\
+	FST::NODE(1, FST::RELATION('d', 7)),\
 	FST::NODE()
 
 #define FST_UNTIL 6,	\

@@ -33,6 +33,7 @@ namespace CG
 		}
 	};
 
+	bool isStanLib(char *nameid);
 	void StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);
 	void addLiterals(IT::IdTable& idTable, Log::LOG log );
 	void addData(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log);

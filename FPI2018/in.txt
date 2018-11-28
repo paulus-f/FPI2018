@@ -5,9 +5,23 @@ int def funadd(int a, int c)
 
 Program
 {
+	
 	fl testflone = 4.54;
 	str strokaa= "fisrts string";
 	str srokabb = "second string";
+	int kek = strfind("str", srokabb);
+	
+	
+	int sizestrokaaa = strlen(srokabb);
+	
+	
+	bool flag = false;
+	
+	str lol = strokaa+srokabb;
+	
+	
+	p< lol;
+	
 	fl testfltwo = 23.43 - testflone;
 	int b = funadd(30, 40) * 2;
 	int i = 1;
@@ -16,5 +30,15 @@ Program
 	{
 		b=b*2;
 	}
+	
+	if(flag == false)
+	{
+		testflone = testflone + 1.01;
+	}
+	alias 
+	{
+		testflone = 1.01;
+	}
+	
 	
 }

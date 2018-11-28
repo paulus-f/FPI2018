@@ -20,9 +20,47 @@ namespace IT {
 
 	void retIDwithScope(IdTable& idTable, LT::LexTable& lexTable, int numLT, char *out)
 	{
-		for (int i = 0; i < idTable.head; i++)
+		
+		if (numLT < lexTable.head)
 		{
-			if (idTable.table[i].idxfirstLE == numLT)
+			int i = lexTable.table[numLT].idxTI;
+
+			if (idTable.table[i].scope == SCOPE::G) strcpy(out, idTable.table[i].id);
+			else if (idTable.table[i].scope == SCOPE::LB)
+			{
+				for (int j = i; j >= 0; j--)
+				{
+					if (lexTable.table[idTable.table[j].idxfirstLE - 1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
+					{
+						char buff[300];
+						strcpy(buff, "lb_foo__");
+						strcat(buff, idTable.table[j].id);
+						strcat(buff, idTable.table[i].id);
+						strcpy(out, buff);
+						return;
+					}
+				}
+			}
+			else
+			{
+				for (int j = i; j >= 0; j--)
+				{
+					if (lexTable.table[idTable.table[j].idxfirstLE - 1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
+					{
+						char buff[300];
+						strcpy(buff, "foo__");
+						strcat(buff, idTable.table[j].id);
+						strcat(buff, idTable.table[i].id);
+						strcpy(out, buff);
+						return;
+					}
+				}
+			}
+		}
+		/*for (int i = 0; i < idTable.head; i++)
+		{
+			if (idTable.table[i].idxfirstLE == lexTable.table[numLT].idxTI)
+			if (numLT < idTable.head ||idTable.table[i].idxfirstLE == lexTable.table[numLT].idxTI)
 			{
 				if (idTable.table[i].scope == SCOPE::G) strcpy(out, idTable.table[i].id);
 				else if (idTable.table[i].scope == SCOPE::LB)
@@ -56,7 +94,7 @@ namespace IT {
 					}
 				}
 			}
-		}
+		}*/
 	}
 	void retNameFun(IdTable & idTable, LT::LexTable & lexTable, int numLT, char * out)
 	{
@@ -167,8 +205,8 @@ namespace IT {
 		else if (!strcmp(buffType, STRING))
 		{
 			indType.iddatatype = IT::STR;
-			indType.value.vstr->str[0] = '\0';
-			indType.value.vstr->len = 0;
+			indType.value.vstr.str[0] = '\0';
+			indType.value.vstr.len = 0;
 		}
 		else if (!strcmp(buffType, FLOAT))
 		{
@@ -428,7 +466,7 @@ namespace IT {
 			if (idTable.table[i].iddatatype == INT && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
 				*log.stream << std::setw(18) << std::left << idTable.table[i].value.vint;
 			else if (idTable.table[i].iddatatype == STR && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
-				*log.stream << "[" << (int)idTable.table[i].value.vstr->len << "] \"" << idTable.table[i].value.vstr->str << "\"";
+				*log.stream << "[" << (int)idTable.table[i].value.vstr.len << "] \"" << idTable.table[i].value.vstr.str << "\"";
 			else if (idTable.table[i].iddatatype == FL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))
 				*log.stream << std::setw(18) << std::left << idTable.table[i].value.vfl;
 			else if (idTable.table[i].iddatatype == BL && (idTable.table[i].idtype == V || idTable.table[i].idtype == L))

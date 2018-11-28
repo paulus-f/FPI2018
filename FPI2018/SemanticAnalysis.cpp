@@ -76,27 +76,27 @@ bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::
 
 bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
-	IT::Entry itentry = IT::GetEntry(idTable, lexTable.table[numLT].idxTI);
+ 	IT::Entry itentry = IT::GetEntry(idTable, lexTable.table[numLT].idxTI);
 	if (!strcmp(itentry.id, MLN)    || !strcmp(itentry.id, MSIN)    || !strcmp(itentry.id, MCOS) || !strcmp(itentry.id, MTAN)   || !strcmp(itentry.id, MCTAN))
 	{ 
-		return checkStandlib(SL::parmFun().trigonmetry, numLT, lexTable, idTable)? true: false;
+		return checkStandlib(1, SL::parmFun().trigonmetry, numLT, lexTable, idTable)? true: false;
 	}
 	else if(!strcmp(itentry.id, MSQR))
 	{
-		return checkStandlib(SL::parmFun().msqr, numLT, lexTable, idTable) ? true : false;
+		return checkStandlib(1, SL::parmFun().msqr, numLT, lexTable, idTable) ? true : false;
 	}
 	else if(!strcmp(itentry.id, STRLEN))
 	{
-		return checkStandlib(SL::parmFun().strlen, numLT, lexTable, idTable) ? true : false;
+		return checkStandlib(1, SL::parmFun().strlen, numLT, lexTable, idTable) ? true : false;
 	}
 	else if (!strcmp(itentry.id, STRFIND))
 	{
-		return checkStandlib(SL::parmFun().srtfind, numLT, lexTable, idTable) ? true : false;
+		return checkStandlib(2, SL::parmFun().srtfind, numLT, lexTable, idTable) ? true : false;
 
 	}
 	else if (!strcmp(itentry.id, MABS))
 	{
-		return checkStandlib(SL::parmFun().mabs, numLT, lexTable, idTable) ? true : false;
+		return checkStandlib(1, SL::parmFun().mabs, numLT, lexTable, idTable) ? true : false;
 	}
 	else
 	{
@@ -118,7 +118,7 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 			parmFun[i] = arrParm[i];
 		}
 
-		if (!checkStandlib(parmFun, numLT, lexTable, idTable))
+		if (checkStandlib(count, parmFun, numLT, lexTable, idTable))
 		{
 			delete parmFun;
 			return true;
@@ -203,7 +203,7 @@ bool Semantic::checkCycle(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 	}
 }
 
-bool Semantic::checkStandlib(int type[], int numLT, LT::LexTable lexTable, IT::IdTable idTable)
+bool Semantic::checkStandlib(int len, int *type, int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	int countParm = 0;
 	for (int i = numLT+1; lexTable.table[i].lexema[GETLEX] != RIGHTHESIS; i++)
@@ -215,7 +215,7 @@ bool Semantic::checkStandlib(int type[], int numLT, LT::LexTable lexTable, IT::I
 				return false;
 			}
 		}
-		if (countParm > sizeof(type) / sizeof(int)) return false;
+		if (countParm > len) return false;
 		if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
 	}
 	return true;

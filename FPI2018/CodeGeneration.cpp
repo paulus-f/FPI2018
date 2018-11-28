@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "iostream"
 #include "CodeGeneration.h"
 #define CURRLEX(i)						lexTable.table[i].lexema[0]
 #define CURRLE(i)						lexTable.table[i]	
@@ -8,7 +9,7 @@
 #define INCLUDELIB						" inputfpi PROTO: DWORD\n\
  outputstrfpi PROTO : DWORD\n\
  outputflfpi  PROTO : REAL4\n\
- outputintfpi  PROTO : DWORD\n\
+ outputintfpi PROTO : DWORD\n\
  msin  PROTO : REAL4\n\
  mcos  PROTO : REAL4\n\
  mtan  PROTO : REAL4\n\
@@ -16,8 +17,8 @@
  mln   PROTO : REAL4\n\
  mabs  PROTO : DWORD\n\
  msqr  PROTO : DWORD\n\
- strlen  PROTO : DWORD\n\
- strfind PROTO : DWORD, : DWORD"
+ strlenfpi PROTO : DWORD\n\
+ strfind   PROTO : DWORD, : DWORD"
 #define PARDEF							"DEFP"
 #define GLMUV(parm1, parm2)				"\t\tMOV\t" << parm1 << ',' << parm2
 #define GLADD(parm1, parm2)				"\t\tADD\t" << parm1 << ',' << parm2
@@ -41,28 +42,28 @@
 #define TINT							"DWORD"
 #define TFL								"REAL4"
 #define TSTR							"DB"
-#define TBL								"BYTE"
+#define TBL								"DWORD"
 #define INTLIT(num)						"\tINTLIT" << num << '\t' << '\t' << "DWORD" << '\t'
 #define STRLIT(num)						"\tSTRLIT" << num << '\t' << '\t' << "DB" <<'\t'
 #define FLLIT(num)						"\tFLLIT" << num << '\t' << '\t' << "REAL4" << '\t'
-#define BLLIT(num)						"\tBLLIT" << num << '\t' << '\t' << "BYTE" << '\t'
+#define BLLIT(num)						"\tBLLIT" << num << '\t' << '\t' << "DWORD" << '\t'
 #define VARINT(name)					'\t' << name << '\t' << '\t' << '\t' << "DWORD" << '\t' << "0"
-#define VARSTR(name)					'\t' << name << '\t' << '\t' << '\t' << "BYTE" << '\t'<< 00
+#define VARSTR(name)					'\t' << name << '\t' << '\t' << '\t' << "DWORD" << '\t'<< 00
 #define VARFL(name)						'\t' << name << '\t' << '\t' << '\t' << "REAL4" << '\t'<< "0.0"
-#define VARBL(name)						'\t' << name << '\t' << '\t' << '\t' << "BYTE" << '\t'<< "0"
+#define VARBL(name)						'\t' << name << '\t' << '\t' << '\t' << "DWORD" << '\t'<< "0"
 #define VRINT(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DWORD" << '\t' << "0"
-#define VRSTR(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DB" << '\t'<< 0
+#define VRSTR(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DB" << '\t'<< 255 << " dup(0)"
 #define VRFL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "REAL4" << '\t'<< "0.0"
-#define VRBL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "BYTE" << '\t'<< "0"
+#define VRBL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DWORD" << '\t'<< "0"
 #define DEFPINT(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DWORD" << '\t' << "0"
-#define DEFPSTR(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "BYTE" << '\t' << "0"
+#define DEFPSTR(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DWORD" << '\t' << "0"
 #define DEFPFL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "REAL4" << '\t' << "0"
-#define DEFPBL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "BYTE" << '\t' << "0"
+#define DEFPBL(par1, par2)				'\t' << par1 << par2 << '\t' << '\t' << '\t' << "DWORD" << '\t' << "0"
 #define PROC(namedef)					'\t' << namedef << " PROC "	
 #define ENDP(name)						'\t' << name << " ENDP"	
 #define EMPTY							""
 #define ISGLOBAL(str)					str[0] == '$'
-#define EXITMAIN						"\tPUSH 0\n\tCALL ExitProcess\n"
+#define EXITMAIN						"\tPUSH OFFSET system_pause_fpi\n\tcall inputfpi\n\tPUSH 0\n\tCALL ExitProcess\n"
 #define ENDMAIN							"end main"
 #define CMP(par1, par2, par3, par4) 	"\t\tCMP\t"<< par1 << par2 << ',' << par3 << par4
 #define JB(parm1, parm2)				"\t\tJB\t\t" << parm1 << parm2 
@@ -80,6 +81,13 @@
 #define FSUB							"\t\tFSUB"
 #define FMUL							"\t\tFMUL"
 #define REPMOVSB						"\t\tREP MOVSB"
+
+bool CG::isStanLib(char * nameid)
+{
+	if (!strcmp(nameid, MLN) || !strcmp(nameid, MSIN) || !strcmp(nameid, MCOS) || !strcmp(nameid, MTAN) || !strcmp(nameid, MCTAN) ||
+		!strcmp(nameid, STRLEN) || !strcmp(nameid, STRFIND) || !strcmp(nameid, MABS) || !strcmp(nameid, MSQR)) return true;
+	else return false;
+}
 
 void CG::StartGeneration(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
@@ -109,7 +117,7 @@ void CG::addLiterals(IT::IdTable& idTable, Log::LOG log)
 				break;
 			case IT::STR:
 				idTable.table[i].countlex = numstr;
-				OUT << STRLIT(numstr++) << '"' << idTable.table[i].value.vstr->str << '"' << ", 0" << ENDL;
+				OUT << STRLIT(numstr++) << '"' << idTable.table[i].value.vstr.str << '"' << ", 0" << ENDL;
 				break;
 			case IT::FL: 
 				idTable.table[i].countlex = numfl;
@@ -128,6 +136,7 @@ void CG::addData(LT::LexTable& lexTable, IT::IdTable & idTable, Log::LOG log)
 {
 	OUT << ASM_DATA << ENDL;
 	char fun[300];
+	OUT << VRSTR(EMPTY, "system_pause_fpi") << ENDL;;
 	for (int i = 0; i < idTable.head; ++i)
 	{
 		if (idTable.table[i].idtype == IT::IDTYPE::F)
@@ -202,13 +211,14 @@ void CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log
 						j--;
 						break;
 					case IT::BL:
-						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : BYTE "<< ENDL
-						else OUT << nameFun << GETIDFROMLT(i).id << " : BYTE, ";
+						if (j == 1) OUT << nameFun << GETIDFROMLT(i).id << " : DWORD "<< ENDL
+						else OUT << nameFun << GETIDFROMLT(i).id << " : DWORD, ";
 						j--;
 						break;
 					}
 				}
 			}
+
 			i = releaseFun(lexTable, idTable, log, i, itentry.id);
 			OUT << ENDP(nameFun) << ENDL;
 		}
@@ -279,8 +289,31 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				}
 				stackblock.pop_back();
 				break;
-			case LEX_INPUT: break;
-			case LEX_OUTPUT: break;
+			case LEX_INPUT:
+				IT::retIDwithScope(idTable, lexTable, i + 1, idname1);
+				OUT << PUSH2("OFFSET ",idname1) << ENDL
+				OUT << CALL("inputfpi") << ENDL
+				OUT << MOV("OFFSET ", idname1, EMPTY , "EAX") << ENDL
+				break;
+			case LEX_OUTPUT: 
+				if (GETIDFROMLT(i + 1).idtype == IT::IDTYPE::L) IT::retIDlit(idTable, i + 1, idname1);
+				else IT::retIDwithScope(idTable, lexTable, i + 1, idname1);
+				switch (GETIDFROMLT(i+1).iddatatype)
+				{
+				case IT::IDDATATYPE::INT:
+					OUT << PUSH(idname1) << ENDL
+					OUT << CALL("outputintfpi") << ENDL
+					break;
+				case IT::IDDATATYPE::STR:
+					OUT << PUSH2("OFFSET ", idname1) << ENDL
+					OUT << CALL("outputstrfpi") << ENDL
+					break;
+				case IT::IDDATATYPE::FL :
+					OUT << PUSH(idname1) << ENDL
+					OUT << CALL("outputflfpi") << ENDL
+					break;
+				}
+				break;
 			case LEX_CYCLE: 
 				if (CURRLE(i).cycling.cycle == LT::Cycle::ut)
 				{
@@ -344,7 +377,7 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 	return -1;
 }
 
-void CG::jumpfun(LT::CO co, std::string strlable, Log::LOG log)
+void CG::jumpfun(LT::CO co, std::string strlable, Log::LOG log)// add inverse
 {
 	switch (co)
 	{
@@ -388,6 +421,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 	int  i;
 	bool flagReturn = false;
 	int countSizeOfStr = 0;
+	char buffInt[50];
 	if (CURRLEX(numLT) == LEX_RETURN)
 	{
 		i = numLT + 1;
@@ -419,17 +453,21 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
 						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 					if (CURRLEX(i) == LEX_ID)
 					{
 						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 				}
-				IT::retNameFun(idTable, lexTable, posFun, idname1);
+				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
+				else IT::retNameFun(idTable, lexTable, posFun, idname1);
+				if (!strcmp(GETIDFROMLT(posFun).id, "strlen")) strcat(idname1, "fpi");
 				OUT << CALL(idname1) << ENDL;
 				OUT << PUSH("EAX") << ENDL;
 			}
@@ -494,17 +532,22 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
 						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
 						j++;
 					}
 					if (CURRLEX(i) == LEX_ID)
 					{
 						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
 						j++;
 					}
 				}
-				IT::retNameFun(idTable, lexTable, posFun, idname1);
+				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
+				else IT::retNameFun(idTable, lexTable, posFun, idname1);
+
+
 				OUT << CALL(idname1) << ENDL;
 				OUT << FLDREG("EAX") << ENDL;
 			}
@@ -536,7 +579,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 		if (flagReturn) OUT << MOV(EMPTY, idname2, EMPTY, "EAX") << ENDL
 		break;
 	case IT::IDDATATYPE::STR:
-		numID = GETIDFROMLT(i).idxfirstLE;
+		numID = GETIDFROMLT(i-2).idxfirstLE;
 		if (flagReturn)
 		{
 			if (CURRLEX(numID + 1) == LEX_LITERAL || CURRLEX(numID + 1) == LEX_LITERAL) throw ERROR_THROW_IN(700, CURRLE(numID).sn, -1);
@@ -552,24 +595,23 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			{
 				IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
 				OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
-				OUT << PMOV("EDX", "OFFSET", idname2, countSizeOfStr) << ENDL;
-				countSizeOfStr += GETIDFROMLT(i).value.vstr->len;
-				
-				OUT << MOV(EMPTY, "ECX", EMPTY, GETIDFROMLT(i).value.vstr->len) << ENDL
+				OUT << PMOV("EDI", "OFFSET", idname2, countSizeOfStr) << ENDL;
+				countSizeOfStr += GETIDFROMLT(i).value.vstr.len;
+				_itoa(GETIDFROMLT(i).value.vstr.len+1, buffInt, 10);
+				OUT << MOV(EMPTY, "ECX", EMPTY, buffInt) << ENDL
 				OUT << REPMOVSB << ENDL
-				GETIDFROMLT(numID).value.vstr->len == countSizeOfStr;
+				GETIDFROMLT(numID).value.vstr.len = countSizeOfStr;
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
-				countSizeOfStr += GETIDFROMLT(i).value.vstr->len;
-				IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
+				IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
 				OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
-				OUT << PMOV("EDX", "OFFSET", idname2, countSizeOfStr) << ENDL;
-				countSizeOfStr += GETIDFROMLT(i).value.vstr->len;
-				
-				OUT << MOV(EMPTY, "ECX", EMPTY, GETIDFROMLT(i).value.vstr->len) << ENDL
+				OUT << PMOV("EDI", "OFFSET ", idname2, countSizeOfStr) << ENDL;
+				countSizeOfStr += GETIDFROMLT(i).value.vstr.len;
+				_itoa(GETIDFROMLT(i).value.vstr.len+1, buffInt, 10);
+				OUT << MOV(EMPTY, "ECX", EMPTY, buffInt) << ENDL
 				OUT << REPMOVSB << ENDL
-				GETIDFROMLT(numID).value.vstr->len == countSizeOfStr;
+				GETIDFROMLT(numID).value.vstr.len = countSizeOfStr;
 			}
 			if (CURRLEX(i) == '@')
 			{
@@ -579,17 +621,21 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
 						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 					if (CURRLEX(i) == LEX_ID)
 					{
 						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 				}
-				IT::retNameFun(idTable, lexTable, posFun, idname1);
+				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
+				else IT::retNameFun(idTable, lexTable, posFun, idname1);
+
 				OUT << CALL(idname1) << ENDL;
 			//	THINK ABOUT
 			}
@@ -613,14 +659,16 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
 						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ",idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 					if (CURRLEX(i) == LEX_ID)
 					{
 						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						OUT << PUSH(idname1) << ENDL
-							j++;
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						else OUT << PUSH(idname1) << ENDL
+						j++;
 					}
 				}
 				IT::retNameFun(idTable, lexTable, posFun, idname1);

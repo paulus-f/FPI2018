@@ -34,7 +34,31 @@ Program
 	{
 		b=b+15;
 	}
-	
+
+		CLD
+		MOV	ESI, OFFSET STRLIT0 ; ист
+		MOV	EDI, OFFSET foo__programstrokaa + 0 ; gприе
+		MOV	ECX, 1
+		REP MOVSB
+
+inverse for unlessssssssssssssssss
+
+pDst - указатель на приемник
+; lpSrc - указатель на источник
+; dSize - размер копируемого блока
+;-----------------------------------------------------
+proc    _memcopy lpDst:DWORD, lpSrc:DWORD, dSize:DWORD
+        pusha
+ 
+        ; Установить указатели на источник и приемник
+        cld
+        mov     edi,[lpDst]
+        mov     esi,[lpSrc]
+ 
+        mov     ecx,[dSize]	
+
+
+
 	fld dword ptr [FLLIT2]
 		fstp dword ptr [realvar]
 
