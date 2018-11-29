@@ -443,7 +443,6 @@ namespace LT {
 								{
 									errorLex = true;
 									errarr[errhead++] = ERROR_THROW_IN(117, numLine, numCol);
-									
 								}
 								else
 								{

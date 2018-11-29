@@ -228,6 +228,7 @@ void CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log
 
 int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int pos, char *idfun)
 {
+	bool isInverse = false;
 	std::vector<LabelStructFPI> stackblock;
 	int numBlock = 0;
 	int posBlock = 0;
@@ -259,17 +260,19 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 					lentry = GETIDFROMLT(posBlock + 6);
 					rentry = GETIDFROMLT(posBlock + 8);
 					co = CURRLE(posBlock + 7).co;
+					isInverse = false;
 					cmpfun(lentry, rentry, idname1, idname2, lexTable, idTable, log);
-					jumpfun(co, stackblock.back()._namestruct, log);
+					jumpfun(isInverse, co, stackblock.back()._namestruct, log);
 					OUT << "end" << LABEL(stackblock.back()._namestruct) << ENDL
 					break;
 				case typeBlock::w:
 				case typeBlock::ut: 
+					isInverse = stackblock.back()._tbstruct == typeBlock::ut ? true : false;
 					lentry = GETIDFROMLT(posBlock + 2);
 					rentry = GETIDFROMLT(posBlock + 4);
 					co = CURRLE(posBlock + 3).co;
 					cmpfun(lentry, rentry, idname1, idname2, lexTable, idTable, log);
-					jumpfun(co, stackblock.back()._namestruct, log);
+					jumpfun(isInverse, co, stackblock.back()._namestruct, log);
 					OUT << "end" << LABEL(stackblock.back()._namestruct) << ENDL
 					break;
 				case typeBlock::i: 
@@ -360,8 +363,9 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				lentry = GETIDFROMLT(i + 2);
 				rentry = GETIDFROMLT(i + 4);
 				co = CURRLE(i + 3).co;
+				isInverse = stackblock.back()._tbstruct == typeBlock::ul ? true : false;
 				cmpfun(lentry, rentry, idname1, idname2, lexTable, idTable, log);
-				jumpfun(co, stackblock.back()._namestruct, log);
+				jumpfun(isInverse, co, stackblock.back()._namestruct, log);
 				OUT << LABEL(stackblock.back()._namestruct) << ENDL
 				break;
 			case LEX_ALIAS:
@@ -377,42 +381,82 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 	return -1;
 }
 
-void CG::jumpfun(LT::CO co, std::string strlable, Log::LOG log)// add inverse
+void CG::jumpfun(bool isInverse, LT::CO co, std::string strlable, Log::LOG log)// add inverse
 {
-	switch (co)
+	if (isInverse) 
 	{
-	case LT::CO::e:
-		OUT << JE(EMPTY, strlable) << ENDL
-		OUT << JZ("end", strlable) << ENDL
-		OUT << ENDL
-		break;
-	case LT::CO::ne:
-		OUT << JZ(EMPTY, strlable) << ENDL
-		OUT << JE("end", strlable) << ENDL
-		OUT << ENDL
-		break;
-	case LT::CO::le:
-		OUT << JB(EMPTY, strlable) << ENDL
-		OUT << JE(EMPTY, strlable) << ENDL
-		OUT << JA("end", strlable) << ENDL
-		OUT << ENDL
-		break;
-	case LT::CO::me:
-		OUT << JA(EMPTY, strlable) << ENDL
-		OUT << JE(EMPTY, strlable) << ENDL
-		OUT << JB("end", strlable) << ENDL
-		OUT << ENDL
-		break;
-	case LT::CO::l:
-		OUT << JB(EMPTY, strlable) << ENDL
-		OUT << JA("end", strlable) << ENDL
-		OUT << ENDL
-		break;
-	case LT::CO::m:
-		OUT << JA(EMPTY, strlable) << ENDL
-		OUT << JB("end", strlable) << ENDL
-		OUT << ENDL
-		break;
+		switch (co)
+		{
+		case LT::CO::e:
+			OUT << JZ(EMPTY, strlable) << ENDL
+				OUT << JE("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::ne:
+			OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JZ("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::le:
+			OUT << JA(EMPTY, strlable) << ENDL
+				OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JB("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::me:
+			OUT << JB(EMPTY, strlable) << ENDL
+				OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JA("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::l:
+			OUT << JA(EMPTY, strlable) << ENDL
+				OUT << JB("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::m:
+			OUT << JB(EMPTY, strlable) << ENDL
+				OUT << JA("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		}
+	}
+	else {
+		switch (co)
+		{
+		case LT::CO::e:
+			OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JZ("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::ne:
+			OUT << JZ(EMPTY, strlable) << ENDL
+				OUT << JE("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::le:
+			OUT << JB(EMPTY, strlable) << ENDL
+				OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JA("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::me:
+			OUT << JA(EMPTY, strlable) << ENDL
+				OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JB("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::l:
+			OUT << JB(EMPTY, strlable) << ENDL
+				OUT << JA("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		case LT::CO::m:
+			OUT << JA(EMPTY, strlable) << ENDL
+				OUT << JB("end", strlable) << ENDL
+				OUT << ENDL
+				break;
+		}
 	}
 }
 
@@ -482,32 +526,32 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				{
 				case PLUS:
 					OUT << POP("EDX") << ENDL
-						OUT << POP("EBX") << ENDL
-						OUT << GLADD("EBX", "EDX") << ENDL
-						OUT << PUSH("EBX") << ENDL
-						break;
+					OUT << POP("EBX") << ENDL
+					OUT << GLADD("EBX", "EDX") << ENDL
+					OUT << PUSH("EBX") << ENDL
+					break;
 				case MINUS:
 					OUT << POP("EDX") << ENDL
-						OUT << POP("EBX") << ENDL
-						OUT << GLSUB("EBX", "EDX") << ENDL
-						OUT << PUSH("EBX") << ENDL
-						break;
+					OUT << POP("EBX") << ENDL
+					OUT << GLSUB("EBX", "EDX") << ENDL
+					OUT << PUSH("EBX") << ENDL
+					break;
 				case STAR:
 					OUT << POP("EBX") << ENDL
-						OUT << POP("EAX") << ENDL
-						OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
-						OUT << GLMUL("EBX") << ENDL
-						OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
-						OUT << PUSH("EBX") << ENDL
-						break;
+					OUT << POP("EAX") << ENDL
+					OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
+					OUT << GLMUL("EBX") << ENDL
+					OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
+					OUT << PUSH("EBX") << ENDL
+					break;
 				case DIRSLASH:
 					OUT << POP("EBX") << ENDL
-						OUT << POP("EAX") << ENDL
-						OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
-						OUT << GLDIV("EBX") << ENDL
-						OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
-						OUT << PUSH("EBX") << ENDL
-						break;
+					OUT << POP("EAX") << ENDL
+					OUT << MOV(EMPTY, "EDX", EMPTY, 0) << ENDL
+					OUT << GLDIV("EBX") << ENDL
+					OUT << MOV(EMPTY, "EBX", EMPTY, "EAX") << ENDL
+					OUT << PUSH("EBX") << ENDL
+					break;
 				}
 			}
 		}
@@ -547,9 +591,8 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
 				else IT::retNameFun(idTable, lexTable, posFun, idname1);
 
-
 				OUT << CALL(idname1) << ENDL;
-				OUT << FLDREG("EAX") << ENDL;
+				OUT << FLDREG("QWORD PTR [EAX]") << ENDL;
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
@@ -576,10 +619,10 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			}
 		}
 		OUT << FSTP(idname2) << ENDL
-		if (flagReturn) OUT << MOV(EMPTY, idname2, EMPTY, "EAX") << ENDL
+		if (flagReturn) OUT << MOV(EMPTY, "EAX", "OFFSET ", idname2) << ENDL
 		break;
 	case IT::IDDATATYPE::STR:
-		numID = GETIDFROMLT(i-2).idxfirstLE;
+		
 		if (flagReturn)
 		{
 			if (CURRLEX(numID + 1) == LEX_LITERAL || CURRLEX(numID + 1) == LEX_LITERAL) throw ERROR_THROW_IN(700, CURRLE(numID).sn, -1);
@@ -588,13 +631,15 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			OUT << MOV(EMPTY, "EAX", "OFFSET ", idname2) << ENDL
 			break;
 		}
+		numID = GETIDFROMLT(i - 2).idxfirstLE;
 		for (;; i++)
 		{
 			if (CURRLEX(i) == '^' || CURRLEX(i) == LEX_SEMICOLON || (CURRLEX(i) == LEX_RIGHTHESIS && CURRLEX(i + 1) == LEX_LEFTBRACE)) break;
 			if (CURRLEX(i) == LEX_ID)
 			{
 				IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-				OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
+				if(GETIDFROMLT(i).idtype == IT::IDTYPE::P) OUT << MOV(EMPTY, "ESI", EMPTY, idname1) << ENDL
+				else OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
 				OUT << PMOV("EDI", "OFFSET", idname2, countSizeOfStr) << ENDL;
 				countSizeOfStr += GETIDFROMLT(i).value.vstr.len;
 				_itoa(GETIDFROMLT(i).value.vstr.len+1, buffInt, 10);

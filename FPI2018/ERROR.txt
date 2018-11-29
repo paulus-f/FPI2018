@@ -41,6 +41,14 @@ Program
 		MOV	ECX, 1
 		REP MOVSB
 
+		
+		
+		
+		
+		
+		
+		
+		
 inverse for unlessssssssssssssssss
 
 pDst - указатель на приемник

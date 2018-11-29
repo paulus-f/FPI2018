@@ -5,7 +5,7 @@ int def funadd(int a, int c)
 
 fl def retfl(fl a, fl c)
 {
-	fl b = a+b;
+	fl b = a+c;
 	r b;
 }
 
@@ -28,18 +28,9 @@ Program
 	
 	int sizestrokaaa = strlen(srokabb);
 	
+	
 	bool flag = false;
 	
-	if(flag == false)
-	{
-		testflone = testflone + 1.01;
-	}
-	alias 
-	{
-		testflone = 1.01;
-	}
-	
-
 	
 	str lol = strokaa+srokabb;
 	
@@ -47,13 +38,7 @@ Program
 	p< lol;
 	
 	fl testfltwo = 23.43 - testflone;
-	int b = funadd(30, 40) * 2;
-	int i = 1;
-	b = 1;
-	for(i = 0; i < 10; i=i+1)
-	{
-		b=b*2;
-	}
+	int b = funadd(30, 40) * 2 + 12;
 	
 	
 }

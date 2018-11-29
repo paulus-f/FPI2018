@@ -64,6 +64,9 @@ namespace IT
 	void retNameFun(IdTable &idTable, LT::LexTable& lexTable, int numLT, char* out);
 
 
+	bool isExist(LT::LexTable& LtTable, IdTable& idTable, char* buff);
+
+
 	IdTable Create(
 		int size
 	);

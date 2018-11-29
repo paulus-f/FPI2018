@@ -14,7 +14,7 @@ namespace Error {
 		ERROR_ENTRY_NODEF(101),ERROR_ENTRY_NODEF(102),ERROR_ENTRY_NODEF(103),
 		ERROR_ENTRY(104, "Превышена длина входного параметра"),
 		ERROR_ENTRY_NODEF(105),ERROR_ENTRY_NODEF(106),ERROR_ENTRY_NODEF(107),
-		ERROR_ENTRY_NODEF(108),
+		ERROR_ENTRY(108, "Переменная уже существует"),
 		ERROR_ENTRY(109, "Не хватает закрывающей или открывающей скобки"),
 		ERROR_ENTRY(110, "Ошибка при открытии файла с исходным кодом (-in)"),
 		ERROR_ENTRY(111, "Недопустимый символ в исходном файле (-in)"),

@@ -56,45 +56,7 @@ namespace IT {
 					}
 				}
 			}
-		}
-		/*for (int i = 0; i < idTable.head; i++)
-		{
-			if (idTable.table[i].idxfirstLE == lexTable.table[numLT].idxTI)
-			if (numLT < idTable.head ||idTable.table[i].idxfirstLE == lexTable.table[numLT].idxTI)
-			{
-				if (idTable.table[i].scope == SCOPE::G) strcpy(out, idTable.table[i].id);
-				else if (idTable.table[i].scope == SCOPE::LB)
-				{
-					for (int j = i; j >= 0; j--)
-					{
-						if (lexTable.table[idTable.table[j].idxfirstLE - 1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
-						{
-							char buff[300];
-							strcpy(buff, "lb_foo__");
-							strcat(buff, idTable.table[j].id);
-							strcat(buff, idTable.table[i].id);
-							strcpy(out, buff);
-							return;
-						}
-					}
-				}
-				else
-				{
-					for (int j = i; j >= 0; j--)
-					{
-						if (lexTable.table[idTable.table[j].idxfirstLE-1].lexema[GETLEX] == LEX_FUNCTION || lexTable.table[idTable.table[j].idxfirstLE].lexema[GETLEX] == LEX_MAIN)
-						{
-							char buff[300];
-							strcpy(buff, "foo__");
-							strcat(buff, idTable.table[j].id);
-							strcat(buff, idTable.table[i].id);
-							strcpy(out, buff);
-							return;
-						}
-					}
-				}
-			}
-		}*/
+		}		
 	}
 	void retNameFun(IdTable & idTable, LT::LexTable & lexTable, int numLT, char * out)
 	{
@@ -224,8 +186,21 @@ namespace IT {
 			throw ERROR_THROW_IN(117, Num, Cul);
 		}
 		checkGlobal = buff[0] == '$' ? true : false;
+		if (isExist(lexTable, idTable, buff) && indType.idtype != IT::P) throw ERROR_THROW_IN(108, Cul, Num);
 		indType.scope = IT::retScope(lexTable, checkGlobal);
 		IT::Add(idTable, indType);
+	}
+	
+	bool IT::isExist(LT::LexTable& LtTable, IdTable& idTable, char* buff)
+	{
+		bool isGlobal = false;
+		if (buff[0] == '$') isGlobal = true;
+		for (int i = idTable.head-1; i >= 0; i--)
+		{
+			if (!isGlobal && (LtTable.table[idTable.table[i].idxfirstLE-1].lexema[GETLEX] == 'f' || LtTable.table[idTable.table[i].idxfirstLE].lexema[GETLEX] == 'm')) return false;
+			if (!strcmp(idTable.table[i].id, buff)) return true;
+		}
+		return false;
 	}
 
 	IT::IdTable IT::Create(int size)
@@ -304,13 +279,17 @@ namespace IT {
 			return SCOPE::G;
 		}
 
+		bool leftbr = false;
+
 		for (int i = lexTable.head; i >= 0; --i)
 		{
+			if (lexTable.table[i].lexema[GETLEX] == LEFTBRACET) leftbr = true;
 			if (lexTable.table[i].lexema[GETLEX] == RIGHTBRACELET)
 			{
 				i = breakBlock(lexTable, i-1) - 1;
+				if (lexTable.table[i+1].lexema[GETLEX] == LEX_ALIAS) i++;
 			}
-			if (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE)
+			if (leftbr && (lexTable.table[i].lexema[GETLEX] == LEX_FOR || lexTable.table[i].lexema[GETLEX] == LEX_ALIAS || lexTable.table[i].lexema[GETLEX] == LEX_BRANCH || lexTable.table[i].lexema[GETLEX] == LEX_CYCLE))
 			{
 				return SCOPE::LB;
 			}
@@ -328,11 +307,38 @@ namespace IT {
 		return idTable.table[lexEntry.idxTI].idtype == IT::F ? true : false;
 	}
 
-	int IT::IsId(IdTable  &idTable, LT::LexTable &lexTable, char id[ID_MAXSIZE])
+	int IT::IsId(IdTable  &idTable, LT::LexTable &lexTable, char *id)
 	{
-		int posI;
 		bool exit = false;
-		for (int j = 0; j < lexTable.head ; j++)
+		bool isFun = false;
+		int posI;
+		// check fun
+		for (int i = 0; i < idTable.head; i++)
+		{
+			if (lexTable.table[idTable.table[i].idxfirstLE].lexema[GETLEX] == 'm') break;
+			if (idTable.table[i].idtype == IDTYPE::F && !strcmp(idTable.table[i].id, id))
+			{
+				posI = i;
+				isFun = true;
+				exit = true;
+				break;
+			}
+		}
+		if (!isFun)
+		{
+			for (int i = idTable.head - 1; i >= 0; i--)
+			{
+				if (lexTable.table[idTable.table[i].idxfirstLE - 1].lexema[GETLEX] == 'f' || lexTable.table[idTable.table[i].idxfirstLE].lexema[GETLEX] == 'm') break;
+				if (!strcmp(idTable.table[i].id, id))
+				{
+					if (idTable.table[i].idtype == IDTYPE::F) continue;
+					posI = i;
+					exit = true;
+					break;
+				}
+			}
+		}
+		/*for (int j = 0; j < lexTable.head ; j++)
 		{
 			if (lexTable.table[j].lexema[GETLEX] == LEX_ID)
 			{
@@ -350,7 +356,7 @@ namespace IT {
 					break;
 				}
 			}
-		}
+		}*/
 		if (exit)
 		{
 			switch (idTable.table[posI].scope)
