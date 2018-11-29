@@ -635,8 +635,12 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				}
 				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
 				else IT::retNameFun(idTable, lexTable, posFun, idname1);
-
 				OUT << CALL(idname1) << ENDL;
+				OUT << MOV(EMPTY, "ESI", EMPTY, "EAX") << ENDL
+				OUT << PMOV("EDI", "OFFSET ", idname2, countSizeOfStr) << ENDL;
+				OUT << PUSH(idname1) << ENDL
+				OUT << CALL("strlenfpi") << ENDL
+				OUT << MOV(EMPTY, "ECX", EMPTY, "EAX") << ENDL
 			//	THINK ABOUT
 			}
 		}

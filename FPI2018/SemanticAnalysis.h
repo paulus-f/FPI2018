@@ -13,6 +13,4 @@ namespace Semantic
 	bool checkType(int numLT, LT::LexTable lexTable, IT::IdTable idTable);
 	bool checkCycle(int numIT, LT::LexTable lexTable, IT::IdTable idTable);
 	bool checkStandlib(int len, int *type, int numLT, LT::LexTable lexTable, IT::IdTable idTable);
-
-
 }
