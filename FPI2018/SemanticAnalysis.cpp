@@ -2,6 +2,10 @@
 #include "SemanticAnalysis.h"
 #include "stanlib.h"
 #include "Error.h"
+
+// added check str-parm in nonstanlibfun;
+// added check str-parm in nonstanlibfun;
+// and str fun
 bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	bool errorSem = false;
@@ -102,11 +106,14 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 	{
 		int count = 0;
 		int arrParm[10/*maxparm*/];  
-		//count the parameters
 		for (int i = itentry.idxfirstLE+1; lexTable.table[i].lexema[GETLEX] != LEX_RIGHTHESIS ; i++)
 		{
 			if (lexTable.table[i].lexema[GETLEX] == LEX_ID)
 			{
+				if (idTable.table[lexTable.table[i].idxTI].iddatatype == IT::IDDATATYPE::STR)
+				{
+					return false;
+				}
 				arrParm[count++] = idTable.table[lexTable.table[i].idxTI].iddatatype;
 			}
 			if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
@@ -133,6 +140,7 @@ bool Semantic::checkFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 bool Semantic::checkSegFun(int numLT, LT::LexTable lexTable, IT::IdTable idTable)
 {
 	IT::IDDATATYPE typefun = idTable.table[lexTable.table[numLT + 1].idxTI].iddatatype;
+	if (typefun == IT::IDDATATYPE::STR) return false;
 	for (int i = numLT+1;; i++)
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_RETURN)

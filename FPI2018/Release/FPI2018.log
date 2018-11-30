@@ -1,0 +1,30 @@
+﻿  CodeGeneration.cpp
+d:\proga\project\fpi2018\fpi2018\codegeneration.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  Error.cpp
+d:\proga\project\fpi2018\fpi2018\error.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  FPI2018.cpp
+d:\proga\project\fpi2018\fpi2018\fpi2018.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  FST.cpp
+d:\proga\project\fpi2018\fpi2018\fst.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  GRB.cpp
+d:\proga\project\fpi2018\fpi2018\grb.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  In.cpp
+d:\proga\project\fpi2018\fpi2018\in.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  IT.cpp
+d:\proga\project\fpi2018\fpi2018\it.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  Log.cpp
+d:\proga\project\fpi2018\fpi2018\log.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  LT.cpp
+d:\proga\project\fpi2018\fpi2018\lt.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  MFST.cpp
+d:\proga\project\fpi2018\fpi2018\mfst.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  Parm.cpp
+d:\proga\project\fpi2018\fpi2018\parm.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  RPN.cpp
+d:\proga\project\fpi2018\fpi2018\rpn.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  SemanticAnalysis.cpp
+d:\proga\project\fpi2018\fpi2018\semanticanalysis.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  stanlib.cpp
+d:\proga\project\fpi2018\fpi2018\stanlib.cpp(1): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,
+  stdafx.cpp
+d:\proga\project\fpi2018\fpi2018\stdafx.cpp(5): fatal error C1083: Не удается открыть файл предкомпилированный заголовок: Release\FPI2018.pch: No such file or directory,

@@ -381,7 +381,7 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 	return -1;
 }
 
-void CG::jumpfun(bool isInverse, LT::CO co, std::string strlable, Log::LOG log)// add inverse
+void CG::jumpfun(bool isInverse, LT::CO co, std::string strlable, Log::LOG log)
 {
 	if (isInverse) 
 	{
@@ -497,14 +497,20 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
 						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR)
+						{
+							OUT << PUSH2("OFFSET ", idname1) << ENDL
+						}
 						else OUT << PUSH(idname1) << ENDL
 						j++;
 					}
 					if (CURRLEX(i) == LEX_ID)
 					{
 						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
+						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR)
+						{
+							OUT << PUSH2("OFFSET ", idname1) << ENDL
+						}
 						else OUT << PUSH(idname1) << ENDL
 						j++;
 					}
@@ -592,7 +598,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				else IT::retNameFun(idTable, lexTable, posFun, idname1);
 
 				OUT << CALL(idname1) << ENDL;
-				OUT << FLDREG("QWORD PTR [EAX]") << ENDL;
+				OUT << FLDREG("DWORD PTR [EAX]") << ENDL;
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
@@ -638,7 +644,10 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			if (CURRLEX(i) == LEX_ID)
 			{
 				IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-				if(GETIDFROMLT(i).idtype == IT::IDTYPE::P) OUT << MOV(EMPTY, "ESI", EMPTY, idname1) << ENDL
+				if (GETIDFROMLT(i).idtype == IT::IDTYPE::P)
+				{
+					OUT << MOV(EMPTY, "ESI", EMPTY, idname1) << ENDL
+				}
 				else OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
 				OUT << PMOV("EDI", "OFFSET", idname2, countSizeOfStr) << ENDL;
 				countSizeOfStr += GETIDFROMLT(i).value.vstr.len;
@@ -657,36 +666,6 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				OUT << MOV(EMPTY, "ECX", EMPTY, buffInt) << ENDL
 				OUT << REPMOVSB << ENDL
 				GETIDFROMLT(numID).value.vstr.len = countSizeOfStr;
-			}
-			if (CURRLEX(i) == '@')
-			{
-				int posFun = i;
-				for (int j = 0; j < CURRLE(posFun).amountArg; i++)
-				{
-					if (CURRLEX(i) == LEX_LITERAL)
-					{
-						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
-						else OUT << PUSH(idname1) << ENDL
-						j++;
-					}
-					if (CURRLEX(i) == LEX_ID)
-					{
-						IT::retIDwithScope(idTable, lexTable, GETIDFROMLT(i).idxfirstLE, idname1);
-						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
-						else OUT << PUSH(idname1) << ENDL
-						j++;
-					}
-				}
-				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
-				else IT::retNameFun(idTable, lexTable, posFun, idname1);
-				OUT << CALL(idname1) << ENDL;
-				OUT << MOV(EMPTY, "ESI", EMPTY, "EAX") << ENDL
-				OUT << PMOV("EDI", "OFFSET ", idname2, countSizeOfStr) << ENDL;
-				OUT << PUSH(idname1) << ENDL
-				OUT << CALL("strlenfpi") << ENDL
-				OUT << MOV(EMPTY, "ECX", EMPTY, "EAX") << ENDL
-			//	THINK ABOUT
 			}
 		}
 		break;

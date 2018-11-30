@@ -5,44 +5,57 @@ int def funadd(int a, int c)
 
 fl def retfl(fl a, fl c)
 {
-	fl b = a+b;
+	fl b = a+c;
 	r b;
 }
 
-str def retstr(str qwert)
+bool def state(int inta)
 {
-	str c = qwert;
-	r c;
+	int b = 100-inta; 
+	if(b >= 10)
+	{
+		checkstate = true;
+	}
+	alias
+	{
+		checkstate = false;
+	}
+	
+	r checkstate;
 }
-
 
 Program
 {
-	
+
 	fl testflone = retfl(12.3, 1.54);
 	str strokaa= "fisrts string";
 	str srokabb = "second string";
 	int kek = strfind("str", srokabb);
-	str retstroka = retstr(strokaa);
-	
+	bool chek = state(123);
+	str lolb = strokaa;	
 	
 	int sizestrokaaa = strlen(srokabb);
 	
 	bool flag = false;
 	
-	if(flag == false)
+	unless(flag == false)
 	{
 		testflone = testflone + 1.01;
 	}
-	alias 
+	W
+	int count = 0;
+	
+	while(flag == false)
 	{
-		testflone = 1.01;
+		count = count + 1;
+		if(count == 3)
+		{
+			flag = true;
+		}
 	}
 	
-
 	
 	str lol = strokaa+srokabb;
-	
 	
 	p< lol;
 	
@@ -50,10 +63,9 @@ Program
 	int b = funadd(30, 40) * 2;
 	int i = 1;
 	b = 1;
-	for(i = 0; i < 10; i=i+1)
+	for(i = 0; i < 5; i=i+1)
 	{
 		b=b*2;
 	}
-	
 	
 }

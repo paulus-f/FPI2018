@@ -1,0 +1,3 @@
+﻿  StanLib.cpp
+d:\proga\project\fpi2018\stanlib\stanlib.cpp(78): warning C4244: return: преобразование "double" в "float", возможна потеря данных
+  StanLib.vcxproj -> D:\Proga\Project\FPI2018\Release\StanLib.lib

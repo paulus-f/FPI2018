@@ -21,35 +21,41 @@ ExitProcess PROTO : DWORD
 
 .const
 	INTLIT0		DWORD	10
+	BLLIT0		DWORD	0
+	INTLIT1		DWORD	10
+	BLLIT1		DWORD	1
+	BLLIT2		DWORD	0
 	FLLIT0		REAL4	12.3
 	FLLIT1		REAL4	1.54
 	STRLIT0		DB	"fisrts string", 0
 	STRLIT1		DB	"second string", 0
 	STRLIT2		DB	"str", 0
-	BLLIT0		DWORD	0
-	BLLIT1		DWORD	0
+	INTLIT2		DWORD	123
+	BLLIT3		DWORD	0
+	BLLIT4		DWORD	0
 	FLLIT2		REAL4	1.01
 	FLLIT3		REAL4	1.01
 	FLLIT4		REAL4	23.43
-	INTLIT1		DWORD	30
-	INTLIT2		DWORD	40
-	INTLIT3		DWORD	2
-	INTLIT4		DWORD	1
-	INTLIT5		DWORD	1
-	INTLIT6		DWORD	0
-	INTLIT7		DWORD	10
-	INTLIT8		DWORD	1
-	INTLIT9		DWORD	2
+	INTLIT3		DWORD	30
+	INTLIT4		DWORD	40
+	INTLIT5		DWORD	2
+	INTLIT6		DWORD	1
+	INTLIT7		DWORD	1
+	INTLIT8		DWORD	0
+	INTLIT9		DWORD	10
+	INTLIT10		DWORD	1
+	INTLIT11		DWORD	2
 
 .data
 	system_pause_fpi			DB	255 dup(0)
 	foo__retflb			REAL4	0.0
-	foo__retstrc			DB	255 dup(0)
+	foo__statecheckstate			DWORD	0
 	foo__programtestflone			REAL4	0.0
 	foo__programstrokaa			DB	255 dup(0)
 	foo__programsrokabb			DB	255 dup(0)
 	foo__programkek			DWORD	0
-	foo__programretstroka			DB	255 dup(0)
+	foo__programchek			DWORD	0
+	foo__programlolb			DB	255 dup(0)
 	foo__programsizestrokaaa			DWORD	0
 	foo__programflag			DWORD	0
 	foo__programlol			DB	255 dup(0)
@@ -77,7 +83,7 @@ ExitProcess PROTO : DWORD
 	foo__funadd ENDP
 	foo__retfl PROC foo__retfla : REAL4, foo__retflc : REAL4 
 		FLD	foo__retfla
-		FLD	foo__retflb
+		FLD	foo__retflc
 		FADD
 		FSTP	[foo__retflb]
 		FLD	foo__retflb
@@ -85,19 +91,33 @@ ExitProcess PROTO : DWORD
 		MOV	EAX,OFFSET foo__retflb
 		ret
 	foo__retfl ENDP
-	foo__retstr PROC foo__retstrqwert : DWORD 
-		MOV	ESI,foo__retstrqwert
-		MOV	EDI , OFFSET foo__retstrc + 0
-		MOV	ECX,1
-		REP MOVSB
-		MOV	EAX,OFFSET foo__retstrc
+	foo__state PROC foo__stateinta : DWORD 
+		PUSH 	BLLIT0
+		POP 	EAX
+		MOV	foo__statecheckstate,EAX
+		JA		if00
+		JE		if00
+		JB		endif00
+
+if00:
+		PUSH 	BLLIT1
+		POP 	EAX
+		MOV	foo__statecheckstate,EAX
+		JMP		endalias0
+endif00:
+		PUSH 	BLLIT2
+		POP 	EAX
+		MOV	foo__statecheckstate,EAX
+endalias0:
+		PUSH 	foo__statecheckstate
+		POP 	EAX
 		ret
-	foo__retstr ENDP
+	foo__state ENDP
 	main PROC 
 		PUSH 	FLLIT0
 		PUSH 	FLLIT1
 		CALL		foo__retfl
-		FLD	QWORD PTR [EAX]
+		FLD	DWORD PTR [EAX]
 		FSTP	[foo__programtestflone]
 		MOV	ESI,OFFSET STRLIT0
 		MOV	EDI , OFFSET  foo__programstrokaa + 0
@@ -113,23 +133,25 @@ ExitProcess PROTO : DWORD
 		PUSH 	EAX
 		POP 	EAX
 		MOV	foo__programkek,EAX
-		PUSH 	OFFSET foo__programstrokaa
-		CALL		foo__retstr
-		MOV	ESI,EAX
-		MOV	EDI , OFFSET  foo__programretstroka + 0
-		PUSH 	foo__retstr
-		CALL		strlenfpi
-		MOV	ECX,EAX
+		PUSH 	INTLIT2
+		CALL		foo__state
+		PUSH 	EAX
+		POP 	EAX
+		MOV	foo__programchek,EAX
+		MOV	ESI,OFFSET foo__programstrokaa
+		MOV	EDI , OFFSET foo__programlolb + 0
+		MOV	ECX,14
+		REP MOVSB
 		PUSH 	OFFSET foo__programsrokabb
 		CALL		strlenfpi
 		PUSH 	EAX
 		POP 	EAX
 		MOV	foo__programsizestrokaaa,EAX
-		PUSH 	BLLIT0
+		PUSH 	BLLIT3
 		POP 	EAX
 		MOV	foo__programflag,EAX
 		MOV	EAX,foo__programflag
-		CMP	EAX,BLLIT1
+		CMP	EAX,BLLIT4
 		JE		if00
 		JZ		endif00
 
@@ -157,11 +179,11 @@ endalias0:
 		FLD	foo__programtestflone
 		FADD
 		FSTP	[foo__programtestfltwo]
-		PUSH 	INTLIT1
-		PUSH 	INTLIT2
+		PUSH 	INTLIT3
+		PUSH 	INTLIT4
 		CALL		foo__funadd
 		PUSH 	EAX
-		PUSH 	INTLIT3
+		PUSH 	INTLIT5
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -170,18 +192,18 @@ endalias0:
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT4
+		PUSH 	INTLIT6
 		POP 	EAX
 		MOV	foo__programi,EAX
-		PUSH 	INTLIT5
+		PUSH 	INTLIT7
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT6
+		PUSH 	INTLIT8
 		POP 	EAX
 		MOV	foo__programi,EAX
 for1:
 		PUSH 	foo__programb
-		PUSH 	INTLIT9
+		PUSH 	INTLIT11
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -191,7 +213,7 @@ for1:
 		POP 	EAX
 		MOV	foo__programb,EAX
 		PUSH 	foo__programi
-		PUSH 	INTLIT8
+		PUSH 	INTLIT10
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
@@ -199,7 +221,7 @@ for1:
 		POP 	EAX
 		MOV	foo__programi,EAX
 		MOV	EAX,foo__programi
-		CMP	EAX,INTLIT7
+		CMP	EAX,INTLIT9
 		JB		for1
 		JA		endfor1
 
