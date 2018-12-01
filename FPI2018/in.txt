@@ -1,6 +1,8 @@
 int def funadd(int a, int c)
 {
-	r (a+c)/10;
+	int div = 10;
+	int $isgl = 23;
+	r (a+c)/div;
 }
 
 fl def retfl(fl a, fl c)
@@ -12,12 +14,15 @@ fl def retfl(fl a, fl c)
 bool def state(int inta)
 {
 	int b = 100-inta; 
+	bool checkstate = false;
 	if(b >= 10)
 	{
+		p< "more or equal";
 		checkstate = true;
 	}
 	alias
 	{
+		p< "less";
 		checkstate = false;
 	}
 	
@@ -31,8 +36,11 @@ Program
 	str strokaa= "fisrts string";
 	str srokabb = "second string";
 	int kek = strfind("str", srokabb);
-	bool chek = state(123);
+	bool chek = state(10);
 	str lolb = strokaa;	
+     
+	p< "isglobal before funadd";
+	p< $isgl;
 	
 	int sizestrokaaa = strlen(srokabb);
 	
@@ -40,9 +48,10 @@ Program
 	
 	unless(flag == false)
 	{
+		p< "flag unless false";
 		testflone = testflone + 1.01;
 	}
-	W
+	
 	int count = 0;
 	
 	while(flag == false)
@@ -50,10 +59,18 @@ Program
 		count = count + 1;
 		if(count == 3)
 		{
+			p< "flag is true";
 			flag = true;
 		}
 	}
 	
+	
+	str newstr;	
+	p< "input string";
+	p> newstr; 
+	
+	p< "inputing string";
+	p< newstr;
 	
 	str lol = strokaa+srokabb;
 	
@@ -62,6 +79,8 @@ Program
 	fl testfltwo = 23.43 - testflone;
 	int b = funadd(30, 40) * 2;
 	int i = 1;
+	p< "isglobal after funadd";
+	p< $isgl;
 	b = 1;
 	for(i = 0; i < 5; i=i+1)
 	{

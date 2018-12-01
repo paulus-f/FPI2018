@@ -68,7 +68,7 @@
 #define CMP(par1, par2, par3, par4) 	"\t\tCMP\t"<< par1 << par2 << ',' << par3 << par4
 #define JB(parm1, parm2)				"\t\tJB\t\t" << parm1 << parm2 
 #define JE(parm1, parm2)				"\t\tJE\t\t" << parm1 << parm2 
-#define JZ(parm1, parm2)				"\t\tJZ\t\t" << parm1 << parm2 
+#define JNE(parm1, parm2)				"\t\tJNE\t\t" << parm1 << parm2 
 #define JA(parm1, parm2)				"\t\tJA\t\t" << parm1 << parm2 
 #define JMP(parm1, parm2)				"\t\tJMP\t\t" << parm1 << parm2 
 #define CALL(parm)						"\t\tCALL\t\t" << parm
@@ -296,10 +296,9 @@ int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log,
 				IT::retIDwithScope(idTable, lexTable, i + 1, idname1);
 				OUT << PUSH2("OFFSET ",idname1) << ENDL
 				OUT << CALL("inputfpi") << ENDL
-				OUT << MOV("OFFSET ", idname1, EMPTY , "EAX") << ENDL
 				break;
 			case LEX_OUTPUT: 
-				if (GETIDFROMLT(i + 1).idtype == IT::IDTYPE::L) IT::retIDlit(idTable, i + 1, idname1);
+				if (GETIDFROMLT(i + 1).idtype == IT::IDTYPE::L) IT::retIDlit(GETIDFROMLT(i + 1), idname1);
 				else IT::retIDwithScope(idTable, lexTable, i + 1, idname1);
 				switch (GETIDFROMLT(i+1).iddatatype)
 				{
@@ -388,13 +387,13 @@ void CG::jumpfun(bool isInverse, LT::CO co, std::string strlable, Log::LOG log)
 		switch (co)
 		{
 		case LT::CO::e:
-			OUT << JZ(EMPTY, strlable) << ENDL
+			OUT << JNE(EMPTY, strlable) << ENDL
 				OUT << JE("end", strlable) << ENDL
 				OUT << ENDL
 				break;
 		case LT::CO::ne:
 			OUT << JE(EMPTY, strlable) << ENDL
-				OUT << JZ("end", strlable) << ENDL
+				OUT << JNE("end", strlable) << ENDL
 				OUT << ENDL
 				break;
 		case LT::CO::le:
@@ -426,12 +425,12 @@ void CG::jumpfun(bool isInverse, LT::CO co, std::string strlable, Log::LOG log)
 		{
 		case LT::CO::e:
 			OUT << JE(EMPTY, strlable) << ENDL
-				OUT << JZ("end", strlable) << ENDL
+				OUT << JNE("end", strlable) << ENDL
 				OUT << ENDL
 				break;
 		case LT::CO::ne:
-			OUT << JZ(EMPTY, strlable) << ENDL
-				OUT << JE("end", strlable) << ENDL
+			OUT << JE(EMPTY, strlable) << ENDL
+				OUT << JNE("end", strlable) << ENDL
 				OUT << ENDL
 				break;
 		case LT::CO::le:
@@ -496,7 +495,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				{
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
-						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+						IT::retIDlit(GETIDFROMLT(i), idname1);
 						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR)
 						{
 							OUT << PUSH2("OFFSET ", idname1) << ENDL
@@ -523,7 +522,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
-				IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+				IT::retIDlit(GETIDFROMLT(i), idname1);
 				OUT << PUSH(idname1) << ENDL
 			}
 			if (CURRLEX(i) == LEX_OPERATION)
@@ -581,7 +580,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				{
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
-						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+						IT::retIDlit(GETIDFROMLT(i), idname1);
 						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ", idname1) << ENDL
 						else OUT << PUSH(idname1) << ENDL
 						j++;
@@ -602,7 +601,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
-				IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+				IT::retIDlit(GETIDFROMLT(i), idname1);
 				OUT << FLD(idname1) << ENDL
 			}
 			if (CURRLEX(i) == LEX_OPERATION)
@@ -632,7 +631,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 		if (flagReturn)
 		{
 			if (CURRLEX(numID + 1) == LEX_LITERAL || CURRLEX(numID + 1) == LEX_LITERAL) throw ERROR_THROW_IN(700, CURRLE(numID).sn, -1);
-			if (CURRLEX(numID) == LEX_LITERAL) IT::retIDlit(idTable, numID, idname2);
+			if (CURRLEX(numID) == LEX_LITERAL) IT::retIDlit(GETIDFROMLT(numID), idname2);
 			if (CURRLEX(numID) == LEX_ID) IT::retIDwithScope(idTable, lexTable, numID, idname2);
 			OUT << MOV(EMPTY, "EAX", "OFFSET ", idname2) << ENDL
 			break;
@@ -658,7 +657,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
-				IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+				IT::retIDlit(GETIDFROMLT(i), idname1);
 				OUT << MOV(EMPTY, "ESI", "OFFSET ", idname1) << ENDL
 				OUT << PMOV("EDI", "OFFSET ", idname2, countSizeOfStr) << ENDL;
 				countSizeOfStr += GETIDFROMLT(i).value.vstr.len;
@@ -686,7 +685,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 				{
 					if (CURRLEX(i) == LEX_LITERAL)
 					{
-						IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+						IT::retIDlit(GETIDFROMLT(i), idname1);
 						if (GETIDFROMLT(i).iddatatype == IT::IDDATATYPE::STR) OUT << PUSH2("OFFSET ",idname1) << ENDL
 						else OUT << PUSH(idname1) << ENDL
 						j++;
@@ -705,7 +704,7 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{
-				IT::retIDlit(idTable, GETIDFROMLT(i).idxfirstLE, idname1);
+				IT::retIDlit(GETIDFROMLT(i), idname1);
 				OUT << PUSH(idname1) << ENDL
 			}
 		}
@@ -728,21 +727,21 @@ void CG::cmpfun(IT::Entry lentry, IT::Entry rentry, char * idname1, char * idnam
 	if (lentry.idtype == IT::IDTYPE::L && rentry.idtype == IT::IDTYPE::V)
 	{
 		IT::retIDwithScope(idTable, lexTable, rentry.idxfirstLE, idname2);
-		IT::retIDlit(idTable, lentry.idxfirstLE, idname1);
+		IT::retIDlit(lentry, idname1);
 		OUT << MOV(EMPTY, "EAX", EMPTY, idname1) << ENDL
 		OUT << CMP(EMPTY, "EAX", EMPTY, idname2) << ENDL
 	}
 	if (lentry.idtype == IT::IDTYPE::V && rentry.idtype == IT::IDTYPE::L)
 	{
 		IT::retIDwithScope(idTable, lexTable, lentry.idxfirstLE, idname1);
-		IT::retIDlit(idTable, rentry.idxfirstLE, idname2);
+		IT::retIDlit(rentry, idname2);
 		OUT << MOV(EMPTY, "EAX", EMPTY, idname1) << ENDL
 		OUT << CMP(EMPTY, "EAX", EMPTY, idname2) << ENDL
 	}
 	if (lentry.idtype == IT::IDTYPE::L && rentry.idtype == IT::IDTYPE::L)
 	{
-		IT::retIDlit(idTable, lentry.idxfirstLE, idname1);
-		IT::retIDlit(idTable, rentry.idxfirstLE, idname2);
+		IT::retIDlit(lentry, idname1);
+		IT::retIDlit(rentry, idname2);
 		OUT << MOV(EMPTY, "EAX", EMPTY, idname1) << ENDL
 		OUT << CMP(EMPTY, "EAX", EMPTY, idname2) << ENDL
 	}

@@ -28,20 +28,20 @@ namespace IT
 		int idxfirstLE;
 		int countlex = -1;
 		char id[ID_MAXSIZE];
-		IDDATATYPE iddatatype;
-		IDTYPE idtype;
-		SCOPE scope;
+		IDDATATYPE iddatatype; // тип данных в ИД 
+		IDTYPE idtype; // тип ИД
+		SCOPE scope; // область видимости
 		union 
 		{
 			struct
 			{
 				int len;
 				char str[TI_STR_MAXSIZE];
-			}vstr;
+			}vstr; // значение строки
 
-			float vfl;
-			bool vbool;
-			int vint; 
+			float vfl; // значение float
+			bool vbool; // значение bool
+			int vint; // значение int 
 		}value;
 	};
 
@@ -54,7 +54,8 @@ namespace IT
 		Entry* table;
 	};
 
-	void retIDlit(IdTable &idTable, int numLT, char* out);
+	//void retIDlit(IdTable &idTable, LT::LexTable &lexTable, int numLT, char* out);
+	void retIDlit(IT::Entry &idTable, char* out);
 	void addFun(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType);
 	int getAmountPar(IdTable &idTable, int num);
 	void addVarOrPar(IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType, bool flagPar, int Cul, int Num);

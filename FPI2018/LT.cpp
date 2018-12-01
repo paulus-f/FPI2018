@@ -761,19 +761,18 @@ namespace LT {
 
 		for (int numLine = 1, ind = 0; ind < lexTable.head; ind++)
 		{
-			if(lexTable.table[ind].lexema[GETLEX] == '^')
-			{
-				continue;
-			}
-			else if (numLine != lexTable.table[ind+1].sn)
-			{
-				*log.stream << lexTable.table[ind].lexema[GETLEX] << std::endl;
-				*log.stream << 0 << numLine++ << std::setw(5) << std::left << "   ";
-			}
-			else if (numLine == lexTable.table[ind].sn)
+			if (numLine == lexTable.table[ind].sn)
 			{
 				*log.stream << lexTable.table[ind].lexema[GETLEX];
 			}
+			else if (numLine != lexTable.table[ind].sn)
+			{
+				numLine++;
+				*log.stream << std::endl;
+				*log.stream << 0 << numLine <<  "   ";
+				ind--;
+			}
+			
 		}
 		*log.stream << std::endl;
 	}

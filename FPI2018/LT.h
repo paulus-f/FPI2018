@@ -23,10 +23,7 @@
 #define MLN "mln"
 #define FLOAT "fl"
 #define MAIN "program"
-#define NOTYPE "NOTYPE"
 #define FUNCTION "def"
-//#define STRLEN "strlen"
-//#define SUBSTR "substr"
 #define SEMICOLON ';'
 #define COMMA ','
 #define FALSE false
@@ -46,9 +43,6 @@
 #define NEWLINE '\n'
 #define ENDNULL '\0'
 #define TAB '\t'
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 #define LEX_FIXSIZE 1
@@ -87,22 +81,19 @@
 #define LEX_DIRSLASH '/'
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
 namespace LT
 {
-	enum CO { m = 1, l = 2, e = 3, ne = 4, me = 5, le = 6};
-	enum Cycle { w = 1, ut = 2 };
-	enum Branch{ i = 1, ul = 2 };
+	enum CO { m = 1, l = 2, e = 3, ne = 4, me = 5, le = 6}; // операции сравнения 
+	enum Cycle { w = 1, ut = 2 }; // тип цикла 
+	enum Branch{ i = 1, ul = 2 }; // тип ветки
 
 	struct Entry
 	{
-		char lexema[LEX_FIXSIZE];
-		int sn;
-		int idxTI;
-		short amountArg;
-		char operation = NULL;
+		char lexema[LEX_FIXSIZE];// тип лексемы
+		int sn;					 // номер строки в искходном коде
+		int idxTI;				 // номер в ТИ
+		short amountArg;		 // количество аргументов, если это функция
+		char operation = NULL;   // тип арифметической операции 
 		CO co;
 		union 
 		{

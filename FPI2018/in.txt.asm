@@ -21,34 +21,51 @@ ExitProcess PROTO : DWORD
 
 .const
 	INTLIT0		DWORD	10
+	INTLIT1		DWORD	23
+	INTLIT2		DWORD	100
 	BLLIT0		DWORD	0
-	INTLIT1		DWORD	10
+	INTLIT3		DWORD	10
+	STRLIT0		DB	"more or equal", 0
 	BLLIT1		DWORD	1
+	STRLIT1		DB	"less", 0
 	BLLIT2		DWORD	0
 	FLLIT0		REAL4	12.3
 	FLLIT1		REAL4	1.54
-	STRLIT0		DB	"fisrts string", 0
-	STRLIT1		DB	"second string", 0
-	STRLIT2		DB	"str", 0
-	INTLIT2		DWORD	123
+	STRLIT2		DB	"fisrts string", 0
+	STRLIT3		DB	"second string", 0
+	STRLIT4		DB	"str", 0
+	INTLIT4		DWORD	10
+	STRLIT5		DB	"isglobal before funadd", 0
 	BLLIT3		DWORD	0
 	BLLIT4		DWORD	0
+	STRLIT6		DB	"flag unless false", 0
 	FLLIT2		REAL4	1.01
-	FLLIT3		REAL4	1.01
-	FLLIT4		REAL4	23.43
-	INTLIT3		DWORD	30
-	INTLIT4		DWORD	40
-	INTLIT5		DWORD	2
+	INTLIT5		DWORD	0
+	BLLIT5		DWORD	0
 	INTLIT6		DWORD	1
-	INTLIT7		DWORD	1
-	INTLIT8		DWORD	0
-	INTLIT9		DWORD	10
-	INTLIT10		DWORD	1
-	INTLIT11		DWORD	2
+	INTLIT7		DWORD	3
+	STRLIT7		DB	"flag is true", 0
+	BLLIT6		DWORD	1
+	STRLIT8		DB	"input string", 0
+	STRLIT9		DB	"inputing string", 0
+	FLLIT3		REAL4	23.43
+	INTLIT8		DWORD	30
+	INTLIT9		DWORD	40
+	INTLIT10		DWORD	2
+	INTLIT11		DWORD	1
+	STRLIT10		DB	"isglobal after funadd", 0
+	INTLIT12		DWORD	1
+	INTLIT13		DWORD	0
+	INTLIT14		DWORD	5
+	INTLIT15		DWORD	1
+	INTLIT16		DWORD	2
 
 .data
 	system_pause_fpi			DB	255 dup(0)
+	foo__funadddiv			DWORD	0
+	$isgl			DWORD	0
 	foo__retflb			REAL4	0.0
+	foo__stateb			DWORD	0
 	foo__statecheckstate			DWORD	0
 	foo__programtestflone			REAL4	0.0
 	foo__programstrokaa			DB	255 dup(0)
@@ -58,6 +75,8 @@ ExitProcess PROTO : DWORD
 	foo__programlolb			DB	255 dup(0)
 	foo__programsizestrokaaa			DWORD	0
 	foo__programflag			DWORD	0
+	foo__programcount			DWORD	0
+	foo__programnewstr			DB	255 dup(0)
 	foo__programlol			DB	255 dup(0)
 	foo__programtestfltwo			REAL4	0.0
 	foo__programb			DWORD	0
@@ -65,13 +84,19 @@ ExitProcess PROTO : DWORD
 
 .code
 	foo__funadd PROC foo__funadda : DWORD, foo__funaddc : DWORD 
+		PUSH 	INTLIT0
+		POP 	EAX
+		MOV	foo__funadddiv,EAX
+		PUSH 	INTLIT1
+		POP 	EAX
+		MOV	$isgl,EAX
 		PUSH 	foo__funadda
 		PUSH 	foo__funaddc
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
 		PUSH 	EBX
-		PUSH 	INTLIT0
+		PUSH 	foo__funadddiv
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -92,19 +117,33 @@ ExitProcess PROTO : DWORD
 		ret
 	foo__retfl ENDP
 	foo__state PROC foo__stateinta : DWORD 
+		PUSH 	INTLIT2
+		PUSH 	foo__stateinta
+		POP 	EDX
+		POP 	EBX
+		ADD	EBX,EDX
+		PUSH 	EBX
+		POP 	EAX
+		MOV	foo__stateb,EAX
 		PUSH 	BLLIT0
 		POP 	EAX
 		MOV	foo__statecheckstate,EAX
+		MOV	EAX,foo__stateb
+		CMP	EAX,INTLIT3
 		JA		if00
 		JE		if00
 		JB		endif00
 
 if00:
+		PUSH 	OFFSET STRLIT0
+		CALL		outputstrfpi
 		PUSH 	BLLIT1
 		POP 	EAX
 		MOV	foo__statecheckstate,EAX
 		JMP		endalias0
 endif00:
+		PUSH 	OFFSET STRLIT1
+		CALL		outputstrfpi
 		PUSH 	BLLIT2
 		POP 	EAX
 		MOV	foo__statecheckstate,EAX
@@ -119,21 +158,21 @@ endalias0:
 		CALL		foo__retfl
 		FLD	DWORD PTR [EAX]
 		FSTP	[foo__programtestflone]
-		MOV	ESI,OFFSET STRLIT0
+		MOV	ESI,OFFSET STRLIT2
 		MOV	EDI , OFFSET  foo__programstrokaa + 0
 		MOV	ECX,14
 		REP MOVSB
-		MOV	ESI,OFFSET STRLIT1
+		MOV	ESI,OFFSET STRLIT3
 		MOV	EDI , OFFSET  foo__programsrokabb + 0
 		MOV	ECX,14
 		REP MOVSB
-		PUSH 	OFFSET STRLIT2
+		PUSH 	OFFSET STRLIT4
 		PUSH 	OFFSET foo__programsrokabb
 		CALL		strfind
 		PUSH 	EAX
 		POP 	EAX
 		MOV	foo__programkek,EAX
-		PUSH 	INTLIT2
+		PUSH 	INTLIT4
 		CALL		foo__state
 		PUSH 	EAX
 		POP 	EAX
@@ -142,6 +181,10 @@ endalias0:
 		MOV	EDI , OFFSET foo__programlolb + 0
 		MOV	ECX,14
 		REP MOVSB
+		PUSH 	OFFSET STRLIT5
+		CALL		outputstrfpi
+		PUSH 	$isgl
+		CALL		outputintfpi
 		PUSH 	OFFSET foo__programsrokabb
 		CALL		strlenfpi
 		PUSH 	EAX
@@ -152,19 +195,55 @@ endalias0:
 		MOV	foo__programflag,EAX
 		MOV	EAX,foo__programflag
 		CMP	EAX,BLLIT4
-		JE		if00
-		JZ		endif00
+		JNE		unless0
+		JE		endunless0
 
-if00:
+unless0:
+		PUSH 	OFFSET STRLIT6
+		CALL		outputstrfpi
 		FLD	foo__programtestflone
 		FLD	[FLLIT2]
 		FADD
 		FSTP	[foo__programtestflone]
-		JMP		endalias0
-endif00:
-		FLD	[FLLIT3]
-		FSTP	[foo__programtestflone]
-endalias0:
+endunless0:
+		PUSH 	INTLIT5
+		POP 	EAX
+		MOV	foo__programcount,EAX
+while1:
+		PUSH 	foo__programcount
+		PUSH 	INTLIT6
+		POP 	EDX
+		POP 	EBX
+		ADD	EBX,EDX
+		PUSH 	EBX
+		POP 	EAX
+		MOV	foo__programcount,EAX
+		MOV	EAX,foo__programcount
+		CMP	EAX,INTLIT7
+		JE		if02
+		JNE		endif02
+
+if02:
+		PUSH 	OFFSET STRLIT7
+		CALL		outputstrfpi
+		PUSH 	BLLIT6
+		POP 	EAX
+		MOV	foo__programflag,EAX
+endif02:
+		MOV	EAX,foo__programflag
+		CMP	EAX,BLLIT5
+		JE		while1
+		JNE		endwhile1
+
+endwhile1:
+		PUSH 	OFFSET STRLIT8
+		CALL		outputstrfpi
+		PUSH 	OFFSET foo__programnewstr
+		CALL		inputfpi
+		PUSH 	OFFSET STRLIT9
+		CALL		outputstrfpi
+		PUSH 	OFFSET foo__programnewstr
+		CALL		outputstrfpi
 		MOV	ESI,OFFSET foo__programstrokaa
 		MOV	EDI , OFFSET foo__programlol + 0
 		MOV	ECX,14
@@ -175,15 +254,15 @@ endalias0:
 		REP MOVSB
 		PUSH 	OFFSET foo__programlol
 		CALL		outputstrfpi
-		FLD	[FLLIT4]
+		FLD	[FLLIT3]
 		FLD	foo__programtestflone
 		FADD
 		FSTP	[foo__programtestfltwo]
-		PUSH 	INTLIT3
-		PUSH 	INTLIT4
+		PUSH 	INTLIT8
+		PUSH 	INTLIT9
 		CALL		foo__funadd
 		PUSH 	EAX
-		PUSH 	INTLIT5
+		PUSH 	INTLIT10
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -192,18 +271,22 @@ endalias0:
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT6
+		PUSH 	INTLIT11
 		POP 	EAX
 		MOV	foo__programi,EAX
-		PUSH 	INTLIT7
+		PUSH 	OFFSET STRLIT10
+		CALL		outputstrfpi
+		PUSH 	$isgl
+		CALL		outputintfpi
+		PUSH 	INTLIT12
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT8
+		PUSH 	INTLIT13
 		POP 	EAX
 		MOV	foo__programi,EAX
-for1:
+for3:
 		PUSH 	foo__programb
-		PUSH 	INTLIT11
+		PUSH 	INTLIT16
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -213,7 +296,7 @@ for1:
 		POP 	EAX
 		MOV	foo__programb,EAX
 		PUSH 	foo__programi
-		PUSH 	INTLIT10
+		PUSH 	INTLIT15
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
@@ -221,11 +304,11 @@ for1:
 		POP 	EAX
 		MOV	foo__programi,EAX
 		MOV	EAX,foo__programi
-		CMP	EAX,INTLIT9
-		JB		for1
-		JA		endfor1
+		CMP	EAX,INTLIT14
+		JB		for3
+		JA		endfor3
 
-endfor1:
+endfor3:
 	PUSH OFFSET system_pause_fpi
 	call inputfpi
 	PUSH 0

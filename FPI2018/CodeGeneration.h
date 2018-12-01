@@ -22,7 +22,6 @@ namespace CG
 		std::string _namestruct;
 		int _posstruct;
 		typeBlock _tbstruct;
-
 		LabelStructFPI(){};
 
 		LabelStructFPI(std::string name, int pos, typeBlock tb)

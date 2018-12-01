@@ -63,43 +63,38 @@ namespace IT {
 		strcpy(out, "foo__");
 		strcat(out, idTable.table[lexTable.table[numLT].idxTI].id);
 	}
-	void retIDlit(IdTable & idTable, int numLT, char *out)
+	void retIDlit(IT::Entry &idTable, char* out)
 	{
-		for (int i = 0; i < idTable.head; i++)
-		{
-			if (idTable.table[i].idxfirstLE == numLT)
-			{
-				char buffnum[30];
-				char bufftype[30];;
 
-				switch (idTable.table[i].iddatatype)
-				{
-					case IDDATATYPE::FL: 
-						strcpy(bufftype, "FLLIT");
-						_itoa(idTable.table[i].countlex, buffnum, 10);
-						strcat(bufftype, buffnum);
-						strcpy(out, bufftype);
-						return;
-					case IDDATATYPE::BL:
-						strcpy(bufftype, "BLLIT");
-						_itoa(idTable.table[i].countlex, buffnum, 10);
-						strcat(bufftype, buffnum);
-						strcpy(out, bufftype);
-						return;
-					case IDDATATYPE::INT:
-						strcpy(bufftype, "INTLIT");
-						_itoa(idTable.table[i].countlex, buffnum, 10);
-						strcat(bufftype, buffnum);
-						strcpy(out, bufftype);
-						return;
-					case IDDATATYPE::STR:
-						strcpy(bufftype, "STRLIT");
-						_itoa(idTable.table[i].countlex, buffnum, 10);
-						strcat(bufftype, buffnum);
-						strcpy(out, bufftype);
-						return;
-				}
-			}
+		char buffnum[30];
+		char bufftype[30];;
+
+		switch (idTable.iddatatype)
+		{
+		case IDDATATYPE::FL:
+			strcpy(bufftype, "FLLIT");
+			_itoa(idTable.countlex, buffnum, 10);
+			strcat(bufftype, buffnum);
+			strcpy(out, bufftype);
+			return;
+		case IDDATATYPE::BL:
+			strcpy(bufftype, "BLLIT");
+			_itoa(idTable.countlex, buffnum, 10);
+			strcat(bufftype, buffnum);
+			strcpy(out, bufftype);
+			return;
+		case IDDATATYPE::INT:
+			strcpy(bufftype, "INTLIT");
+			_itoa(idTable.countlex, buffnum, 10);
+			strcat(bufftype, buffnum);
+			strcpy(out, bufftype);
+			return;
+		case IDDATATYPE::STR:
+			strcpy(bufftype, "STRLIT");
+			_itoa(idTable.countlex, buffnum, 10);
+			strcat(bufftype, buffnum);
+			strcpy(out, bufftype);
+			return;
 		}
 	}
 	void addFun(IT::IdTable &idTable, LT::LexTable &lexTable, LT::Entry lexEntry, char* buff, char* buffType)
@@ -294,10 +289,19 @@ namespace IT {
 		bool exit = false;
 		bool isFun = false;
 		int posI;
-		// check fun
+		
+		// check fun and gl
 		for (int i = 0; i < idTable.head; i++)
 		{
 			if (lexTable.table[idTable.table[i].idxfirstLE].lexema[GETLEX] == 'm') break;
+			
+			if (id[0] == '$' && !strcmp(idTable.table[i].id, id))
+			{
+				posI = i;
+				isFun = true;
+				exit = true;
+				break;
+			}
 			if (idTable.table[i].idtype == IDTYPE::F && !strcmp(idTable.table[i].id, id))
 			{
 				posI = i;
