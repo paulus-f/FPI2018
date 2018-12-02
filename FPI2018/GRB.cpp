@@ -8,10 +8,9 @@ namespace GRB
 	#define NS(n) GRB::Rule::Chain::N(n)
 	#define TS(n) GRB::Rule::Chain::T(n)
 	Greibach greibach(NS('S'), TS('$'), 8,
-		Rule(NS('S'), GRB_ERROR_SERIES + 0, 3
-			, Rule::Chain(4,  TS('m'), TS('{'), NS('N'), TS('}'))
+		Rule(NS('S'), GRB_ERROR_SERIES + 0, 2
 			, Rule::Chain(13, TS('t'), TS('f'), TS('i'), TS('('), NS('F'), TS(')'), TS('{'), NS('N'), TS('r'), NS('E'), TS(';'), TS('}'), NS('S'))
-			, Rule::Chain(5,  TS('m'), TS('{'), NS('N'), TS('}'), NS('S')))
+			, Rule::Chain(4,  TS('m'), TS('{'), NS('N'), TS('}')))
 		, Rule(NS('N'), GRB_ERROR_SERIES + 1, 22
 			, Rule::Chain(7,  TS('b'), TS('('), NS('Y'), TS(')'), TS('{'), NS('N'), TS('}'))
 			, Rule::Chain(7,  TS('c'), TS('('), NS('Y'), TS(')'), TS('{'), NS('N'), TS('}'))
