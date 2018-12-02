@@ -35,33 +35,49 @@ ExitProcess PROTO : DWORD
 	STRLIT3		DB	"second string", 0
 	STRLIT4		DB	"str", 0
 	INTLIT4		DWORD	10
-	STRLIT5		DB	"isglobal before funadd", 0
+	INTLIT5		DWORD	5
+	INTLIT6		DWORD	10
+	FLLIT2		REAL4	3.14
+	STRLIT5		DB	"sin", 0
+	FLLIT3		REAL4	0.01
+	STRLIT6		DB	"cos", 0
+	FLLIT4		REAL4	1.3
+	STRLIT7		DB	"tan", 0
+	FLLIT5		REAL4	2.14
+	STRLIT8		DB	"ctan", 0
+	FLLIT6		REAL4	0.2
+	STRLIT9		DB	"mln e", 0
+	INTLIT7		DWORD	9
+	STRLIT10		DB	"sqr 9", 0
+	STRLIT11		DB	"5-10", 0
+	STRLIT12		DB	"isglobal before funadd", 0
 	BLLIT3		DWORD	0
 	BLLIT4		DWORD	0
-	STRLIT6		DB	"flag unless false", 0
-	FLLIT2		REAL4	1.01
-	INTLIT5		DWORD	0
+	STRLIT13		DB	"flag unless false", 0
+	FLLIT7		REAL4	1.01
+	INTLIT8		DWORD	0
 	BLLIT5		DWORD	0
-	INTLIT6		DWORD	1
-	INTLIT7		DWORD	3
-	STRLIT7		DB	"flag is true", 0
+	INTLIT9		DWORD	1
+	INTLIT10		DWORD	3
+	STRLIT14		DB	"flag is true", 0
 	BLLIT6		DWORD	1
-	STRLIT8		DB	"input string", 0
-	STRLIT9		DB	"inputing string", 0
-	FLLIT3		REAL4	23.43
-	INTLIT8		DWORD	30
-	INTLIT9		DWORD	40
-	INTLIT10		DWORD	2
-	INTLIT11		DWORD	1
-	STRLIT10		DB	"isglobal after funadd", 0
-	INTLIT12		DWORD	1
-	INTLIT13		DWORD	0
-	INTLIT14		DWORD	5
+	STRLIT15		DB	"input string", 0
+	STRLIT16		DB	"inputing string", 0
+	FLLIT8		REAL4	23.43
+	INTLIT11		DWORD	30
+	INTLIT12		DWORD	40
+	INTLIT13		DWORD	2
+	INTLIT14		DWORD	1
+	STRLIT17		DB	"isglobal after funadd", 0
 	INTLIT15		DWORD	1
-	INTLIT16		DWORD	2
+	INTLIT16		DWORD	0
+	INTLIT17		DWORD	5
+	INTLIT18		DWORD	1
+	INTLIT19		DWORD	2
 
 .data
 	system_pause_fpi			DB	255 dup(0)
+	__temp__var__fpi			REAL4	0.0
 	foo__funadddiv			DWORD	0
 	$isgl			DWORD	0
 	foo__retflb			REAL4	0.0
@@ -73,6 +89,8 @@ ExitProcess PROTO : DWORD
 	foo__programkek			DWORD	0
 	foo__programchek			DWORD	0
 	foo__programlolb			DB	255 dup(0)
+	foo__programtestabs			DWORD	0
+	foo__programtestfun			REAL4	0.0
 	foo__programsizestrokaaa			DWORD	0
 	foo__programflag			DWORD	0
 	foo__programcount			DWORD	0
@@ -121,7 +139,7 @@ ExitProcess PROTO : DWORD
 		PUSH 	foo__stateinta
 		POP 	EDX
 		POP 	EBX
-		ADD	EBX,EDX
+		SUB	EBX,EDX
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__stateb,EAX
@@ -181,7 +199,84 @@ endalias0:
 		MOV	EDI , OFFSET foo__programlolb + 0
 		MOV	ECX,14
 		REP MOVSB
+		PUSH 	INTLIT5
+		PUSH 	INTLIT6
+		POP 	EDX
+		POP 	EBX
+		SUB	EBX,EDX
+		PUSH 	EBX
+		POP 	EAX
+		MOV	foo__programtestabs,EAX
+		PUSH 	FLLIT2
+		CALL		msin
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
 		PUSH 	OFFSET STRLIT5
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	FLLIT3
+		CALL		mcos
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
+		PUSH 	OFFSET STRLIT6
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	FLLIT4
+		CALL		mtan
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
+		PUSH 	OFFSET STRLIT7
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	FLLIT5
+		CALL		mctan
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
+		PUSH 	OFFSET STRLIT8
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	FLLIT6
+		CALL		mln
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
+		PUSH 	OFFSET STRLIT9
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	INTLIT7
+		CALL		msqr
+		MOV	__temp__var__fpi,EAX
+		FLD	DWORD PTR [__temp__var__fpi]
+		FSTP	dword ptr [__temp__var__fpi]
+		FSTP	[foo__programtestfun]
+		PUSH 	OFFSET STRLIT10
+		CALL		outputstrfpi
+		PUSH 	foo__programtestfun
+		CALL		outputflfpi
+		PUSH 	foo__programtestabs
+		CALL		mabs
+		PUSH 	EAX
+		POP 	EAX
+		MOV	foo__programtestabs,EAX
+		PUSH 	OFFSET STRLIT11
+		CALL		outputstrfpi
+		PUSH 	foo__programtestabs
+		CALL		outputintfpi
+		PUSH 	OFFSET STRLIT12
 		CALL		outputstrfpi
 		PUSH 	$isgl
 		CALL		outputintfpi
@@ -199,19 +294,19 @@ endalias0:
 		JE		endunless0
 
 unless0:
-		PUSH 	OFFSET STRLIT6
+		PUSH 	OFFSET STRLIT13
 		CALL		outputstrfpi
 		FLD	foo__programtestflone
-		FLD	[FLLIT2]
+		FLD	[FLLIT7]
 		FADD
 		FSTP	[foo__programtestflone]
 endunless0:
-		PUSH 	INTLIT5
+		PUSH 	INTLIT8
 		POP 	EAX
 		MOV	foo__programcount,EAX
 while1:
 		PUSH 	foo__programcount
-		PUSH 	INTLIT6
+		PUSH 	INTLIT9
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
@@ -219,12 +314,12 @@ while1:
 		POP 	EAX
 		MOV	foo__programcount,EAX
 		MOV	EAX,foo__programcount
-		CMP	EAX,INTLIT7
+		CMP	EAX,INTLIT10
 		JE		if02
 		JNE		endif02
 
 if02:
-		PUSH 	OFFSET STRLIT7
+		PUSH 	OFFSET STRLIT14
 		CALL		outputstrfpi
 		PUSH 	BLLIT6
 		POP 	EAX
@@ -236,11 +331,11 @@ endif02:
 		JNE		endwhile1
 
 endwhile1:
-		PUSH 	OFFSET STRLIT8
+		PUSH 	OFFSET STRLIT15
 		CALL		outputstrfpi
 		PUSH 	OFFSET foo__programnewstr
 		CALL		inputfpi
-		PUSH 	OFFSET STRLIT9
+		PUSH 	OFFSET STRLIT16
 		CALL		outputstrfpi
 		PUSH 	OFFSET foo__programnewstr
 		CALL		outputstrfpi
@@ -254,15 +349,15 @@ endwhile1:
 		REP MOVSB
 		PUSH 	OFFSET foo__programlol
 		CALL		outputstrfpi
-		FLD	[FLLIT3]
+		FLD	[FLLIT8]
 		FLD	foo__programtestflone
-		FADD
+		FSUB
 		FSTP	[foo__programtestfltwo]
-		PUSH 	INTLIT8
-		PUSH 	INTLIT9
+		PUSH 	INTLIT11
+		PUSH 	INTLIT12
 		CALL		foo__funadd
 		PUSH 	EAX
-		PUSH 	INTLIT10
+		PUSH 	INTLIT13
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -271,22 +366,22 @@ endwhile1:
 		PUSH 	EBX
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT11
+		PUSH 	INTLIT14
 		POP 	EAX
 		MOV	foo__programi,EAX
-		PUSH 	OFFSET STRLIT10
+		PUSH 	OFFSET STRLIT17
 		CALL		outputstrfpi
 		PUSH 	$isgl
 		CALL		outputintfpi
-		PUSH 	INTLIT12
+		PUSH 	INTLIT15
 		POP 	EAX
 		MOV	foo__programb,EAX
-		PUSH 	INTLIT13
+		PUSH 	INTLIT16
 		POP 	EAX
 		MOV	foo__programi,EAX
 for3:
 		PUSH 	foo__programb
-		PUSH 	INTLIT16
+		PUSH 	INTLIT19
 		POP 	EBX
 		POP 	EAX
 		MOV	EDX,0
@@ -296,7 +391,7 @@ for3:
 		POP 	EAX
 		MOV	foo__programb,EAX
 		PUSH 	foo__programi
-		PUSH 	INTLIT15
+		PUSH 	INTLIT18
 		POP 	EDX
 		POP 	EBX
 		ADD	EBX,EDX
@@ -304,7 +399,7 @@ for3:
 		POP 	EAX
 		MOV	foo__programi,EAX
 		MOV	EAX,foo__programi
-		CMP	EAX,INTLIT14
+		CMP	EAX,INTLIT17
 		JB		for3
 		JA		endfor3
 

@@ -136,7 +136,8 @@ void CG::addData(LT::LexTable& lexTable, IT::IdTable & idTable, Log::LOG log)
 {
 	OUT << ASM_DATA << ENDL;
 	char fun[300];
-	OUT << VRSTR(EMPTY, "system_pause_fpi") << ENDL;;
+	OUT << VRSTR(EMPTY, "system_pause_fpi") << ENDL;
+	OUT << VRFL(EMPTY, "__temp__var__fpi") << ENDL;
 	for (int i = 0; i < idTable.head; ++i)
 	{
 		if (idTable.table[i].idtype == IT::IDTYPE::F)
@@ -593,11 +594,20 @@ int  CG::doExpression(LT::LexTable& lexTable, IT::IdTable& idTable, int numLT, c
 						j++;
 					}
 				}
-				if (isStanLib(GETIDFROMLT(posFun).id)) strcpy(idname1, GETIDFROMLT(posFun).id);
-				else IT::retNameFun(idTable, lexTable, posFun, idname1);
-
-				OUT << CALL(idname1) << ENDL;
-				OUT << FLDREG("DWORD PTR [EAX]") << ENDL;
+				if (isStanLib(GETIDFROMLT(posFun).id))
+				{
+					strcpy(idname1, GETIDFROMLT(posFun).id);
+					OUT << CALL(idname1) << ENDL;
+					OUT << MOV(EMPTY, "__temp__var__fpi", EMPTY, "EAX") << ENDL;
+					OUT << FLDREG("DWORD PTR [__temp__var__fpi]") << ENDL;
+					OUT << FSTPREG("__temp__var__fpi") << ENDL;
+				}
+				else 
+				{
+					IT::retNameFun(idTable, lexTable, posFun, idname1);
+					OUT << CALL(idname1) << ENDL;
+					OUT << FLDREG("DWORD PTR [EAX]") << ENDL;
+				}
 			}
 			if (CURRLEX(i) == LEX_LITERAL)
 			{

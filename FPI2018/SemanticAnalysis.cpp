@@ -3,9 +3,6 @@
 #include "stanlib.h"
 #include "Error.h"
 
-// added check str-parm in nonstanlibfun;
-// added check str-parm in nonstanlibfun;
-// and str fun
 bool Semantic::startSemantic(LT::LexTable& lexTable, IT::IdTable& idTable, Log::LOG log)
 {
 	bool errorSem = false;

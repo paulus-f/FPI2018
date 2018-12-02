@@ -38,7 +38,31 @@ Program
 	int kek = strfind("str", srokabb);
 	bool chek = state(10);
 	str lolb = strokaa;	
-     
+
+	int testabs = 5-10;
+	fl testfun = msin(3.14);
+	p< "sin";
+	p< testfun;
+	testfun = mcos(0.01);
+    p< "cos";
+	p< testfun;
+	testfun = mtan(1.3);
+	p< "tan";
+	p< testfun;
+	testfun = mctan(2.14);
+	p< "ctan";
+	p< testfun;
+	testfun = mln(0.2);
+	p< "mln e";
+	p< testfun;
+	testfun = msqr(9);
+	p< "sqr 9";
+	p< testfun;
+	testabs = mabs(testabs);
+	p< "5-10";
+	p< testabs;
+	
+	
 	p< "isglobal before funadd";
 	p< $isgl;
 	

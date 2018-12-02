@@ -642,7 +642,7 @@ namespace LT {
 				if (FST::execute(fstMinus))
 				{
 					lexEntry = retLex(LEX_OPERATION, numLine, LT_TI_NULLIDX);
-					lexEntry.operation = PLUS;
+					lexEntry.operation = MINUS;
 					Add(lexTable, lexEntry);
 					continue;
 				}

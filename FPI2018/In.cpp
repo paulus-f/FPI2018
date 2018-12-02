@@ -29,7 +29,8 @@ IN getin(wchar_t infile[])
 
 			for (int i = 0; i < Buff.length(); ++i)
 			{
-				if (tempIN.code[(unsigned char)Buff[i]] == IN::F)
+				char ind = (unsigned char)Buff[i];
+				if (tempIN.code[ind] == IN::F)
 				{
 					throw ERROR_THROW_IN(111, tempIN.lines, i);
 				}
