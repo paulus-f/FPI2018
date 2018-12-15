@@ -226,7 +226,7 @@ void CG::protImplem(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log
 	}
 	OUT << ENDL;
 }
-
+//semantic
 int CG::releaseFun(LT::LexTable & lexTable, IT::IdTable & idTable, Log::LOG log, int pos, char *idfun)
 {
 	bool isInverse = false;

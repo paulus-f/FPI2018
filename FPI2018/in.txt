@@ -38,13 +38,21 @@ Program
 	int kek = strfind("str", srokabb);
 	bool chek = state(10);
 	str lolb = strokaa;	
+	
 
+	bool andreymuha = true;
+	int checkuntil = 5;
+	until(checkuntil < 6)
+	{
+		checkuntil = checkuntil+1;
+	}
+	
 	int testabs = 5-10;
 	fl testfun = msin(3.14);
 	p< "sin";
 	p< testfun;
 	testfun = mcos(0.01);
-    p< "cos";
+   	p< "cos";
 	p< testfun;
 	testfun = mtan(1.3);
 	p< "tan";
@@ -89,6 +97,7 @@ Program
 	}
 	
 	
+	
 	str newstr;	
 	p< "input string";
 	p> newstr; 
@@ -103,12 +112,19 @@ Program
 	fl testfltwo = 23.43 - testflone;
 	int b = funadd(30, 40) * 2;
 	int i = 1;
+	int j = 0;
 	p< "isglobal after funadd";
 	p< $isgl;
 	b = 1;
 	for(i = 0; i < 5; i=i+1)
 	{
+		for(j = 0; j < 2;j=j+1)
+		{
+			b=b*2;
+		}
 		b=b*2;
 	}
+	
+	p< b;
 	
 }

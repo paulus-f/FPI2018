@@ -61,10 +61,10 @@ namespace LT {
 			{
 				int j = i;
 				buffIndL = 0;
-				for (j++; strcmp((strCode[j] + EMPTYSTR), QUOTES + EMPTYSTR); j++)
+				for (j++; strCode[j] != QUOTES; j++)
 				{
 					buffL[buffIndL++] = strCode[j];
-					if (j + 1 == strlen(strCode))
+					if (strCode[j] == ';')
 					{
 						errorLex = true;
 						errarr[errhead++] = ERROR_THROW_IN(116, numLine, numCol);
