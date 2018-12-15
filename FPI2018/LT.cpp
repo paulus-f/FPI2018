@@ -63,12 +63,11 @@ namespace LT {
 				buffIndL = 0;
 				for (j++; strCode[j] != QUOTES; j++)
 				{
-					buffL[buffIndL++] = strCode[j];
 					if (strCode[j] == ';')
 					{
-						errorLex = true;
-						errarr[errhead++] = ERROR_THROW_IN(116, numLine, numCol);
+						throw ERROR_THROW_IN(116, numLine, numCol);
 					}
+					buffL[buffIndL++] = strCode[j];
 				}
 				i = j;
 				buffL[buffIndL] = '\0';
@@ -710,8 +709,6 @@ namespace LT {
 		}
 		/////TABLE OF LEXEM AND IND. ARE ALL RIGHT BEFORE POLISH NOTATION
 		std::cout << "LexicalAnalysis is made copmlete" << std::endl;
-		LogLA(lexTable, log);
-		IT::logIT(idTable, log);
 	}
 
 	LT::LexTable LT::Create(int size)
@@ -761,6 +758,7 @@ namespace LT {
 
 		for (int numLine = 1, ind = 0; ind < lexTable.head; ind++)
 		{
+			if (lexTable.table[ind].lexema[GETLEX] == '^') continue;
 			if (numLine == lexTable.table[ind].sn)
 			{
 				*log.stream << lexTable.table[ind].lexema[GETLEX];
@@ -772,6 +770,7 @@ namespace LT {
 				*log.stream << 0 << numLine <<  "   ";
 				ind--;
 			}
+			
 			
 		}
 		*log.stream << std::endl;

@@ -215,13 +215,13 @@ bool Semantic::checkStandlib(int len, int *type, int numLT, LT::LexTable lexTabl
 	{
 		if (lexTable.table[i].lexema[GETLEX] == LEX_ID || lexTable.table[i].lexema[GETLEX] == LEX_LITERAL)
 		{
-			if (!IT::GetEntry(idTable, lexTable.table[i].idxTI).iddatatype == type[countParm++])
+			if (IT::GetEntry(idTable, lexTable.table[i].idxTI).iddatatype != type[countParm++])
 			{
 				return false;
 			}
 		}
-		if (countParm > len) return false;
 		if (i >= lexTable.head) throw ERROR_THROW(999)// going out of the array
 	}
-	return true;
+	if (countParm == len) return true;
+	return false;
 }

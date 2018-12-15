@@ -28,25 +28,20 @@ bool def state(int inta)
 	
 	r checkstate;
 }
-
 Program
 {
-
 	fl testflone = retfl(12.3, 1.54);
 	str strokaa= "fisrts string";
 	str srokabb = "second string";
 	int kek = strfind("str", srokabb);
 	bool chek = state(10);
 	str lolb = strokaa;	
-	
-
 	bool andreymuha = true;
 	int checkuntil = 5;
 	until(checkuntil < 6)
 	{
 		checkuntil = checkuntil+1;
 	}
-	
 	int testabs = 5-10;
 	fl testfun = msin(3.14);
 	p< "sin";
@@ -69,23 +64,16 @@ Program
 	testabs = mabs(testabs);
 	p< "5-10";
 	p< testabs;
-	
-	
 	p< "isglobal before funadd";
 	p< $isgl;
-	
 	int sizestrokaaa = strlen(srokabb);
-	
 	bool flag = false;
-	
 	unless(flag == false)
 	{
 		p< "flag unless false";
 		testflone = testflone + 1.01;
 	}
-	
 	int count = 0;
-	
 	while(flag == false)
 	{
 		count = count + 1;
@@ -95,20 +83,13 @@ Program
 			flag = true;
 		}
 	}
-	
-	
-	
 	str newstr;	
 	p< "input string";
 	p> newstr; 
-	
 	p< "inputing string";
 	p< newstr;
-	
 	str lol = strokaa+srokabb;
-	
 	p< lol;
-	
 	fl testfltwo = 23.43 - testflone;
 	int b = funadd(30, 40) * 2;
 	int i = 1;
@@ -124,7 +105,5 @@ Program
 		}
 		b=b*2;
 	}
-	
 	p< b;
-	
 }
